@@ -4,63 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BARBER RESERVE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+«script src="https://unpkg.com"></script>
 <script>
-/* ====== إعدادات Supabase — ضع رابط مشروعك هنا ====== */
-const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co'; // ← غيّر هذا إلى رابط مشروعك (من Settings → API في Supabase)
-const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = window.supabase.createClient('https://supabase.co','sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95');
+</script>
+<script>
+  // دالة برمجية مخصصة لرفع الصور مباشرة من لوحة تحكم فيصل السحابية
+  async function handlePhotoUpload(fileInput) {
+    const file = fileInput.files[0];
+    if (!file) return;
 
-const BUCKET = 'gallery';      // اسم الـ Bucket في Supabase Storage
-const TABLE  = 'barber_photos'; // اسم الجدول في قاعدة البيانات
+    // تسمية الصورة بشكل فريد لمنع التداخل
+    const fileName = 'barber_' + Date.now() + '_' + file.name;
 
-/* ضغط الصورة بجودة جيدة قبل الرفع (حجم أصغر + تحميل أسرع) */
-async function compressImage(file, maxSize = 1600, quality = 0.85) {
-  const img = await createImageBitmap(file);
-  let w = img.width, h = img.height;
-  if (w > maxSize || h > maxSize) {
-    const r = Math.min(maxSize / w, maxSize / h);
-    w = Math.round(w * r); h = Math.round(h * r);
+    try {
+      // 1. رفع الصورة مباشرة إلى مجلد gallery العام في Supabase
+      const { data, error: uploadError } = await supabase.storage
+        .from('gallery')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // 2. استخراج الرابط العام المباشر للصورة المرفوعة
+      const { data: publicUrlData } = supabase.storage
+        .from('gallery')
+        .getPublicUrl(fileName);
+
+      const imageUrl = publicUrlData.publicUrl;
+
+      // 3. حفظ رابط الصورة الجديد في جدول قاعدة البيانات لتظهر للزبائن فوراً
+      const { error: dbError } = await supabase
+        .from('barber_photos')
+        .insert([{ url: imageUrl, created_at: new Date() }]);
+
+      if (dbError) throw dbError;
+
+      alert('🎉 نجح الأمر يا فيصل! تم رفع صورتك الاحترافية وستظهر للزبائن الآن فوراً!');
+      if (typeof loadPhotos === 'function') loadPhotos(); // تحديث المعرض تلقائياً
+    } catch (err) {
+      alert('حدث خطأ أثناء الرفع السحابي، تأكد من إعدادات الجدول في Supabase');
+      console.error(err);
+    }
   }
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
-  return new File([blob], 'photo.jpg', { type: 'image/jpeg' });
-}
-
-/* رفع صورة جديدة من لوحة التحكم إلى Supabase */
-async function handlePhotoUpload(fileInput) {
-  const file = fileInput.files[0];
-  if (!file) return;
-  try {
-    const compressed = await compressImage(file);
-    const fileName = 'barber_' + Date.now() + '.jpg';
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET).upload(fileName, compressed, { cacheControl: '3600', upsert: false });
-    if (uploadError) throw uploadError;
-
-    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-    const { error: dbError } = await supabase.from(TABLE).insert([{ url: publicUrl }]);
-    if (dbError) throw dbError;
-
-    alert('تم رفع الصورة بنجاح وستظهر للزبائن فوراً!');
-    await loadPhotos();
-    if (screen === 'admin_gallery') renderAdminGallery();
-  } catch (err) {
-    alert('حدث خطأ أثناء الرفع: ' + (err.message || err));
-    console.error(err);
-  } finally {
-    fileInput.value = '';
-  }
-}
-
-/* تحميل الصور من جدول Supabase — تظهر لجميع الزبائن */
-async function loadPhotos() {
-  const { data, error } = await supabase.from(TABLE).select('*').order('created_at', { ascending: true });
-  if (error) { console.error('loadPhotos:', error); return; }
-  galleryPhotos = (data || []).map(r => ({ id: String(r.id), url: r.url }));
-}
 </script>
 
 <style>
@@ -431,6 +416,8 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
 
+/* ================= Default photos (seeded once) ================= */
+const DEFAULT_PHOTOS = Array.from({length:23},(_,i)=>({ id:`work-${i+1}`, uri:`assets/work-${i+1}.jpg` }));
 
 /* ================= Modal (replaces Alert) ================= */
 function showAlert(title, msg, okText, onOk){
@@ -550,30 +537,29 @@ function deleteBooking(id){
   });
 }
 
-/* ================= Gallery (Supabase) ================= */
-async function replacePhoto(id, file){
-  try {
-    const compressed = await compressImage(file);
-    const fileName = 'barber_' + Date.now() + '.jpg';
-    const { error: upErr } = await supabase.storage.from(BUCKET).upload(fileName, compressed, { cacheControl: '3600', upsert: false });
-    if (upErr) throw upErr;
-    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
-    const { error: dbErr } = await supabase.from(TABLE).update({ url: publicUrl }).eq('id', id);
-    if (dbErr) throw dbErr;
-    await loadPhotos();
+/* ================= Gallery ================= */
+function addPhoto(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    galleryPhotos.push({ id:`${Date.now()}`, uri:e.target.result });
+    store.set('barber_gallery', galleryPhotos);
     renderAdminGallery();
-  } catch (err) { alert('حدث خطأ: ' + (err.message || err)); console.error(err); }
+  };
+  reader.readAsDataURL(file);
 }
-async function deletePhoto(id){
-  const photo = galleryPhotos.find(p => p.id === id);
-  showConfirm(t().deleteTitle, t().deleteMessage, t().yesDelete, async () => {
-    const { error } = await supabase.from(TABLE).delete().eq('id', id);
-    if (error) { alert('خطأ في الحذف: ' + error.message); return; }
-    if (photo && photo.url){
-      const path = photo.url.split('/').pop();
-      await supabase.storage.from(BUCKET).remove([path]);
-    }
-    await loadPhotos();
+function replacePhoto(id, file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    galleryPhotos = galleryPhotos.map(p=> p.id===id ? {...p, uri:e.target.result} : p);
+    store.set('barber_gallery', galleryPhotos);
+    renderAdminGallery();
+  };
+  reader.readAsDataURL(file);
+}
+function deletePhoto(id){
+  showConfirm(t().deleteTitle, t().deleteMessage, t().yesDelete, () => {
+    galleryPhotos = galleryPhotos.filter(p=>p.id!==id);
+    store.set('barber_gallery', galleryPhotos);
     renderAdminGallery();
   });
 }
@@ -685,7 +671,7 @@ function renderGallery(){
   document.getElementById('galleryTitle').textContent = t().gBtn;
   const list = document.getElementById('galleryList');
   if (!galleryPhotos.length){ list.innerHTML = `<div class="warning">${t().gEmpty}</div>`; return; }
-  list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${p.url}" alt="" loading="lazy">`).join('');
+  list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${p.uri}" alt="">`).join('');
 }
 
 function renderAdminLogin(){
@@ -774,7 +760,7 @@ function renderAdminGallery(){
     const row = document.createElement('div');
     row.className = 'gallery-row';
     row.innerHTML = `
-      <img class="gallery-thumb" src="${p.url}" alt="" loading="lazy">
+      <img class="gallery-thumb" src="${p.uri}" alt="">
       <div class="gallery-actions">
         <button class="logout change-btn">${tr.gChange}</button>
         <button class="delete-btn del-btn" style="margin-left:0">🗑️</button>
@@ -808,8 +794,8 @@ document.getElementById('addPhotoBtn').onclick = () => { replaceTargetId = null;
 document.getElementById('photoInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
-  if (replaceTargetId) { const id = replaceTargetId; replaceTargetId = null; e.target.value = ''; replacePhoto(id, file); }
-  else handlePhotoUpload(e.target);
+  if (replaceTargetId) replacePhoto(replaceTargetId, file); else addPhoto(file);
+  e.target.value = '';
 });
 document.querySelectorAll('.back').forEach(b=>{
   b.onclick = () => {
@@ -839,16 +825,22 @@ function loadData(){
   if (Array.isArray(b)) bookedSlots = b;
   const h = store.get('barber_holidays', []);
   if (Array.isArray(h)) holidayDates = h;
-  galleryPhotos = []; // الصور تُحمّل من Supabase وليس من localStorage
+  let list = store.get('barber_gallery', []);
+  if (!Array.isArray(list)) list = [];
+  let seededIds = store.get('barber_gallery_seeded_ids', null);
+  if (!Array.isArray(seededIds)) seededIds = store.get('barber_gallery_seeded', false) ? ['work-1','work-2','work-3'] : [];
+  const fresh = DEFAULT_PHOTOS.filter(p=>!seededIds.includes(p.id));
+  if (fresh.length){
+    list = [...list, ...fresh];
+    store.set('barber_gallery', list);
+    store.set('barber_gallery_seeded_ids', [...seededIds, ...fresh.map(p=>p.id)]);
+  }
+  galleryPhotos = list;
 }
 
 loadData();
 applyLang();
 renderHome();
-loadPhotos().then(() => {
-  if (screen === 'gallery') renderGallery();
-  if (screen === 'admin_gallery') renderAdminGallery();
-});
 </script>
 </body>
 </html>
