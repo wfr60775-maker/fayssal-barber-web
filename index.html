@@ -35,7 +35,7 @@
   .working-hours { color:#777; font-size:12px; text-align:center; margin-top:8px; }
   .btn { background:var(--gold); color:#111; border:none; padding:17px; border-radius:12px; width:100%; margin-top:25px; font-size:14px; font-weight:bold; cursor:pointer; }
   .btn.disabled { opacity:.5; }
-  .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; }
+  .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; margin-top:10px; }
   .back { color:var(--gold); font-size:15px; margin-bottom:15px; font-weight:600; background:none; border:none; cursor:pointer; }
   .input { background:var(--box); color:var(--white); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; width:100%; font-size:16px; }
   .input::placeholder { color:#666; }
@@ -113,7 +113,7 @@
     <div class="section-title" id="titleText"></div>
     <div id="servicesList"></div>
 
-    <button class="btn-secondary" id="galleryBtn" style="margin-top:6px"></button>
+    <button class="btn-secondary" id="galleryBtn"></button>
 
     <div class="line"></div>
     <div class="working-hours" id="workingHours"></div>
@@ -124,7 +124,7 @@
   <!-- BOOKING -->
   <div class="card screen" id="screen-booking">
     <button class="back" data-goto="home"></button>
-    <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name">
+    <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name" placeholder="Full name">
     <input class="input" id="inpPhone" type="tel" placeholder="+34 600 000 000" autocomplete="tel">
     <div class="line"></div>
     <div class="section-title-small" id="dLabel"></div>
@@ -155,10 +155,6 @@
       <span class="sc-icon">🔐</span>
       <span class="sc-text"><span class="sc-title">Login (Barber)</span><span class="sc-sub">Access your dashboard</span></span>
     </button>
-    <button class="settings-card" id="goDemo">
-      <span class="sc-icon">🔍</span>
-      <span class="sc-text"><span class="sc-title">View a barber page</span><span class="sc-sub">Open public booking page</span></span>
-    </button>
   </div>
 
   <!-- SIGN UP -->
@@ -180,7 +176,7 @@
     <input class="input" id="blEmail" type="email" placeholder="Email">
     <input class="input" id="blPassword" type="password" placeholder="Password">
     <button class="btn" id="loginBtn">LOGIN</button>
-    <button class="btn-secondary" id="forgotBtn" style="margin-top:10px">Forgot password?</button>
+    <button class="btn-secondary" id="forgotBtn">Forgot password?</button>
     <p id="blMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
   </div>
 
@@ -211,7 +207,7 @@
     <div class="admin-info">🏪 <span id="bdShop"></span></div>
     <div class="line"></div>
     <button class="btn-secondary" id="bdShare">🔗 Copy my public link</button>
-    <button class="btn-secondary" id="bdPassword" style="margin-top:10px">🔑 Change password</button>
+    <button class="btn-secondary" id="bdPassword">🔑 Change password</button>
     <div class="line"></div>
     <div class="section-title-small">📅 Holidays (tap a day to toggle)</div>
     <div class="month-box" id="bdMonth"></div>
@@ -243,7 +239,7 @@
   </div>
 </div>
 
-<script>
+  <script>
 /* ============ CONFIG ============ */
 const SUPABASE_URL = 'https://fpwksmmsogvxgqyyngfs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
@@ -255,10 +251,10 @@ const OPENING_TIME = '10:00';
 const CLOSING_TIME = '20:00';
 const BOOKING_DAYS_AHEAD = 30;
 
-/* ============ State ============ */
+/* ============ STATE ============ */
 let currentBarberId = null;
 let currentBarber = null;
-let viewingBarberId = null;         // الحلاق المعروض للزبون (من ?b=UUID)
+let viewingBarberId = null;
 let selectedService = null;
 let screen = 'home';
 let selectedDateKey = null;
@@ -277,7 +273,7 @@ const futureDates = (() => {
   return out;
 })();
 
-/* ============ Helpers ============ */
+/* ============ HELPERS ============ */
 const pad = n => String(n).padStart(2,'0');
 const dateToKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const keyToDate = k => { const [y,m,dd]=k.split('-').map(Number); return new Date(y,m-1,dd); };
@@ -285,6 +281,7 @@ const timeToMinutes = v => { const [h,m]=v.split(':').map(Number); return h*60+m
 const minutesToTime = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const getShortDayName = d => d.toLocaleDateString('en', {weekday:'short'});
+
 function getMonthLabel(scrollEl){
   const itemW=78, left=scrollEl?scrollEl.scrollLeft:0, width=scrollEl?scrollEl.clientWidth:300;
   const s=Math.max(0,Math.min(futureDates.length-1,Math.floor(Math.abs(left)/itemW)));
@@ -297,7 +294,7 @@ function getMonthLabel(scrollEl){
 }
 const isHoliday = k => holidayDates.includes(k);
 
-/* ============ Modal ============ */
+/* ============ MODAL ============ */
 function showAlert(title, msg, okText, onOk){
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalMsg').textContent = msg;
@@ -319,14 +316,14 @@ function showConfirm(title, msg, okText, onOk){
   okBtn.className = 'modal-ok danger';
   cancelBtn.style.display = '';
   document.getElementById('modalOverlay').classList.add('show');
-  cancelBtn.onclick = () => document.getElementById('modalOverlay').classList.remove('show');
+  cancelBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); };
   okBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); onOk && onOk(); };
 }
 document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
 });
 
-/* ============ Supabase loaders ============ */
+/* ============ SUPABASE LOADERS ============ */
 async function loadBusy(){
   if (!viewingBarberId){ busySlots=[]; return false; }
   const { data, error } = await sb.rpc('bb_public_busy', { p_barber_id: viewingBarberId });
@@ -369,11 +366,12 @@ async function loadAdminBookings(){
   return true;
 }
 
-/* ============ Rendering ============ */
+/* ============ SCREEN MANAGEMENT ============ */
 function setScreen(s){
   screen = s;
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
-  document.getElementById('screen-'+s).classList.add('active');
+  const el = document.getElementById('screen-'+s);
+  if (el) el.classList.add('active');
   window.scrollTo(0,0);
   if (s==='home') renderHome();
   if (s==='booking') renderBooking();
@@ -381,14 +379,11 @@ function setScreen(s){
   if (s==='barber') renderBarberDashboard();
 }
 
+/* ============ HOME ============ */
 function renderHome(){
   const hero = document.getElementById('heroImg');
   const shopEl = document.getElementById('shopName');
   const locEl = document.getElementById('locText');
-
-  hero.style.visibility = 'hidden';
-  shopEl.textContent = 'Barber';
-  locEl.textContent = '';
 
   document.getElementById('galleryBtn').textContent = '🖼️ My work photos';
   document.getElementById('titleText').textContent = 'Choose service';
@@ -398,29 +393,30 @@ function renderHome(){
   document.getElementById('nextBtn').textContent = 'NEXT';
 
   const list = document.getElementById('servicesList');
-  list.innerHTML = '<div class="warning">Loading...</div>';
 
   if (!viewingBarberId){
-    list.innerHTML = '<div class="warning">Open a barber link to see services. Go to ⚙️ to sign up or login.</div>';
-    document.getElementById('nextBtn').disabled = true;
+    shopEl.textContent = 'Barber';
+    locEl.textContent = '';
+    hero.style.visibility = 'hidden';
+    list.innerHTML = '<div class="warning">Open a barber link to see services. Tap ⚙️ to sign up or login.</div>';
     document.getElementById('nextBtn').classList.add('disabled');
     return;
   }
 
+  list.innerHTML = '<div class="warning">Loading...</div>';
   loadBarberConfig().then(data=>{
     if (!data || !data.barber){ list.innerHTML='<div class="warning">Barber not found.</div>'; return; }
     shopEl.textContent = data.barber.shop_name || data.barber.full_name || 'Barber';
-    locEl.textContent = '📍 ' + (data.settings.location || '');
-    document.getElementById('workingHours').textContent =
-      `Working hours: ${data.settings.opening_time||OPENING_TIME} - ${data.settings.closing_time||CLOSING_TIME}`;
+    locEl.textContent = data.settings && data.settings.location ? ('📍 ' + data.settings.location) : '';
+    const open = (data.settings && data.settings.opening_time) || OPENING_TIME;
+    const close = (data.settings && data.settings.closing_time) || CLOSING_TIME;
+    document.getElementById('workingHours').textContent = `Working hours: ${open} - ${close}`;
 
-    // Hero image
-    const url = data.settings.hero_url || DEFAULT_HERO;
+    const url = (data.settings && data.settings.hero_url) || DEFAULT_HERO;
     hero.src = url;
-    hero.style.objectPosition = '50% ' + (data.settings.hero_pos||'50') + '%';
+    hero.style.objectPosition = '50% ' + ((data.settings && data.settings.hero_pos) || '50') + '%';
     hero.style.visibility = 'visible';
 
-    // Services
     const svcs = data.services || [];
     if (!svcs.length){ list.innerHTML='<div class="warning">No services yet.</div>'; return; }
     list.innerHTML = '';
@@ -431,9 +427,11 @@ function renderHome(){
       b.onclick = () => { selectedService = { id:String(sv.id), name:sv.name_en, duration:sv.duration, price:sv.price }; time=null; renderHome(); };
       list.appendChild(b);
     });
+    document.getElementById('nextBtn').classList.remove('disabled');
   }).catch(e=>{ console.error(e); list.innerHTML='<div class="warning">Error loading.</div>'; });
 }
 
+/* ============ BOOKING ============ */
 function updateConfirmState(){
   const disabled = submitting || !name.trim() || !phone.trim() || !selectedDateKey || !time || isHoliday(selectedDateKey);
   document.getElementById('confirmBtn').classList.toggle('disabled', disabled);
@@ -443,7 +441,6 @@ function renderBooking(){
   const daysEl = document.getElementById('bookingDays');
   const prevScroll = daysEl.scrollLeft;
   document.querySelector('#screen-booking .back').textContent = '‹ Back';
-  document.getElementById('inpName').placeholder = 'Full name';
   document.getElementById('dLabel').textContent = 'Select Day';
   document.getElementById('tLabel').textContent = 'Available Times';
   document.getElementById('confirmBtn').textContent = 'CONFIRM BOOKING';
@@ -515,4 +512,267 @@ async function handleFinalBooking(){
     });
     if (error){ console.error(error); showAlert('!', 'Connection error.'); return; }
     if (!data || !data.ok){
-      await Promise.all([loadBusy(), loadHolidays
+      await Promise.all([loadBusy(), loadHolidays()]);
+      time = null; renderBooking();
+      showAlert('!', data && data.error === 'holiday' ? 'This day is a holiday.' : 'This time was just booked.');
+      return;
+    }
+    const selectedDate = keyToDate(selectedDateKey);
+    const displayed = selectedDate.toLocaleDateString('en', {weekday:'long', day:'numeric', month:'long'});
+    await loadBusy();
+    showAlert('✓ Confirmed', `Thank you ${name.trim()}! ${selectedService.name} booked on ${displayed} at ${time}.`, 'OK', () => {
+      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null;
+      document.getElementById('inpName').value=''; document.getElementById('inpPhone').value='';
+      setScreen('home');
+    });
+  } finally {
+    submitting = false;
+    if (screen === 'booking') updateConfirmState();
+  }
+}
+
+/* ============ GALLERY (customers) ============ */
+function renderGallery(){
+  document.querySelector('#screen-gallery .back').textContent = '‹ Back';
+  document.getElementById('galleryTitle').textContent = 'My work photos';
+  const list = document.getElementById('galleryList');
+  if (!galleryPhotos.length){ list.innerHTML = '<div class="warning">No photos yet.</div>'; return; }
+  list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${esc(p.url)}" alt="" loading="lazy">`).join('');
+}
+
+/* ============ BARBER DASHBOARD ============ */
+function renderBarberDashboard(){
+  document.getElementById('bdEmail').textContent = currentBarber ? currentBarber.email : '';
+  document.getElementById('bdShop').textContent = currentBarber ? (currentBarber.shop_name || currentBarber.full_name || '') : '';
+
+  const daysEl = document.getElementById('bdDays');
+  daysEl.innerHTML = '';
+  futureDates.forEach(d => {
+    const key = dateToKey(d);
+    const sel = isHoliday(key);
+    const box = document.createElement('div');
+    box.className = 'day-box' + (sel ? ' holiday-selected' : '');
+    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${sel?'<div class="holiday-mini" style="color:var(--gold)">✓</div>':''}`;
+    box.onclick = () => toggleHoliday(key);
+    daysEl.appendChild(box);
+  });
+  document.getElementById('bdMonth').textContent = getMonthLabel(daysEl);
+
+  const list = document.getElementById('bdBookings');
+  if (!adminBookings.length){
+    list.innerHTML = '<div class="empty">No bookings yet.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  adminBookings.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'admin-item';
+    div.innerHTML = `
+      <div style="flex:1">
+        <div class="client-name">${esc(item.clientName)}</div>
+        <div class="admin-info">📞 ${esc(item.clientPhone)}</div>
+        <div class="admin-info">✂️ ${esc(item.serviceName)}</div>
+        <div class="admin-info">📅 ${esc(item.dateKey)} — ⏰ ${esc(item.startTime)}</div>
+      </div>
+      <button class="delete-btn">🗑️</button>`;
+    div.querySelector('.delete-btn').onclick = () => {
+      showConfirm('Delete booking', 'Cancel this booking?', 'Yes, delete', async () => {
+        const { error } = await sb.from('bookings').update({ status: 'cancelled' }).eq('id', item.id);
+        if (error){ alert(error.message); return; }
+        await Promise.all([loadAdminBookings(), loadBusy()]);
+        renderBarberDashboard();
+      });
+    };
+    list.appendChild(div);
+  });
+}
+
+async function toggleHoliday(key){
+  if (!currentBarberId) return;
+  const isOn = isHoliday(key);
+  let error;
+  if (isOn){
+    ({error} = await sb.from('holidays').delete().eq('barber_id', currentBarberId).eq('date_key', key));
+  } else {
+    ({error} = await sb.from('holidays').insert({ barber_id: currentBarberId, date_key: key }));
+  }
+  if (error){ alert(error.message); return; }
+  await loadHolidays();
+  renderBarberDashboard();
+}
+
+/* ============ AUTH ============ */
+async function loadCurrentBarber(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user){ currentBarberId = null; currentBarber = null; return null; }
+  currentBarberId = user.id;
+  const { data } = await sb.from('barbers').select('*').eq('id', user.id).single();
+  currentBarber = data;
+  if (data) viewingBarberId = data.id;
+  return data;
+}
+
+async function enterBarberMode(){
+  const b = await loadCurrentBarber();
+  if (!b){ alert('Profile not found. Try logging out and back in.'); return; }
+  await Promise.all([loadBusy(), loadHolidays(), loadPhotos(), loadAdminBookings()]);
+  setScreen('barber');
+}
+
+/* Sign Up */
+document.getElementById('signupBtn').onclick = async () => {
+  const full_name = document.getElementById('suName').value.trim();
+  const shop_name = document.getElementById('suShop').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const password = document.getElementById('suPassword').value;
+  const msg = document.getElementById('suMsg');
+  if (!email || password.length < 6){ msg.textContent = 'Email + password (min 6 chars).'; return; }
+  msg.textContent = 'Creating...';
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name, shop_name } }
+  });
+  if (error){ msg.textContent = error.message; return; }
+  msg.textContent = '✓ Account created! Logging in...';
+  // Auto login after signup
+  const { error: le } = await sb.auth.signInWithPassword({ email, password });
+  if (le){ msg.textContent = '✓ Created. Please login.'; return; }
+  await enterBarberMode();
+};
+
+/* Login */
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('blEmail').value.trim();
+  const password = document.getElementById('blPassword').value;
+  const msg = document.getElementById('blMsg');
+  msg.textContent = 'Logging in...';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ msg.textContent = error.message; return; }
+  msg.textContent = '';
+  await enterBarberMode();
+};
+
+/* Forgot password */
+document.getElementById('forgotBtn').onclick = () => setScreen('reset');
+
+document.getElementById('resetBtn').onclick = async () => {
+  const email = document.getElementById('rpEmail').value.trim();
+  const msg = document.getElementById('rpMsg');
+  if (!email){ msg.textContent = 'Enter your email.'; return; }
+  msg.textContent = 'Sending...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + location.pathname + '?reset=1'
+  });
+  if (error){ msg.textContent = error.message; return; }
+  msg.textContent = '✓ Reset link sent. Check your email.';
+};
+
+/* New password (after reset link) */
+document.getElementById('newpassBtn').onclick = async () => {
+  const password = document.getElementById('npPassword').value;
+  if (password.length < 6){ alert('Password must be 6+ chars.'); return; }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error){ alert(error.message); return; }
+  alert('✓ Password updated.');
+  history.replaceState({}, '', location.pathname);
+  setScreen('login');
+};
+
+/* Change password (from dashboard) */
+document.getElementById('cpBtn').onclick = async () => {
+  const password = document.getElementById('cpPassword').value;
+  if (password.length < 6){ alert('Password must be 6+ chars.'); return; }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error){ alert(error.message); return; }
+  alert('✓ Password changed.');
+  setScreen('barber');
+};
+
+/* Logout */
+document.getElementById('logoutBtn').onclick = async () => {
+  await sb.auth.signOut();
+  currentBarberId = null; currentBarber = null;
+  setScreen('home');
+};
+
+/* Share link */
+document.getElementById('bdShare').onclick = async () => {
+  const url = location.origin + location.pathname + '?b=' + currentBarberId;
+  try {
+    await navigator.clipboard.writeText(url);
+    alert('✓ Public link copied:\n\n' + url);
+  } catch(e){
+    prompt('Copy this link:', url);
+  }
+};
+
+document.getElementById('bdPassword').onclick = () => setScreen('changepass');
+
+/* ============ NAVIGATION ============ */
+document.getElementById('adminTrigger').onclick = async () => {
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) await enterBarberMode();
+  else setScreen('settings');
+};
+
+document.getElementById('goSignup').onclick = () => setScreen('signup');
+document.getElementById('goLogin').onclick = () => setScreen('login');
+document.getElementById('galleryBtn').onclick = () => setScreen('gallery');
+document.getElementById('nextBtn').onclick = () => {
+  if (!selectedService){ showAlert('!', 'Please select a service.'); return; }
+  setScreen('booking');
+};
+document.getElementById('confirmBtn').onclick = handleFinalBooking;
+
+document.getElementById('inpName').addEventListener('input', e => { name = e.target.value; updateConfirmState(); });
+document.getElementById('inpPhone').addEventListener('input', e => { phone = e.target.value; updateConfirmState(); });
+
+document.querySelectorAll('.back').forEach(b=>{
+  b.onclick = () => {
+    const go = b.dataset.goto;
+    if (go === 'home' && screen === 'booking'){
+      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null;
+      document.getElementById('inpName').value=''; document.getElementById('inpPhone').value='';
+    }
+    setScreen(go);
+  };
+});
+
+const bookingDaysEl = document.getElementById('bookingDays');
+if (bookingDaysEl) bookingDaysEl.addEventListener('scroll', () => { document.getElementById('bookingMonth').textContent = getMonthLabel(bookingDaysEl); });
+
+/* ============ URL PARAMS ============ */
+const params = new URLSearchParams(location.search);
+if (params.get('reset') === '1') {
+  setTimeout(() => setScreen('newpass'), 400);
+}
+const bParam = params.get('b');
+if (bParam){
+  viewingBarberId = bParam;
+  localStorage.setItem('viewing_barber', bParam);
+} else {
+  const stored = localStorage.getItem('viewing_barber');
+  if (stored) viewingBarberId = stored;
+}
+
+/* ============ INIT ============ */
+(async () => {
+  // Restore session if any
+  const { data: { session } } = await sb.auth.getSession();
+  if (session){
+    await loadCurrentBarber();
+  }
+  // Load public barber data if URL specifies
+  if (viewingBarberId){
+    await Promise.all([loadBusy(), loadHolidays(), loadPhotos()]);
+  }
+  renderHome();
+})();
+
+// Listen to auth changes
+sb.auth.onAuthStateChange((event) => {
+  console.log('Auth event:', event);
+});
+</script>
+</body>
+</html>
