@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARBER RESERVE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root { --gold:#D4AF37; --bg:#111; --card:#1c1c1c; --box:#252525; --line:#333; --white:#fff; --gray:#aaa; }
+  * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif; }
+  body { background:var(--bg); color:var(--white); min-height:100vh; padding:40px 16px 60px; }
+  .container { max-width:560px; margin:0 auto; }
+  [dir="rtl"] { text-align:right; }
+  .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .logo { color:var(--gold); font-size:26px; font-weight:bold; }
+  .subtitle { color:var(--gray); font-size:14px; margin-top:6px; }
+  .admin-trigger { background:var(--box); border:1px solid var(--line); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:16px; color:var(--white); }
+  .card { background:var(--card); border-radius:20px; padding:22px; margin-bottom:40px; }
+  .lang-box { background:var(--box); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:5px; width:100%; color:var(--white); font-size:15px; }
+  .lang-box .gold { color:var(--gold); font-weight:bold; }
+  .gray { color:var(--gray); }
+  .language-menu { margin-bottom:10px; }
+  .language-item { display:block; width:100%; text-align:start; padding:12px; background:var(--box); margin-top:3px; border-radius:8px; color:var(--white); border:none; cursor:pointer; font-size:15px; }
+  .hero-image { width:100%; height:220px; object-fit:cover; border-radius:14px; margin-top:15px; }
+  .barber-name { color:var(--white); font-size:24px; font-weight:bold; margin-top:15px; }
+  .location { color:var(--gray); font-size:14px; margin-top:6px; }
+  .line { height:1px; background:var(--line); margin:22px 0; }
+  .section-title { color:var(--white); font-size:19px; font-weight:bold; margin-bottom:15px; }
+  .section-title-small { color:var(--white); font-size:18px; font-weight:bold; margin:10px 0 12px; }
+  .item { background:var(--box); border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1.5px solid transparent; cursor:pointer; width:100%; color:var(--white); text-align:start; }
+  .item.active { border-color:var(--gold); background:#2d2d2d; }
+  .service-name { font-size:16px; font-weight:600; }
+  .service-time { color:#888; font-size:13px; margin-top:4px; }
+  .price { color:var(--gold); font-size:18px; font-weight:bold; }
+  .working-hours { color:#777; font-size:12px; text-align:center; margin-top:8px; }
+  .btn { background:var(--gold); color:#111; border:none; padding:17px; border-radius:12px; width:100%; margin-top:25px; font-size:14px; font-weight:bold; cursor:pointer; }
+  .btn.disabled { opacity:.5; }
+  .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; }
+  .back { color:var(--gold); font-size:15px; margin-bottom:15px; font-weight:600; background:none; border:none; cursor:pointer; }
+  .input { background:var(--box); color:var(--white); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; width:100%; font-size:16px; }
+  .input::placeholder { color:#666; }
+  .month-box { background:var(--box); border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
+  .days-scroll { display:flex; overflow-x:auto; padding:5px 2px; gap:8px; }
+  .day-box { min-width:70px; height:78px; background:var(--box); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1.5px solid transparent; cursor:pointer; }
+  .day-box.active { border-color:var(--gold); background:#2d2d2d; }
+  .day-box.holiday { border-color:#7a3333; background:#292020; }
+  .day-box.holiday-selected { border-color:var(--gold); background:#302c1d; }
+  .day-name { color:var(--gray); font-size:12px; font-weight:600; margin-bottom:5px; }
+  .day-number { color:var(--white); font-size:20px; font-weight:bold; }
+  .day-box.active .day-name, .day-box.active .day-number, .day-box.holiday-selected .day-name, .day-box.holiday-selected .day-number { color:var(--gold); }
+  .holiday-mini { font-size:10px; margin-top:3px; }
+  .holiday-message { background:#2b2020; border:1px solid #6b3535; border-radius:12px; padding:14px; margin-top:12px; color:#ffb0b0; font-size:13px; line-height:20px; text-align:center; font-weight:600; }
+  .times-scroll { display:flex; overflow-x:auto; padding:5px 0; gap:8px; }
+  .time-box { background:var(--box); border-radius:12px; padding:13px 18px; border:1.5px solid transparent; color:var(--white); font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .time-box.active { border-color:var(--gold); background:#2d2d2d; color:var(--gold); }
+  .warning { color:#888; font-size:14px; margin-top:5px; line-height:20px; }
+  .admin-title { color:var(--gold); font-size:22px; font-weight:bold; margin-bottom:20px; }
+  .dashboard-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .logout { background:var(--box); border:1px solid var(--line); color:var(--gold); font-size:12px; font-weight:bold; padding:8px 12px; border-radius:8px; cursor:pointer; }
+  .admin-item { background:#222; padding:15px; border-radius:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--line); gap:10px; }
+  .client-name { color:var(--gold); font-size:17px; font-weight:bold; margin-bottom:8px; }
+  .admin-info { color:#ddd; font-size:13px; margin-bottom:4px; }
+  .delete-btn { border:1px solid #ff4d4d; background:none; border-radius:8px; padding:10px; font-size:18px; cursor:pointer; }
+  .empty { padding:25px; text-align:center; color:#888; font-size:15px; }
+  .gallery-full { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:14px; margin-bottom:14px; display:block; }
+  .gallery-row { display:flex; background:#222; padding:12px; border-radius:12px; margin-bottom:12px; border:1px solid var(--line); gap:12px; align-items:center; }
+  .gallery-thumb { width:110px; height:140px; object-fit:cover; border-radius:10px; }
+  .gallery-actions { flex:1; display:flex; flex-direction:column; gap:10px; }
+  .screen { display:none; }
+  .screen.active { display:block; }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:var(--card); border-radius:16px; padding:24px; max-width:400px; width:100%; }
+  .modal h3 { color:var(--gold); margin-bottom:12px; }
+  .modal p { color:#ddd; font-size:14px; margin-bottom:20px; line-height:20px; }
+  .modal-buttons { display:flex; gap:10px; }
+  .modal-buttons button { flex:1; padding:12px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; }
+  .modal-cancel { background:var(--box); color:var(--gray); }
+  .modal-ok { background:var(--gold); color:#111; }
+  .modal-ok.danger { background:#ff4d4d; color:#fff; }
+  .settings-card { display:flex; align-items:center; gap:14px; width:100%; background:var(--box); border:1.5px solid var(--gold); border-radius:14px; padding:18px; margin-bottom:14px; color:var(--white); cursor:pointer; text-align:start; }
+  .sc-icon { font-size:30px; }
+  .sc-text { display:flex; flex-direction:column; gap:4px; flex:1; }
+  .sc-title { color:var(--gold); font-size:18px; font-weight:bold; }
+  .sc-sub { color:var(--gray); font-size:13px; line-height:18px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <div class="logo" id="logoText">BARBER RESERVE</div>
+      <div class="subtitle" id="subText"></div>
+    </div>
+    <button class="admin-trigger" id="adminTrigger">⚙️</button>
+  </div>
+
+  <!-- HOME -->
+  <div class="card screen active" id="screen-home">
+    <button class="lang-box" id="langBox">
+      <span class="gray" id="labelText"></span>
+      <span class="gold" id="langName"></span>
+    </button>
+    <div class="language-menu" id="langMenu" style="display:none"></div>
+
+    <img class="hero-image" id="heroImg" alt="barber" style="visibility:hidden">
+
+    <div class="barber-name" id="shopName">Barber</div>
+    <div class="location" id="locText"></div>
+
+    <div class="line"></div>
+    <div class="section-title" id="titleText"></div>
+    <div id="servicesList"></div>
+
+    <button class="btn-secondary" id="galleryBtn" style="margin-top:6px"></button>
+
+    <div class="line"></div>
+    <div class="working-hours" id="workingHours"></div>
+
+    <button class="btn" id="nextBtn"></button>
+  </div>
+
+  <!-- BOOKING -->
+  <div class="card screen" id="screen-booking">
+    <button class="back" data-goto="home"></button>
+    <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name">
+    <input class="input" id="inpPhone" type="tel" placeholder="+34 600 000 000" autocomplete="tel">
+    <div class="line"></div>
+    <div class="section-title-small" id="dLabel"></div>
+    <div class="month-box" id="bookingMonth"></div>
+    <div class="days-scroll" id="bookingDays"></div>
+    <div id="bookingHolidayMsg"></div>
+    <div class="section-title-small" id="tLabel"></div>
+    <div id="timesArea"></div>
+    <button class="btn" id="confirmBtn"></button>
+  </div>
+
+  <!-- GALLERY (customers) -->
+  <div class="card screen" id="screen-gallery">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title" id="galleryTitle"></div>
+    <div id="galleryList"></div>
+  </div>
+
+  <!-- SETTINGS HUB -->
+  <div class="card screen" id="screen-settings">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title">⚙️ Settings</div>
+    <button class="settings-card" id="goSignup">
+      <span class="sc-icon">📝</span>
+      <span class="sc-text"><span class="sc-title">Sign Up (New Barber)</span><span class="sc-sub">Create your own account</span></span>
+    </button>
+    <button class="settings-card" id="goLogin">
+      <span class="sc-icon">🔐</span>
+      <span class="sc-text"><span class="sc-title">Login (Barber)</span><span class="sc-sub">Access your dashboard</span></span>
+    </button>
+    <button class="settings-card" id="goDemo">
+      <span class="sc-icon">🔍</span>
+      <span class="sc-text"><span class="sc-title">View a barber page</span><span class="sc-sub">Open public booking page</span></span>
+    </button>
+  </div>
+
+  <!-- SIGN UP -->
+  <div class="card screen" id="screen-signup">
+    <button class="back" data-goto="settings"></button>
+    <div class="admin-title">📝 Sign Up</div>
+    <input class="input" id="suName" type="text" placeholder="Full name">
+    <input class="input" id="suShop" type="text" placeholder="Shop name">
+    <input class="input" id="suEmail" type="email" placeholder="Email">
+    <input class="input" id="suPassword" type="password" placeholder="Password (min 6)">
+    <button class="btn" id="signupBtn">CREATE ACCOUNT</button>
+    <p id="suMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card screen" id="screen-login">
+    <button class="back" data-goto="settings"></button>
+    <div class="admin-title">🔐 Login</div>
+    <input class="input" id="blEmail" type="email" placeholder="Email">
+    <input class="input" id="blPassword" type="password" placeholder="Password">
+    <button class="btn" id="loginBtn">LOGIN</button>
+    <button class="btn-secondary" id="forgotBtn" style="margin-top:10px">Forgot password?</button>
+    <p id="blMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- RESET -->
+  <div class="card screen" id="screen-reset">
+    <button class="back" data-goto="login"></button>
+    <div class="admin-title">Reset password</div>
+    <input class="input" id="rpEmail" type="email" placeholder="Email">
+    <button class="btn" id="resetBtn">SEND RESET LINK</button>
+    <p id="rpMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- NEW PASSWORD -->
+  <div class="card screen" id="screen-newpass">
+    <div class="admin-title">New password</div>
+    <input class="input" id="npPassword" type="password" placeholder="New password">
+    <button class="btn" id="newpassBtn">SAVE</button>
+  </div>
+
+  <!-- BARBER DASHBOARD -->
+  <div class="card screen" id="screen-barber">
+    <div class="dashboard-header">
+      <div class="admin-title" style="margin-bottom:0">My Dashboard</div>
+      <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+    <div class="line"></div>
+    <div class="admin-info">📧 <span id="bdEmail"></span></div>
+    <div class="admin-info">🏪 <span id="bdShop"></span></div>
+    <div class="line"></div>
+    <button class="btn-secondary" id="bdShare">🔗 Copy my public link</button>
+    <button class="btn-secondary" id="bdPassword" style="margin-top:10px">🔑 Change password</button>
+    <div class="line"></div>
+    <div class="section-title-small">📅 Holidays (tap a day to toggle)</div>
+    <div class="month-box" id="bdMonth"></div>
+    <div class="days-scroll" id="bdDays"></div>
+    <div class="line"></div>
+    <div class="section-title-small">📋 My Bookings</div>
+    <div id="bdBookings"></div>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="card screen" id="screen-changepass">
+    <button class="back" data-goto="barber"></button>
+    <div class="admin-title">Change password</div>
+    <input class="input" id="cpPassword" type="password" placeholder="New password">
+    <button class="btn" id="cpBtn">SAVE</button>
+  </div>
+
+</div>
+
+<!-- modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle"></h3>
+    <p id="modalMsg"></p>
+    <div class="modal-buttons">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-ok" id="modalOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+const SUPABASE_URL = 'https://fpwksmmsogvxgqyyngfs.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const BUCKET = 'gallery';
+const DEFAULT_HERO = 'https://images.unsplash.com/photo-1702865272115-5afdbae975af?fm=jpg&q=60&w=1200&auto=format&fit=crop';
+
+const OPENING_TIME = '10:00';
+const CLOSING_TIME = '20:00';
+const BOOKING_DAYS_AHEAD = 30;
+
+/* ============ State ============ */
+let currentBarberId = null;
+let currentBarber = null;
+let viewingBarberId = null;         // الحلاق المعروض للزبون (من ?b=UUID)
+let selectedService = null;
+let screen = 'home';
+let selectedDateKey = null;
+let time = null;
+let name = '';
+let phone = '';
+let busySlots = [];
+let holidayDates = [];
+let galleryPhotos = [];
+let adminBookings = [];
+let submitting = false;
+
+const futureDates = (() => {
+  const out = []; const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0;i<BOOKING_DAYS_AHEAD;i++){ const d=new Date(today); d.setDate(today.getDate()+i); out.push(d); }
+  return out;
+})();
+
+/* ============ Helpers ============ */
+const pad = n => String(n).padStart(2,'0');
+const dateToKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const keyToDate = k => { const [y,m,dd]=k.split('-').map(Number); return new Date(y,m-1,dd); };
+const timeToMinutes = v => { const [h,m]=v.split(':').map(Number); return h*60+m; };
+const minutesToTime = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const getShortDayName = d => d.toLocaleDateString('en', {weekday:'short'});
+function getMonthLabel(scrollEl){
+  const itemW=78, left=scrollEl?scrollEl.scrollLeft:0, width=scrollEl?scrollEl.clientWidth:300;
+  const s=Math.max(0,Math.min(futureDates.length-1,Math.floor(Math.abs(left)/itemW)));
+  const e=Math.max(s,Math.min(futureDates.length-1,Math.floor((Math.abs(left)+width-1)/itemW)));
+  const seen=[];
+  for(let i=s;i<=e;i++){ const d=futureDates[i]; const k=`${d.getFullYear()}-${d.getMonth()}`; if(!seen.some(x=>x.k===k)) seen.push({k,d}); }
+  if(!seen.length) return '';
+  if(seen.length===1) return seen[0].d.toLocaleDateString('en',{month:'long',year:'numeric'});
+  return seen.map(x=>x.d.toLocaleDateString('en',{month:'long',year:'numeric'})).join(' / ');
+}
+const isHoliday = k => holidayDates.includes(k);
+
+/* ============ Modal ============ */
+function showAlert(title, msg, okText, onOk){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMsg').textContent = msg;
+  const cancelBtn = document.getElementById('modalCancel');
+  const okBtn = document.getElementById('modalOk');
+  okBtn.textContent = okText || 'OK';
+  okBtn.className = 'modal-ok';
+  cancelBtn.style.display = 'none';
+  document.getElementById('modalOverlay').classList.add('show');
+  okBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); onOk && onOk(); };
+}
+function showConfirm(title, msg, okText, onOk){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMsg').textContent = msg;
+  const cancelBtn = document.getElementById('modalCancel');
+  const okBtn = document.getElementById('modalOk');
+  cancelBtn.textContent = 'Cancel';
+  okBtn.textContent = okText;
+  okBtn.className = 'modal-ok danger';
+  cancelBtn.style.display = '';
+  document.getElementById('modalOverlay').classList.add('show');
+  cancelBtn.onclick = () => document.getElementById('modalOverlay').classList.remove('show');
+  okBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); onOk && onOk(); };
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
+});
+
+/* ============ Supabase loaders ============ */
+async function loadBusy(){
+  if (!viewingBarberId){ busySlots=[]; return false; }
+  const { data, error } = await sb.rpc('bb_public_busy', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return false; }
+  busySlots = (data||[]).map(r=>({dateKey:r.date_key, start:r.start_min, duration:r.duration}));
+  return true;
+}
+async function loadHolidays(){
+  if (!viewingBarberId){ holidayDates=[]; return false; }
+  const { data, error } = await sb.rpc('bb_public_holidays', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return false; }
+  holidayDates = (data||[]).map(r=>r.date_key).sort();
+  return true;
+}
+async function loadPhotos(){
+  if (!viewingBarberId){ galleryPhotos=[]; return false; }
+  const { data, error } = await sb.from('gallery').select('id,url,sort').eq('barber_id', viewingBarberId).order('sort');
+  if (error){ console.error(error); return false; }
+  galleryPhotos = (data||[]).map(r=>({id:String(r.id), url:r.url}));
+  return true;
+}
+async function loadBarberConfig(){
+  if (!viewingBarberId) return null;
+  const { data, error } = await sb.rpc('bb_public_get_barber', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return null; }
+  return data;
+}
+async function loadAdminBookings(){
+  if (!currentBarberId){ adminBookings=[]; return false; }
+  const { data, error } = await sb.from('bookings')
+    .select('*').eq('barber_id', currentBarberId).eq('status','confirmed')
+    .gte('date_key', dateToKey(new Date()))
+    .order('date_key').order('start_min');
+  if (error){ console.error(error); return false; }
+  adminBookings = (data||[]).map(r=>({
+    id:r.id, clientName:r.client_name, clientPhone:r.client_phone,
+    serviceName:r.service_name, dateKey:r.date_key,
+    startTime:minutesToTime(r.start_min), duration:r.duration
+  }));
+  return true;
+}
+
+/* ============ Rendering ============ */
+function setScreen(s){
+  screen = s;
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+  window.scrollTo(0,0);
+  if (s==='home') renderHome();
+  if (s==='booking') renderBooking();
+  if (s==='gallery') renderGallery();
+  if (s==='barber') renderBarberDashboard();
+}
+
+function renderHome(){
+  const hero = document.getElementById('heroImg');
+  const shopEl = document.getElementById('shopName');
+  const locEl = document.getElementById('locText');
+
+  hero.style.visibility = 'hidden';
+  shopEl.textContent = 'Barber';
+  locEl.textContent = '';
+
+  document.getElementById('galleryBtn').textContent = '🖼️ My work photos';
+  document.getElementById('titleText').textContent = 'Choose service';
+  document.getElementById('labelText').textContent = 'Language';
+  document.getElementById('langName').textContent = 'English ▾';
+  document.getElementById('workingHours').textContent = `Working hours: ${OPENING_TIME} - ${CLOSING_TIME}`;
+  document.getElementById('nextBtn').textContent = 'NEXT';
+
+  const list = document.getElementById('servicesList');
+  list.innerHTML = '<div class="warning">Loading...</div>';
+
+  if (!viewingBarberId){
+    list.innerHTML = '<div class="warning">Open a barber link to see services. Go to ⚙️ to sign up or login.</div>';
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('nextBtn').classList.add('disabled');
+    return;
+  }
+
+  loadBarberConfig().then(data=>{
+    if (!data || !data.barber){ list.innerHTML='<div class="warning">Barber not found.</div>'; return; }
+    shopEl.textContent = data.barber.shop_name || data.barber.full_name || 'Barber';
+    locEl.textContent = '📍 ' + (data.settings.location || '');
+    document.getElementById('workingHours').textContent =
+      `Working hours: ${data.settings.opening_time||OPENING_TIME} - ${data.settings.closing_time||CLOSING_TIME}`;
+
+    // Hero image
+    const url = data.settings.hero_url || DEFAULT_HERO;
+    hero.src = url;
+    hero.style.objectPosition = '50% ' + (data.settings.hero_pos||'50') + '%';
+    hero.style.visibility = 'visible';
+
+    // Services
+    const svcs = data.services || [];
+    if (!svcs.length){ list.innerHTML='<div class="warning">No services yet.</div>'; return; }
+    list.innerHTML = '';
+    svcs.forEach(sv=>{
+      const b = document.createElement('button');
+      b.className = 'item' + (selectedService && selectedService.id===String(sv.id) ? ' active' : '');
+      b.innerHTML = `<div style="flex:1"><div class="service-name">${esc(sv.name_en)}</div><div class="service-time">${sv.duration} min</div></div><div class="price">€${esc(sv.price)}</div>`;
+      b.onclick = () => { selectedService = { id:String(sv.id), name:sv.name_en, duration:sv.duration, price:sv.price }; time=null; renderHome(); };
+      list.appendChild(b);
+    });
+  }).catch(e=>{ console.error(e); list.innerHTML='<div class="warning">Error loading.</div>'; });
+}
+
+function updateConfirmState(){
+  const disabled = submitting || !name.trim() || !phone.trim() || !selectedDateKey || !time || isHoliday(selectedDateKey);
+  document.getElementById('confirmBtn').classList.toggle('disabled', disabled);
+}
+
+function renderBooking(){
+  const daysEl = document.getElementById('bookingDays');
+  const prevScroll = daysEl.scrollLeft;
+  document.querySelector('#screen-booking .back').textContent = '‹ Back';
+  document.getElementById('inpName').placeholder = 'Full name';
+  document.getElementById('dLabel').textContent = 'Select Day';
+  document.getElementById('tLabel').textContent = 'Available Times';
+  document.getElementById('confirmBtn').textContent = 'CONFIRM BOOKING';
+
+  daysEl.innerHTML = '';
+  futureDates.forEach(d=>{
+    const key = dateToKey(d);
+    const box = document.createElement('div');
+    box.className = 'day-box' + (selectedDateKey===key ? ' active' : '') + (isHoliday(key) ? ' holiday' : '');
+    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${isHoliday(key)?'<div class="holiday-mini">🚫</div>':''}`;
+    box.onclick = () => { selectedDateKey = key; time=null; renderBooking(); };
+    daysEl.appendChild(box);
+  });
+  daysEl.scrollLeft = prevScroll;
+  document.getElementById('bookingMonth').textContent = getMonthLabel(daysEl);
+
+  document.getElementById('bookingHolidayMsg').innerHTML =
+    (selectedDateKey && isHoliday(selectedDateKey))
+      ? `<div class="holiday-message">🚫 This day is a holiday. No bookings.</div>` : '';
+
+  const area = document.getElementById('timesArea');
+  if (!selectedDateKey){ area.innerHTML = '<div class="warning">Select a day first.</div>'; }
+  else if (isHoliday(selectedDateKey)){ area.innerHTML = '<div class="warning">Holiday - no booking.</div>'; }
+  else {
+    const times = generateAvailableTimes();
+    if (!times.length){ area.innerHTML = '<div class="warning">No available times.</div>'; }
+    else {
+      area.innerHTML = '<div class="times-scroll">' + times.map(tm=>`<button class="time-box${time===tm?' active':''}" data-time="${tm}">${tm}</button>`).join('') + '</div>';
+      area.querySelectorAll('.time-box').forEach(b=>{ b.onclick = () => { time=b.dataset.time; renderBooking(); }; });
+    }
+  }
+  updateConfirmState();
+}
+
+function generateAvailableTimes(){
+  if (!selectedDateKey || !selectedService) return [];
+  if (isHoliday(selectedDateKey)) return [];
+  const opening = timeToMinutes(OPENING_TIME), closing = timeToMinutes(CLOSING_TIME);
+  const dur = Number(selectedService.duration);
+  const now = new Date();
+  const isToday = selectedDateKey === dateToKey(now);
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const out = [];
+  for (let start=opening; start+dur<=closing; start+=5){
+    if (isToday && start <= nowMin) continue;
+    const cand = minutesToTime(start);
+    const newEnd = start + dur;
+    const overlap = busySlots.some(b => b.dateKey===selectedDateKey && start < b.start+b.duration && newEnd > b.start);
+    if (!overlap) out.push(cand);
+  }
+  return out;
+}
+
+async function handleFinalBooking(){
+  if (submitting) return;
+  if (!name.trim() || !phone.trim() || !selectedDateKey || !time || !selectedService){
+    showAlert('!', 'Please fill name, phone, day and time.'); return;
+  }
+  submitting = true;
+  document.getElementById('confirmBtn').classList.add('disabled');
+  try {
+    const { data, error } = await sb.rpc('bb_public_create_booking', {
+      p_barber_id: viewingBarberId,
+      p_name: name.trim(),
+      p_phone: phone.trim(),
+      p_service_id: Number(selectedService.id),
+      p_date: selectedDateKey,
+      p_start: timeToMinutes(time)
+    });
+    if (error){ console.error(error); showAlert('!', 'Connection error.'); return; }
+    if (!data || !data.ok){
+      await Promise.all([loadBusy(), loadHolidays
