@@ -2,12 +2,12 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>BARBER RESERVE</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root { --gold:#D4AF37; --bg:#111; --card:#1c1c1c; --box:#252525; --line:#333; --white:#fff; --gray:#aaa; }
-  * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif; }
+  * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif; -webkit-tap-highlight-color:transparent; }
   body { background:var(--bg); color:var(--white); min-height:100vh; padding:40px 16px 60px; }
   .container { max-width:560px; margin:0 auto; }
   [dir="rtl"] { text-align:right; }
@@ -34,11 +34,12 @@
   .price { color:var(--gold); font-size:18px; font-weight:bold; }
   .working-hours { color:#777; font-size:12px; text-align:center; margin-top:8px; }
   .btn { background:var(--gold); color:#111; border:none; padding:17px; border-radius:12px; width:100%; margin-top:25px; font-size:14px; font-weight:bold; cursor:pointer; }
-  .btn.disabled { opacity:.5; }
+  .btn.disabled { opacity:.5; pointer-events:none; }
   .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; margin-top:10px; }
   .back { color:var(--gold); font-size:15px; margin-bottom:15px; font-weight:600; background:none; border:none; cursor:pointer; }
   .input { background:var(--box); color:var(--white); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; width:100%; font-size:16px; }
   .input::placeholder { color:#666; }
+  select.input { appearance:none; -webkit-appearance:none; }
   .month-box { background:var(--box); border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
   .days-scroll { display:flex; overflow-x:auto; padding:5px 2px; gap:8px; }
   .day-box { min-width:70px; height:78px; background:var(--box); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1.5px solid transparent; cursor:pointer; }
@@ -72,7 +73,7 @@
   .modal-overlay.show { display:flex; }
   .modal { background:var(--card); border-radius:16px; padding:24px; max-width:400px; width:100%; }
   .modal h3 { color:var(--gold); margin-bottom:12px; }
-  .modal p { color:#ddd; font-size:14px; margin-bottom:20px; line-height:20px; word-break:break-all; }
+  .modal p { color:#ddd; font-size:14px; margin-bottom:20px; line-height:20px; word-break:break-all; white-space:pre-line; }
   .modal-buttons { display:flex; gap:10px; }
   .modal-buttons button { flex:1; padding:12px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; }
   .modal-cancel { background:var(--box); color:var(--gray); }
@@ -108,14 +109,24 @@
   .worker-circle.busy .worker-name { color:#ff4d4d; }
   .qr-box { background:#fff; padding:16px; border-radius:14px; text-align:center; margin-top:14px; }
   .qr-box img { width:200px; height:200px; }
-  .tabs { display:flex; gap:6px; margin-bottom:14px; }
-  .tab { flex:1; padding:10px; background:var(--box); border:none; border-radius:10px; color:var(--gray); font-size:14px; font-weight:600; cursor:pointer; }
-  .tab.active { background:var(--gold); color:#111; }
+  .job-type-btn { display:flex; align-items:center; gap:14px; width:100%; background:var(--box); border:1.5px solid var(--line); border-radius:14px; padding:18px; margin-bottom:12px; color:var(--white); cursor:pointer; text-align:start; transition:border-color 0.2s; }
+  .job-type-btn:active { border-color:var(--gold); }
+  .job-type-icon { font-size:36px; }
+  .job-type-title { color:var(--white); font-size:17px; font-weight:bold; margin-bottom:4px; }
+  .job-type-sub { color:var(--gray); font-size:13px; line-height:18px; }
+  .job-card { background:#222; padding:16px; border-radius:12px; margin-bottom:12px; border:1px solid var(--line); }
+  .job-card-title { color:var(--white); font-size:16px; font-weight:bold; margin-bottom:6px; }
+  .job-card-desc { color:#ccc; font-size:13px; line-height:20px; margin-bottom:10px; white-space:pre-wrap; }
+  .job-card-meta { color:var(--gray); font-size:12px; margin-bottom:6px; }
+  .job-card-actions { display:flex; gap:8px; margin-top:12px; }
+  .job-card-actions button { flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--gold); background:none; color:var(--gold); font-size:13px; font-weight:bold; cursor:pointer; }
+  .filter-chips { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; padding:4px 0; }
+  .chip { padding:10px 18px; background:var(--box); border:1.5px solid var(--line); border-radius:20px; color:var(--gray); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .chip.active { border-color:var(--gold); color:var(--gold); background:#2d2d2d; }
 </style>
 </head>
 <body>
 <div class="container">
-
   <div class="header">
     <div>
       <div class="logo" id="logoText">BARBER RESERVE</div>
@@ -131,40 +142,32 @@
       <span class="gold" id="langName"></span>
     </button>
     <div class="language-menu" id="langMenu" style="display:none"></div>
-
-    <img class="hero-image" id="heroImg" alt="barber" style="visibility:hidden">
-
+    <img class="hero-image" id="heroImg" alt="" style="visibility:hidden">
     <div class="barber-name" id="shopName">Barber</div>
     <div class="location" id="locText"></div>
-
     <div class="line"></div>
+    <button class="btn-secondary" id="jobsBtn" style="margin-bottom:14px">💼 Work Market</button>
     <div class="section-title" id="titleText"></div>
     <div id="servicesList"></div>
-
     <button class="btn-secondary" id="galleryBtn"></button>
-
     <div class="line"></div>
     <div class="working-hours" id="workingHours"></div>
-
     <button class="btn" id="nextBtn"></button>
   </div>
 
   <!-- BOOKING -->
   <div class="card screen" id="screen-booking">
     <button class="back" data-goto="home"></button>
-    
     <div id="workersSection" style="display:none">
       <div class="section-title-small" id="wLabel"></div>
       <div class="workers-row" id="workersRow"></div>
     </div>
-
     <div class="section-title-small" id="cdLabel"></div>
     <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name">
     <div class="phone-row">
       <button type="button" class="country-btn" id="countryBtn"></button>
       <input class="input" id="inpPhone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel-national">
     </div>
-    
     <div class="line"></div>
     <div class="section-title-small" id="dLabel"></div>
     <div class="month-box" id="bookingMonth"></div>
@@ -193,6 +196,10 @@
     <button class="settings-card" id="goLogin">
       <span class="sc-icon">🔐</span>
       <span class="sc-text"><span class="sc-title">Login (Barber)</span><span class="sc-sub">Access your dashboard</span></span>
+    </button>
+    <button class="settings-card" id="goJobsFromSettings">
+      <span class="sc-icon">💼</span>
+      <span class="sc-text"><span class="sc-title">Work Market</span><span class="sc-sub">Find jobs & workers</span></span>
     </button>
   </div>
 
@@ -238,46 +245,38 @@
   <!-- BARBER DASHBOARD -->
   <div class="card screen" id="screen-barber">
     <div class="dashboard-header">
-      <div class="admin-title" style="margin-bottom:0">My Dashboard</div>
+      <div class="admin-title" style="margin-bottom:0" id="bdTitle">My Dashboard</div>
       <button class="logout" id="logoutBtn">Logout</button>
     </div>
     <div class="line"></div>
     <div class="admin-info">📧 <span id="bdEmail"></span></div>
     <div class="admin-info">🏪 <span id="bdShop"></span></div>
-    
     <div class="line"></div>
-    <div class="section-title-small">👥 My Team (Workers)</div>
+    <div class="section-title-small" id="myTeamLabel">👥 My Team (Workers)</div>
     <div class="workers-row" id="bdWorkersRow"></div>
     <button class="btn-secondary" id="addWorkerBtn">➕ Add Worker</button>
-    
     <div class="line"></div>
-    <button class="btn-secondary" id="bdEditCenter">🛠️ Edit Center (Services & Photos)</button>
+    <button class="btn-secondary" id="bdEditCenter">🛠️ Edit Center</button>
     <button class="btn-secondary" id="bdGallery">🖼️ My Work Photos</button>
-    
     <div class="line"></div>
-    <div class="section-title-small">🔗 Share with clients</div>
+    <div class="section-title-small" id="shareLabel">🔗 Share with clients</div>
     <button class="btn-secondary" id="bdShare">📋 Copy my public link</button>
-    <div class="qr-box">
-      <img id="bdQR" alt="QR">
-    </div>
-    
+    <div class="qr-box"><img id="bdQR" alt="QR"></div>
     <div class="line"></div>
     <button class="btn-secondary" id="bdPassword">🔑 Change password</button>
-    
     <div class="line"></div>
-    <div class="section-title-small">📅 Holidays (tap to toggle)</div>
+    <div class="section-title-small" id="holidaysLabel">📅 Holidays (tap to toggle)</div>
     <div class="month-box" id="bdMonth"></div>
     <div class="days-scroll" id="bdDays"></div>
-    
     <div class="line"></div>
-    <div class="section-title-small">📋 My Bookings</div>
+    <div class="section-title-small" id="myBookingsLabel">📋 My Bookings</div>
     <div id="bdBookings"></div>
   </div>
 
   <!-- CHANGE PASSWORD -->
   <div class="card screen" id="screen-changepass">
     <button class="back" data-goto="barber"></button>
-    <div class="admin-title">Change password</div>
+    <div class="admin-title" id="cpTitle">Change password</div>
     <input class="input" id="cpPassword" type="password" placeholder="New password">
     <button class="btn" id="cpBtn">SAVE</button>
   </div>
@@ -285,16 +284,14 @@
   <!-- EDIT CENTER -->
   <div class="card screen" id="screen-editcenter">
     <button class="back" data-goto="barber"></button>
-    <div class="admin-title">🛠️ Edit Center</div>
-
-    <div class="section-title-small">🖼️ Cover Image</div>
+    <div class="admin-title" id="ecTitle">🛠️ Edit Center</div>
+    <div class="section-title-small" id="coverLabel">🖼️ Cover Image</div>
     <img class="hero-image" id="ecHeroPreview" alt="" style="visibility:hidden">
     <input type="range" class="input" id="ecHeroPos" min="0" max="100" value="50" style="padding:8px">
     <button class="btn-secondary" id="ecHeroChange">📷 Change Cover Image</button>
     <input type="file" id="ecHeroInput" accept="image/*" style="display:none">
-
     <div class="line"></div>
-    <div class="section-title-small">✂️ Services</div>
+    <div class="section-title-small" id="servicesLabel">✂️ Services</div>
     <div id="ecServices"></div>
     <button class="btn-secondary" id="ecAddService">➕ Add Service</button>
   </div>
@@ -302,7 +299,7 @@
   <!-- ADMIN GALLERY -->
   <div class="card screen" id="screen-admingallery">
     <button class="back" data-goto="barber"></button>
-    <div class="admin-title">🖼️ My Work Photos</div>
+    <div class="admin-title" id="agTitle">🖼️ My Work Photos</div>
     <button class="btn-secondary" id="agAdd">📷 Add Photo</button>
     <input type="file" id="agInput" accept="image/*" style="display:none">
     <div class="line"></div>
@@ -318,6 +315,63 @@
     <input type="file" id="wPhotoInput" accept="image/*" style="display:none">
     <input class="input" id="wName" type="text" placeholder="Worker name" style="margin-top:14px">
     <button class="btn" id="wSave">SAVE WORKER</button>
+  </div>
+
+  <!-- WORK MARKET HUB -->
+  <div class="card screen" id="screen-jobs">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title" id="jobsTitle">💼 Work Market</div>
+    <button class="job-type-btn" id="jobTypeJob">
+      <span class="job-type-icon">👨‍🦱</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtJobTitle">Looking for a Job</div>
+        <div class="job-type-sub" id="jtJobSub">Post your profile so salons can find you</div>
+      </div>
+    </button>
+    <button class="job-type-btn" id="jobTypeWorker">
+      <span class="job-type-icon">🏪</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtWorkerTitle">Looking for a Worker</div>
+        <div class="job-type-sub" id="jtWorkerSub">Post a job offer for barbers</div>
+      </div>
+    </button>
+    <button class="job-type-btn" id="jobTypeBrowse">
+      <span class="job-type-icon">👀</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtBrowseTitle">Browse Offers</div>
+        <div class="job-type-sub" id="jtBrowseSub">See all barbers and salons looking to connect</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- POST JOB FORM -->
+  <div class="card screen" id="screen-postjob">
+    <button class="back" data-goto="jobs"></button>
+    <div class="admin-title" id="postTitle">New Post</div>
+    <input class="input" id="pjTitle" type="text" placeholder="Title (e.g. Experienced barber available)">
+    <textarea class="input" id="pjDesc" rows="4" placeholder="Description (optional)" style="resize:vertical"></textarea>
+    <input class="input" id="pjPhone" type="tel" placeholder="Phone number">
+    <input class="input" id="pjInstagram" type="text" placeholder="Instagram handle (optional)">
+    <div class="section-title-small" id="cityLabel">City</div>
+    <select class="input" id="pjCity"></select>
+    <input class="input" id="pjCityCustom" type="text" placeholder="City name" style="display:none">
+    <button class="btn" id="pjSubmit">POST</button>
+  </div>
+
+  <!-- BROWSE JOBS -->
+  <div class="card screen" id="screen-browsejobs">
+    <button class="back" data-goto="jobs"></button>
+    <div class="admin-title" id="browseTitle">👀 Browse</div>
+    <div class="section-title-small" id="filterLabel">Filter by city</div>
+    <select class="input" id="bjCity">
+      <option value="">All cities</option>
+    </select>
+    <div class="filter-chips" id="bjChips">
+      <button class="chip active" data-type="">All</button>
+      <button class="chip" data-type="looking_for_job">👨‍🦱 Barbers</button>
+      <button class="chip" data-type="looking_for_worker">🏪 Salons</button>
+    </div>
+    <div id="bjList"></div>
   </div>
 
 </div>
@@ -352,15 +406,52 @@ const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const BUCKET = 'gallery';
 const DEFAULT_HERO = 'https://images.unsplash.com/photo-1702865272115-5afdbae975af?fm=jpg&q=60&w=1200&auto=format&fit=crop';
-const OPENING_TIME = '10:00';
-const CLOSING_TIME = '20:00';
 const BOOKING_DAYS_AHEAD = 30;
 
-/* ============ TRANSLATIONS ============ */
+/* ============ STATE ============ */
+let lang = localStorage.getItem('barber_lang') || 'en';
+if (!translations) var translations = {};
+if (!translations[lang]) lang = 'en';
+
+let currentBarberId = null;
+let currentBarber = null;
+let currentSettings = {};
+let viewingBarberId = null;
+let currentBarberData = null;
+let selectedService = null;
+let selectedWorkerId = null;
+let workers = [];
+let busySlots = [];
+let holidayDates = [];
+let workerHolidays = [];
+let galleryPhotos = [];
+let adminBookings = [];
+let cities = [];
+let jobPosts = [];
+let jobFilter = { city_id: null, type: null };
+let screen = 'home';
+let selectedDateKey = null;
+let time = null;
+let name = '';
+let phone = '';
+let submitting = false;
+let editingWorkerId = null;
+let editingWorkerPhotoUrl = null;
+let pendingWorkerPhotoFile = null;
+let isAdmin = false;
+
+const futureDates = (() => {
+  const out = []; const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0;i<BOOKING_DAYS_AHEAD;i++){ const d=new Date(today); d.setDate(today.getDate()+i); out.push(d); }
+  return out;
+})();
+
+/* ============ LANGUAGES ============ */
 const langNames = { en:'English', ar:'العربية', fr:'Français', es:'Español', de:'Deutsch' };
 const locales = { en:'en-US', ar:'ar', fr:'fr-FR', es:'es-ES', de:'de-DE' };
 
-const translations = {
+/* ============ TRANSLATIONS ============ */
+var translations = {
   en: {
     logo:'BARBER RESERVE', sub:'Book easily', label:'Language / اللغة',
     title:'Choose service', btn1:'NEXT', btn2:'CONFIRM BOOKING', back:'‹ Back',
@@ -385,7 +476,6 @@ const translations = {
     deleteBookingTitle:'Delete booking',
     deleteBookingMessage:'Cancel this booking and free the time?',
     cancel:'Cancel', yesDelete:'Yes, delete', logout:'Logout', btnOk:'OK',
-    workingHours:`Working hours: ${OPENING_TIME} - ${CLOSING_TIME}`,
     gTitle:'My Work Photos', gBtn:'🖼️ My Work Photos', gAdd:'📷 Add Photo',
     gChange:'Change', gEmpty:'No photos yet.', gDone:'Photo saved.',
     deletePhotoTitle:'Delete photo', deletePhotoMsg:'Delete this photo?',
@@ -409,12 +499,38 @@ const translations = {
     resetSent:'✓ Reset link sent. Check your email.',
     emailNotFound:'Email not found.',
     newPassword:'New password', savedPass:'✓ Password updated.',
-    confirmBooking:'Please confirm your booking:',
     selectWorker:'Please select a barber first.',
     qrTitle:'Scan to book',
-    s:[ {id:'1',name:'Haircut',duration:30,price:'15'},
-        {id:'2',name:'Beard',duration:20,price:'10'},
-        {id:'3',name:'Haircut + Beard',duration:45,price:'22'} ]
+    jobsBtn:'💼 Work Market',
+    jobsTitle:'💼 Work Market',
+    jtJobTitle:'Looking for a Job', jtJobSub:'Post your profile so salons can find you',
+    jtWorkerTitle:'Looking for a Worker', jtWorkerSub:'Post a job offer for barbers',
+    jtBrowseTitle:'Browse Offers', jtBrowseSub:'See all barbers and salons looking to connect',
+    postTitle:'New Post', browseTitle:'👀 Browse',
+    pjTitle:'Title (e.g. Experienced barber available)',
+    pjDesc:'Description (optional)',
+    pjPhone:'Phone number',
+    pjInstagram:'Instagram handle (optional)',
+    cityLabel:'City',
+    pjSubmit:'POST',
+    filterLabel:'Filter by city',
+    allCities:'All cities',
+    typeAll:'All', typeBarbers:'👨‍🦱 Barbers', typeSalons:'🏪 Salons',
+    contactCall:'📱 Call', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Posted successfully',
+    jobDeleted:'✓ Deleted',
+    loginRequired:'Please login or sign up to post',
+    profileTitle:'My Profile',
+    editProfile:'✏️ Edit Profile',
+    fullName:'Full Name', shopName:'Shop Name',
+    addressLabel:'Address', phoneLabel:'Phone',
+    holidays:'Holidays',
+    whatsappConfirm:'📱 Confirm via WhatsApp',
+    adminPanel:'👑 Super Admin',
+    totalBarbers:'Total Barbers', totalBookings:'Total Bookings',
+    totalWorkers:'Total Workers', totalJobs:'Total Jobs',
+    selectCity:'Select a city',
+    other:'Other'
   },
   ar: {
     logo:'حجوزات الصالون', sub:'احجز بسهولة', label:'اللغة / Language',
@@ -440,7 +556,6 @@ const translations = {
     deleteBookingTitle:'حذف الحجز',
     deleteBookingMessage:'هل أنت متأكد من إلغاء هذا الحجز؟',
     cancel:'تراجع', yesDelete:'نعم، احذف', logout:'خروج', btnOk:'حسناً',
-    workingHours:`ساعات العمل: ${OPENING_TIME} - ${CLOSING_TIME}`,
     gTitle:'صور أعمالي', gBtn:'🖼️ صور أعمالي', gAdd:'📷 إضافة صورة',
     gChange:'تغيير', gEmpty:'لا توجد صور بعد.', gDone:'تم حفظ الصورة.',
     deletePhotoTitle:'حذف الصورة', deletePhotoMsg:'حذف هذه الصورة؟',
@@ -464,12 +579,38 @@ const translations = {
     resetSent:'✓ تم إرسال الرابط. تحقق من بريدك.',
     emailNotFound:'البريد غير موجود.',
     newPassword:'كلمة مرور جديدة', savedPass:'✓ تم تحديث كلمة المرور.',
-    confirmBooking:'تأكيد الحجز:',
     selectWorker:'اختر الحلاق أولاً.',
     qrTitle:'امسح للحجز',
-    s:[ {id:'1',name:'قص شعر',duration:30,price:'15'},
-        {id:'2',name:'حلاقة لحية',duration:20,price:'10'},
-        {id:'3',name:'شعر + لحية',duration:45,price:'22'} ]
+    jobsBtn:'💼 سوق العمل',
+    jobsTitle:'💼 سوق العمل',
+    jtJobTitle:'أبحث عن عمل', jtJobSub:'انشر ملفك ليجدك أصحاب الصالونات',
+    jtWorkerTitle:'أبحث عن عامل', jtWorkerSub:'انشر عرض عمل للحلاقين',
+    jtBrowseTitle:'مشاهدة', jtBrowseSub:'اطلع على كل الحلاقين والصالونات',
+    postTitle:'نشر جديد', browseTitle:'👀 مشاهدة',
+    pjTitle:'العنوان (مثال: حلاق محترف متاح)',
+    pjDesc:'الوصف (اختياري)',
+    pjPhone:'رقم الهاتف',
+    pjInstagram:'حساب إنستغرام (اختياري)',
+    cityLabel:'المدينة',
+    pjSubmit:'نشر',
+    filterLabel:'تصفية حسب المدينة',
+    allCities:'كل المدن',
+    typeAll:'الكل', typeBarbers:'👨‍🦱 حلاقون', typeSalons:'🏪 صالونات',
+    contactCall:'📱 اتصل', contactInsta:'📷 إنستغرام',
+    jobPosted:'✓ تم النشر بنجاح',
+    jobDeleted:'✓ تم الحذف',
+    loginRequired:'الرجاء تسجيل الدخول للنشر',
+    profileTitle:'ملفي',
+    editProfile:'✏️ تعديل الملف',
+    fullName:'الاسم الكامل', shopName:'اسم الصالون',
+    addressLabel:'العنوان', phoneLabel:'الهاتف',
+    holidays:'العطل',
+    whatsappConfirm:'📱 تأكيد عبر واتساب',
+    adminPanel:'👑 الإدارة العليا',
+    totalBarbers:'إجمالي الحلاقين', totalBookings:'إجمالي الحجوزات',
+    totalWorkers:'إجمالي العمال', totalJobs:'إجمالي الطلبات',
+    selectCity:'اختر مدينة',
+    other:'أخرى'
   },
   fr: {
     logo:'BARBER RESERVE', sub:'Réservez facilement', label:'Langue',
@@ -495,7 +636,6 @@ const translations = {
     deleteBookingTitle:'Supprimer la réservation',
     deleteBookingMessage:'Annuler cette réservation ?',
     cancel:'Annuler', yesDelete:'Oui, supprimer', logout:'Déconnexion', btnOk:'OK',
-    workingHours:`Horaires: ${OPENING_TIME} - ${CLOSING_TIME}`,
     gTitle:'Photos de mon travail', gBtn:'🖼️ Photos', gAdd:'📷 Ajouter photo',
     gChange:'Changer', gEmpty:'Pas de photos.', gDone:'Photo enregistrée.',
     deletePhotoTitle:'Supprimer', deletePhotoMsg:'Supprimer cette photo ?',
@@ -519,12 +659,27 @@ const translations = {
     resetSent:'✓ Lien envoyé.',
     emailNotFound:'Email introuvable.',
     newPassword:'Nouveau mot de passe', savedPass:'✓ Mot de passe changé.',
-    confirmBooking:'Confirmer la réservation:',
     selectWorker:'Choisissez un barbier.',
     qrTitle:'Scanner pour réserver',
-    s:[ {id:'1',name:'Coupe',duration:30,price:'15'},
-        {id:'2',name:'Barbe',duration:20,price:'10'},
-        {id:'3',name:'Coupe + Barbe',duration:45,price:'22'} ]
+    jobsBtn:'💼 Marché du travail',
+    jobsTitle:'💼 Marché du travail',
+    jtJobTitle:'Je cherche un emploi', jtJobSub:'Publiez votre profil',
+    jtWorkerTitle:'Je cherche un coiffeur', jtWorkerSub:'Publiez une offre',
+    jtBrowseTitle:'Parcourir', jtBrowseSub:'Voir toutes les annonces',
+    postTitle:'Nouvelle annonce', browseTitle:'👀 Parcourir',
+    pjTitle:'Titre', pjDesc:'Description', pjPhone:'Téléphone',
+    pjInstagram:'Instagram (optionnel)', cityLabel:'Ville', pjSubmit:'PUBLIER',
+    filterLabel:'Filtrer par ville', allCities:'Toutes les villes',
+    typeAll:'Tout', typeBarbers:'👨‍🦱 Coiffeurs', typeSalons:'🏪 Salons',
+    contactCall:'📱 Appeler', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Publié', jobDeleted:'✓ Supprimé',
+    loginRequired:'Connectez-vous pour publier',
+    profileTitle:'Mon profil', editProfile:'✏️ Modifier',
+    fullName:'Nom', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Téléphone',
+    holidays:'Congés', whatsappConfirm:'📱 Confirmer via WhatsApp',
+    adminPanel:'👑 Super Admin', totalBarbers:'Coiffeurs', totalBookings:'Réservations',
+    totalWorkers:'Employés', totalJobs:'Annonces',
+    selectCity:'Choisir une ville', other:'Autre'
   },
   es: {
     logo:'BARBER RESERVE', sub:'Reserva fácilmente', label:'Idioma',
@@ -550,7 +705,6 @@ const translations = {
     deleteBookingTitle:'Eliminar reserva',
     deleteBookingMessage:'¿Cancelar esta reserva?',
     cancel:'Cancelar', yesDelete:'Sí, eliminar', logout:'Salir', btnOk:'OK',
-    workingHours:`Horario: ${OPENING_TIME} - ${CLOSING_TIME}`,
     gTitle:'Fotos de mi trabajo', gBtn:'🖼️ Fotos', gAdd:'📷 Añadir foto',
     gChange:'Cambiar', gEmpty:'Sin fotos.', gDone:'Foto guardada.',
     deletePhotoTitle:'Eliminar', deletePhotoMsg:'¿Eliminar esta foto?',
@@ -574,12 +728,27 @@ const translations = {
     resetSent:'✓ Enlace enviado.',
     emailNotFound:'Email no encontrado.',
     newPassword:'Nueva contraseña', savedPass:'✓ Contraseña cambiada.',
-    confirmBooking:'Confirmar reserva:',
     selectWorker:'Elige un barbero.',
     qrTitle:'Escanea para reservar',
-    s:[ {id:'1',name:'Corte',duration:30,price:'15'},
-        {id:'2',name:'Barba',duration:20,price:'10'},
-        {id:'3',name:'Corte + Barba',duration:45,price:'22'} ]
+    jobsBtn:'💼 Mercado laboral',
+    jobsTitle:'💼 Mercado laboral',
+    jtJobTitle:'Busco trabajo', jtJobSub:'Publica tu perfil',
+    jtWorkerTitle:'Busco un barbero', jtWorkerSub:'Publica una oferta',
+    jtBrowseTitle:'Explorar', jtBrowseSub:'Ver todas las ofertas',
+    postTitle:'Nueva publicación', browseTitle:'👀 Explorar',
+    pjTitle:'Título', pjDesc:'Descripción', pjPhone:'Teléfono',
+    pjInstagram:'Instagram (opcional)', cityLabel:'Ciudad', pjSubmit:'PUBLICAR',
+    filterLabel:'Filtrar por ciudad', allCities:'Todas las ciudades',
+    typeAll:'Todo', typeBarbers:'👨‍🦱 Barberos', typeSalons:'🏪 Salones',
+    contactCall:'📱 Llamar', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Publicado', jobDeleted:'✓ Eliminado',
+    loginRequired:'Inicia sesión para publicar',
+    profileTitle:'Mi perfil', editProfile:'✏️ Editar',
+    fullName:'Nombre', shopName:'Salón', addressLabel:'Dirección', phoneLabel:'Teléfono',
+    holidays:'Vacaciones', whatsappConfirm:'📱 Confirmar por WhatsApp',
+    adminPanel:'👑 Super Admin', totalBarbers:'Barberos', totalBookings:'Reservas',
+    totalWorkers:'Empleados', totalJobs:'Anuncios',
+    selectCity:'Elige una ciudad', other:'Otro'
   },
   de: {
     logo:'BARBER RESERVE', sub:'Einfach buchen', label:'Sprache',
@@ -605,7 +774,6 @@ const translations = {
     deleteBookingTitle:'Buchung löschen',
     deleteBookingMessage:'Diese Buchung löschen?',
     cancel:'Abbrechen', yesDelete:'Ja, löschen', logout:'Abmelden', btnOk:'OK',
-    workingHours:`Arbeitszeit: ${OPENING_TIME} - ${CLOSING_TIME}`,
     gTitle:'Meine Arbeitsfotos', gBtn:'🖼️ Fotos', gAdd:'📷 Foto hinzufügen',
     gChange:'Ändern', gEmpty:'Keine Fotos.', gDone:'Foto gespeichert.',
     deletePhotoTitle:'Löschen', deletePhotoMsg:'Dieses Foto löschen?',
@@ -629,45 +797,32 @@ const translations = {
     resetSent:'✓ Link gesendet.',
     emailNotFound:'Email nicht gefunden.',
     newPassword:'Neues Passwort', savedPass:'✓ Passwort geändert.',
-    confirmBooking:'Buchung bestätigen:',
     selectWorker:'Barbier wählen.',
     qrTitle:'Scannen zum Buchen',
-    s:[ {id:'1',name:'Haarschnitt',duration:30,price:'15'},
-        {id:'2',name:'Bart',duration:20,price:'10'},
-        {id:'3',name:'Haarschnitt + Bart',duration:45,price:'22'} ]
+    jobsBtn:'💼 Jobbörse',
+    jobsTitle:'💼 Jobbörse',
+    jtJobTitle:'Ich suche Arbeit', jtJobSub:'Profil veröffentlichen',
+    jtWorkerTitle:'Ich suche Barbier', jtWorkerSub:'Stelle veröffentlichen',
+    jtBrowseTitle:'Durchsuchen', jtBrowseSub:'Alle Anzeigen ansehen',
+    postTitle:'Neue Anzeige', browseTitle:'👀 Durchsuchen',
+    pjTitle:'Titel', pjDesc:'Beschreibung', pjPhone:'Telefon',
+    pjInstagram:'Instagram (optional)', cityLabel:'Stadt', pjSubmit:'POSTEN',
+    filterLabel:'Nach Stadt filtern', allCities:'Alle Städte',
+    typeAll:'Alle', typeBarbers:'👨‍🦱 Barbiere', typeSalons:'🏪 Salons',
+    contactCall:'📱 Anrufen', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Gepostet', jobDeleted:'✓ Gelöscht',
+    loginRequired:'Bitte anmelden zum Posten',
+    profileTitle:'Mein Profil', editProfile:'✏️ Bearbeiten',
+    fullName:'Name', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Telefon',
+    holidays:'Urlaub', whatsappConfirm:'📱 Via WhatsApp bestätigen',
+    adminPanel:'👑 Super Admin', totalBarbers:'Barbiere', totalBookings:'Buchungen',
+    totalWorkers:'Mitarbeiter', totalJobs:'Anzeigen',
+    selectCity:'Stadt wählen', other:'Andere'
   }
 };
 
-/* ============ STATE ============ */
-let lang = localStorage.getItem('barber_lang') || 'en';
-if (!translations[lang]) lang = 'en';
-let currentBarberId = null;
-let currentBarber = null;
-let viewingBarberId = null;
-let currentBarberData = null;
-let selectedService = null;
-let selectedWorkerId = null;
-let workers = [];
-let screen = 'home';
-let selectedDateKey = null;
-let time = null;
-let name = '';
-let phone = '';
-let busySlots = [];
-let holidayDates = [];
-let galleryPhotos = [];
-let adminBookings = [];
-let submitting = false;
-let editingWorkerId = null;
-let editingWorkerPhotoUrl = null;
-let pendingWorkerPhotoFile = null;
-let heroChangeFile = null;
-
-const futureDates = (() => {
-  const out = []; const today = new Date(); today.setHours(0,0,0,0);
-  for (let i=0;i<BOOKING_DAYS_AHEAD;i++){ const d=new Date(today); d.setDate(today.getDate()+i); out.push(d); }
-  return out;
-})();
+const t = () => translations[lang];
+const locale = () => locales[lang];
 
 /* ============ HELPERS ============ */
 const pad = n => String(n).padStart(2,'0');
@@ -677,8 +832,8 @@ const timeToMinutes = v => { const [h,m]=v.split(':').map(Number); return h*60+m
 const minutesToTime = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const getShortDayName = d => d.toLocaleDateString(locale(), {weekday:'short'});
-const t = () => translations[lang];
-const locale = () => locales[lang];
+const isHoliday = k => holidayDates.includes(k);
+const isWorkerHoliday = (wId, k) => workerHolidays.some(h => h.worker_id === wId && h.date_key === k);
 
 function getMonthLabel(scrollEl){
   const itemW=78, left=scrollEl?scrollEl.scrollLeft:0, width=scrollEl?scrollEl.clientWidth:300;
@@ -690,7 +845,6 @@ function getMonthLabel(scrollEl){
   if(seen.length===1) return seen[0].d.toLocaleDateString(locale(),{month:'long',year:'numeric'});
   return seen.map(x=>x.d.toLocaleDateString(locale(),{month:'long',year:'numeric'})).join(' / ');
 }
-const isHoliday = k => holidayDates.includes(k);
 
 /* ============ MODAL ============ */
 function showAlert(title, msg, okText, onOk){
@@ -721,7 +875,7 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
 });
 
-/* ============ SCREEN ============ */
+/* ============ SCREEN MANAGEMENT ============ */
 function setScreen(s){
   screen = s;
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
@@ -735,10 +889,22 @@ function setScreen(s){
   if (s==='editcenter') renderEditCenter();
   if (s==='admingallery') renderAdminGallery();
   if (s==='worker') renderWorkerScreen();
-  if (s==='settings') renderSettings();
+  if (s==='jobs') renderJobsHub();
+  if (s==='postjob') renderPostJob();
+  if (s==='browsejobs') renderBrowseJobs();
 }
 
-  /* ============ SUPABASE LOADERS ============ */
+/* ============ SUPABASE LOADERS ============ */
+async function loadBarberConfig(){
+  if (!viewingBarberId) return null;
+  const { data, error } = await sb.rpc('bb_public_get_barber', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return null; }
+  currentBarberData = data;
+  workers = (data && data.workers) || [];
+  currentSettings = (data && data.settings) || {};
+  return data;
+}
+
 async function loadBusy(){
   if (!viewingBarberId){ busySlots=[]; return false; }
   const { data, error } = await sb.rpc('bb_public_busy', { p_barber_id: viewingBarberId });
@@ -746,13 +912,18 @@ async function loadBusy(){
   busySlots = (data||[]).map(r=>({dateKey:r.date_key, start:r.start_min, duration:r.duration, workerId:r.worker_id}));
   return true;
 }
+
 async function loadHolidays(){
-  if (!viewingBarberId){ holidayDates=[]; return false; }
-  const { data, error } = await sb.rpc('bb_public_holidays', { p_barber_id: viewingBarberId });
-  if (error){ console.error(error); return false; }
-  holidayDates = (data||[]).map(r=>r.date_key).sort();
+  if (!viewingBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
+  const [h1, h2] = await Promise.all([
+    sb.rpc('bb_public_holidays', { p_barber_id: viewingBarberId }),
+    sb.rpc('bb_public_worker_holidays', { p_barber_id: viewingBarberId })
+  ]);
+  if (!h1.error) holidayDates = (h1.data||[]).map(r=>r.date_key).sort();
+  if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
   return true;
 }
+
 async function loadPhotos(){
   if (!viewingBarberId){ galleryPhotos=[]; return false; }
   const { data, error } = await sb.from('gallery').select('id,url,sort').eq('barber_id', viewingBarberId).order('sort');
@@ -760,22 +931,16 @@ async function loadPhotos(){
   galleryPhotos = (data||[]).map(r=>({id:String(r.id), url:r.url}));
   return true;
 }
-async function loadBarberConfig(){
-  if (!viewingBarberId) return null;
-  const { data, error } = await sb.rpc('bb_public_get_barber', { p_barber_id: viewingBarberId });
-  if (error){ console.error(error); return null; }
-  currentBarberData = data;
-  workers = (data && data.workers) || [];
-  return data;
-}
-async function loadWorkers(){
+
+async function loadMyWorkers(){
   if (!currentBarberId){ workers=[]; return false; }
   const { data, error } = await sb.from('workers')
     .select('*').eq('barber_id', currentBarberId).eq('is_active', true).order('sort').order('id');
   if (error){ console.error(error); return false; }
-  workers = (data||[]).map(w => ({ id: w.id, name: w.name, photo_url: w.photo_url, sort: w.sort }));
+  workers = (data||[]).map(w => ({ id: w.id, name: w.name, photo_url: w.photo_url, sort: w.sort, open_time: w.open_time, close_time: w.close_time }));
   return true;
 }
+
 async function loadAdminBookings(){
   if (!currentBarberId){ adminBookings=[]; return false; }
   const { data, error } = await sb.from('bookings')
@@ -784,20 +949,197 @@ async function loadAdminBookings(){
     .order('date_key').order('start_min');
   if (error){ console.error(error); return false; }
   adminBookings = (data||[]).map(r=>({
-    id:r.id, clientName:r.client_name, clientPhone:r.client_phone,
+    id:r.id, workerId: r.worker_id, clientName:r.client_name, clientPhone:r.client_phone,
     serviceName:r.service_name, dateKey:r.date_key,
     startTime:minutesToTime(r.start_min), duration:r.duration,
     workerName: r.workers ? r.workers.name : null
   }));
   return true;
 }
+
+async function loadMyHolidays(){
+  if (!currentBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
+  const [h1, h2] = await Promise.all([
+    sb.from('holidays').select('date_key').eq('barber_id', currentBarberId).gte('date_key', dateToKey(new Date())),
+    sb.from('worker_holidays').select('worker_id,date_key').eq('barber_id', currentBarberId).gte('date_key', dateToKey(new Date()))
+  ]);
+  if (!h1.error) holidayDates = (h1.data||[]).map(r=>r.date_key);
+  if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
+  return true;
+}
+
+async function loadCities(){
+  const { data, error } = await sb.rpc('bb_public_cities');
+  if (error){ console.error(error); return false; }
+  cities = (data||[]).map(c=>({ id: Number(c.id), name: c.name, country: c.country, jobs_count: Number(c.jobs_count||0) }));
+  return true;
+}
+
+async function loadJobPosts(cityId = null, type = null){
+  const params = {};
+  if (cityId) params.p_city_id = cityId;
+  if (type) params.p_type = type;
+  const { data, error } = await sb.rpc('bb_public_jobs', params);
+  if (error){ console.error(error); return false; }
+  jobPosts = (data||[]).map(j=>({
+    id: Number(j.id), post_type: j.post_type, title: j.title, description: j.description,
+    phone: j.phone, instagram: j.instagram, city_name: j.city_name, city_custom: j.city_custom,
+    views: Number(j.views||0), created_at: j.created_at
+  }));
+  return true;
+}
+
 async function loadSettings(){
   if (!viewingBarberId) return null;
   const { data, error } = await sb.from('barber_settings').select('key,value').eq('barber_id', viewingBarberId);
   if (error){ console.error(error); return null; }
   const settings = {};
   (data||[]).forEach(r => settings[r.key] = r.value);
+  currentSettings = settings;
   return settings;
+}
+
+/* ============ AUTH ============ */
+async function loadCurrentBarber(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user){ currentBarberId = null; currentBarber = null; isAdmin = false; return null; }
+  currentBarberId = user.id;
+  const { data } = await sb.from('barbers').select('*').eq('id', user.id).single();
+  currentBarber = data;
+  isAdmin = !!(data && data.is_super_admin);
+  if (data){ viewingBarberId = data.id; }
+  return data;
+}
+
+async function enterBarberMode(){
+  const b = await loadCurrentBarber();
+  if (!b){ alert('Profile not found. Try logging out and back in.'); return; }
+  await Promise.all([
+    loadMyWorkers(), loadMyHolidays(), loadPhotos(), loadAdminBookings(), loadSettings()
+  ]);
+  setScreen('barber');
+}
+
+async function doSignup(){
+  const full_name = document.getElementById('suName').value.trim();
+  const shop_name = document.getElementById('suShop').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const password = document.getElementById('suPassword').value;
+  const msg = document.getElementById('suMsg');
+  const tr = t();
+  
+  if (!full_name || !shop_name){ msg.textContent = tr.errNameShop; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.textContent = tr.errEmail; return; }
+  if (password.length < 6){ msg.textContent = tr.errPass; return; }
+  
+  msg.textContent = 'Creating...';
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name, shop_name } }
+  });
+  if (error){ 
+    if (/already/i.test(error.message)) msg.textContent = tr.errEmailExists;
+    else msg.textContent = error.message;
+    return; 
+  }
+  msg.textContent = tr.signupSuccess;
+  const { error: le } = await sb.auth.signInWithPassword({ email, password });
+  if (le){ msg.textContent = '✓ Created. Please login.'; return; }
+  await enterBarberMode();
+}
+
+async function doLogin(){
+  const email = document.getElementById('blEmail').value.trim();
+  const password = document.getElementById('blPassword').value;
+  const msg = document.getElementById('blMsg');
+  const tr = t();
+  if (!email || !password){ msg.textContent = tr.errEmail; return; }
+  msg.textContent = tr.loginSuccess;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ 
+    if (/invalid/i.test(error.message)) msg.textContent = tr.wrongPassword;
+    else msg.textContent = error.message;
+    return; 
+  }
+  msg.textContent = '';
+  await enterBarberMode();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  currentBarberId = null; currentBarber = null; isAdmin = false;
+  setScreen('home');
+}
+
+/* ============ LANGUAGE ============ */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  // Apply to static labels
+  const els = {
+    'jobsBtn': 'jobsBtn',
+    'bdTitle': 'dashboard',
+    'myTeamLabel': 'myTeam',
+    'addWorkerBtn': null,
+    'bdEditCenter': 'editCenter',
+    'bdGallery': 'gBtn',
+    'shareLabel': 'shareWithClients',
+    'bdShare': 'copyLink',
+    'bdPassword': 'changePassword',
+    'holidaysLabel': 'holidays',
+    'myBookingsLabel': 'noBookings',
+    'cpTitle': 'changePassword',
+    'ecTitle': 'editCenter',
+    'coverLabel': 'coverImage',
+    'ecHeroChange': 'changeCover',
+    'servicesLabel': 'title',
+    'ecAddService': 'addService',
+    'agTitle': 'gTitle',
+    'agAdd': 'gAdd',
+    'workerTitle': 'addWorker',
+    'wSave': 'saveWorker',
+    'jobsTitle': 'jobsTitle',
+    'jtJobTitle': 'jtJobTitle',
+    'jtJobSub': 'jtJobSub',
+    'jtWorkerTitle': 'jtWorkerTitle',
+    'jtWorkerSub': 'jtWorkerSub',
+    'jtBrowseTitle': 'jtBrowseTitle',
+    'jtBrowseSub': 'jtBrowseSub',
+    'postTitle': 'postTitle',
+    'browseTitle': 'browseTitle',
+    'cityLabel': 'cityLabel',
+    'pjSubmit': 'pjSubmit',
+    'filterLabel': 'filterLabel',
+    'wLabel': 'wLabel',
+    'cdLabel': 'cdLabel',
+    'pName': 'pName',
+    'dLabel': 'dLabel',
+    'tLabel': 'tLabel',
+    'btn2': 'btn2'
+  };
+  Object.keys(els).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && els[id]) el.textContent = t()[els[id]] || el.textContent;
+  });
+  // Placeholders
+  const ph = {
+    'inpName': 'pName',
+    'pjTitle': 'pjTitle',
+    'pjDesc': 'pjDesc',
+    'pjPhone': 'pjPhone',
+    'pjInstagram': 'pjInstagram'
+  };
+  Object.keys(ph).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = t()[ph[id]] || '';
+  });
+  // Chip labels
+  document.querySelectorAll('#bjChips .chip').forEach(c => {
+    const type = c.dataset.type;
+    if (!type) c.textContent = t().typeAll;
+    else if (type === 'looking_for_job') c.textContent = t().typeBarbers;
+    else if (type === 'looking_for_worker') c.textContent = t().typeSalons;
+  });
 }
 
 /* ============ HOME ============ */
@@ -809,7 +1151,6 @@ async function renderHome(){
   document.getElementById('langName').textContent = langNames[lang] + ' ▾';
   document.getElementById('titleText').textContent = tr.title;
   document.getElementById('galleryBtn').textContent = tr.gBtn;
-  document.getElementById('workingHours').textContent = tr.workingHours;
   document.getElementById('nextBtn').textContent = tr.btn1;
 
   const menu = document.getElementById('langMenu');
@@ -820,8 +1161,7 @@ async function renderHome(){
     b.textContent = langNames[k];
     b.onclick = () => {
       lang = k; localStorage.setItem('barber_lang', lang); menu.style.display='none';
-      applyLang();
-      renderHome();
+      applyLang(); renderHome();
     };
     menu.appendChild(b);
   });
@@ -832,7 +1172,7 @@ async function renderHome(){
     document.getElementById('shopName').textContent = 'Barber';
     document.getElementById('locText').textContent = '';
     document.getElementById('heroImg').style.visibility = 'hidden';
-    list.innerHTML = '<div class="warning">Open a barber link to see services. Tap ⚙️ to sign up or login.</div>';
+    list.innerHTML = '<div class="warning">Open a barber link or sign up to start. Tap ⚙️.</div>';
     document.getElementById('nextBtn').classList.add('disabled');
     return;
   }
@@ -840,14 +1180,18 @@ async function renderHome(){
   list.innerHTML = '<div class="warning">Loading...</div>';
 
   const [data, settings] = await Promise.all([loadBarberConfig(), loadSettings()]);
-  if (!data || !data.barber){ list.innerHTML='<div class="warning">Barber not found.</div>'; return; }
+  if (!data || !data.barber){ 
+    list.innerHTML='<div class="warning">Barber not found.</div>'; 
+    document.getElementById('nextBtn').classList.add('disabled');
+    return; 
+  }
 
   document.getElementById('shopName').textContent = data.barber.shop_name || data.barber.full_name || 'Barber';
   document.getElementById('locText').textContent = (settings && settings.location) ? ('📍 ' + settings.location) : '';
   
-  const open = (settings && settings.opening_time) || OPENING_TIME;
-  const close = (settings && settings.closing_time) || CLOSING_TIME;
-  document.getElementById('workingHours').textContent = `Working hours: ${open} - ${close}`;
+  const open = (settings && settings.opening_time) || '10:00';
+  const close = (settings && settings.closing_time) || '20:00';
+  document.getElementById('workingHours').textContent = `${open} - ${close}`;
 
   const hero = document.getElementById('heroImg');
   const url = (settings && settings.hero_url) || DEFAULT_HERO;
@@ -856,7 +1200,11 @@ async function renderHome(){
   hero.style.visibility = 'visible';
 
   const svcs = data.services || [];
-  if (!svcs.length){ list.innerHTML='<div class="warning">No services yet.</div>'; return; }
+  if (!svcs.length){ 
+    list.innerHTML='<div class="warning">No services yet.</div>'; 
+    document.getElementById('nextBtn').classList.add('disabled');
+    return; 
+  }
   
   list.innerHTML = '';
   svcs.forEach(sv=>{
@@ -890,13 +1238,11 @@ async function renderBooking(){
   document.querySelector('#screen-booking .back').textContent = tr.back;
   document.getElementById('dLabel').textContent = tr.dLabel;
   document.getElementById('tLabel').textContent = tr.tLabel;
-  document.getElementById('pName',0) || null;
   document.getElementById('inpName').placeholder = tr.pName;
   document.getElementById('inpPhone').placeholder = tr.pPhone;
   document.getElementById('cdLabel').textContent = tr.cdLabel;
   document.getElementById('confirmBtn').textContent = tr.btn2;
 
-  // Workers section
   const workersSection = document.getElementById('workersSection');
   const workersRow = document.getElementById('workersRow');
   if (workers.length > 0){
@@ -904,18 +1250,18 @@ async function renderBooking(){
     document.getElementById('wLabel').textContent = tr.wLabel;
     workersRow.innerHTML = '';
     
-    // Add "Any worker" option? No — user must select
     workers.forEach(w => {
       const div = document.createElement('div');
+      const wHoliday = selectedDateKey && isWorkerHoliday(w.id, selectedDateKey);
       const isBusy = selectedDateKey && time && isWorkerBusy(w.id, selectedDateKey, time, selectedService);
       div.className = 'worker-circle' 
         + (selectedWorkerId === w.id ? ' active' : '')
-        + (isBusy ? ' busy' : '');
+        + ((isBusy || wHoliday) ? ' busy' : '');
       const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
       div.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt="">
                        <div class="worker-name">${esc(w.name)}</div>`;
       div.onclick = () => {
-        if (isBusy) return;
+        if (wHoliday) return;
         selectedWorkerId = w.id;
         time = null;
         renderBooking();
@@ -927,7 +1273,6 @@ async function renderBooking(){
     selectedWorkerId = null;
   }
 
-  // Days
   daysEl.innerHTML = '';
   futureDates.forEach(d=>{
     const key = dateToKey(d);
@@ -979,11 +1324,25 @@ function isWorkerBusy(workerId, dateKey, timeStr, service){
   );
 }
 
+function getWorkerHours(workerId){
+  // ساعات العامل إذا محددة، وإلا ساعات الصالون
+  const w = workers.find(x => x.id === workerId);
+  const open = (w && w.open_time) || currentSettings.opening_time || '10:00';
+  const close = (w && w.close_time) || currentSettings.closing_time || '20:00';
+  return [open, close];
+}
+
 function generateAvailableTimes(){
   if (!selectedDateKey || !selectedService) return [];
   if (isHoliday(selectedDateKey)) return [];
+  if (workers.length > 0 && !selectedWorkerId) return [];
+  if (selectedWorkerId && isWorkerHoliday(selectedWorkerId, selectedDateKey)) return [];
   
-  const opening = timeToMinutes(OPENING_TIME), closing = timeToMinutes(CLOSING_TIME);
+  const [openStr, closeStr] = workers.length > 0 
+    ? getWorkerHours(selectedWorkerId)
+    : [currentSettings.opening_time || '10:00', currentSettings.closing_time || '20:00'];
+  
+  const opening = timeToMinutes(openStr), closing = timeToMinutes(closeStr);
   const dur = Number(selectedService.duration);
   const now = new Date();
   const isToday = selectedDateKey === dateToKey(now);
@@ -997,7 +1356,6 @@ function generateAvailableTimes(){
     
     let overlap;
     if (workers.length > 0){
-      // فلترة حسب العامل المختار
       overlap = busySlots.some(b => 
         b.dateKey === selectedDateKey 
         && b.workerId === selectedWorkerId 
@@ -1005,7 +1363,6 @@ function generateAvailableTimes(){
         && end > b.start
       );
     } else {
-      // حلاق فردي
       overlap = busySlots.some(b => 
         b.dateKey === selectedDateKey 
         && (b.workerId === null || b.workerId === undefined)
@@ -1016,6 +1373,75 @@ function generateAvailableTimes(){
     if (!overlap) out.push(cand);
   }
   return out;
+}
+
+async function handleFinalBooking(){
+  if (submitting) return;
+  normalizePhoneField();
+  
+  if (!name.trim() || !phone.trim() || !selectedDateKey || !time || !selectedService){
+    showAlert('!', t().errF); return;
+  }
+  if (!isPhoneValid()){ showAlert('!', t().phoneInvalid); return; }
+  if (workers.length > 0 && !selectedWorkerId){ showAlert('!', t().selectWorker); return; }
+  
+  submitting = true;
+  document.getElementById('confirmBtn').classList.add('disabled');
+  
+  try {
+    const params = {
+      p_barber_id: viewingBarberId,
+      p_name: name.trim(),
+      p_phone: phone.trim(),
+      p_service_id: Number(selectedService.id),
+      p_date: selectedDateKey,
+      p_start: timeToMinutes(time)
+    };
+    if (workers.length > 0 && selectedWorkerId){
+      params.p_worker_id = selectedWorkerId;
+    }
+    
+    const { data, error } = await sb.rpc('bb_public_create_booking', params);
+    if (error){ console.error(error); showAlert('!', t().netErr); return; }
+    if (!data || !data.ok){
+      await Promise.all([loadBusy(), loadHolidays()]);
+      time = null; renderBooking();
+      showAlert('!', data && data.error === 'holiday' ? t().holidayNoBooking 
+                : (data && data.error === 'worker_holiday' ? t().holidayNoBooking : t().timeTaken));
+      return;
+    }
+    
+    const selectedDate = keyToDate(selectedDateKey);
+    const displayed = selectedDate.toLocaleDateString(locale(), {weekday:'long', day:'numeric', month:'long'});
+    await loadBusy();
+    
+    const msg = t().alertSuccess(name.trim(), selectedService.name, displayed, time);
+    const waText = encodeURIComponent(`مرحباً، حجزت ${selectedService.name} يوم ${displayed} الساعة ${time}. الاسم: ${name.trim()}`);
+    const waBtn = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;margin-top:10px;cursor:pointer">${t().whatsappConfirm}</button>`;
+    
+    showAlert(t().alertTitle, msg, t().btnOk, () => {
+      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
+      document.getElementById('inpName').value='';
+      document.getElementById('inpPhone').value='';
+      setScreen('home');
+    });
+    
+    // Add WhatsApp button after modal appears
+    setTimeout(() => {
+      const modal = document.querySelector('#modalOverlay .modal');
+      const buttons = modal.querySelector('.modal-buttons');
+      if (buttons && !buttons.querySelector('.wa-btn')){
+        const wa = document.createElement('div');
+        wa.className = 'wa-btn';
+        wa.innerHTML = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;margin-top:10px;cursor:pointer">${t().whatsappConfirm}</button>`;
+        buttons.parentNode.insertBefore(wa, buttons.nextSibling);
+      }
+    }, 50);
+    
+  } finally {
+    submitting = false;
+    if (screen === 'booking') updateConfirmState();
+  }
 }
 
 /* ============ GALLERY (customers) ============ */
@@ -1032,10 +1458,100 @@ async function renderGallery(){
   list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${esc(p.url)}" alt="" loading="lazy">`).join('');
 }
 
-  /* ============ BARBER DASHBOARD ============ */
+/* ============ COUNTRIES ============ */
+const COUNTRY_DATA = 'AF:93,AL:355,DZ:213,AS:1684,AD:376,AO:244,AI:1264,AG:1268,AR:54,AM:374,AW:297,AU:61,AT:43,AZ:994,BS:1242,BH:973,BD:880,BB:1246,BY:375,BE:32,BZ:501,BJ:229,BM:1441,BT:975,BO:591,BA:387,BW:267,BR:55,IO:246,VG:1284,BN:673,BG:359,BF:226,BI:257,KH:855,CM:237,CA:1,CV:238,KY:1345,CF:236,TD:235,CL:56,CN:86,CO:57,KM:269,CG:242,CD:243,CK:682,CR:506,CI:225,HR:385,CU:53,CW:599,CY:357,CZ:420,DK:45,DJ:253,DM:1767,DO:1809,EC:593,EG:20,SV:503,GQ:240,ER:291,EE:372,SZ:268,ET:251,FK:500,FO:298,FJ:679,FI:358,FR:33,GF:594,PF:689,GA:241,GM:220,GE:995,DE:49,GH:233,GI:350,GR:30,GL:299,GD:1473,GP:590,GU:1671,GT:502,GN:224,GW:245,GY:592,HT:509,HN:504,HK:852,HU:36,IS:354,IN:91,ID:62,IR:98,IQ:964,IE:353,IL:972,IT:39,JM:1876,JP:81,JO:962,KZ:7,KE:254,KI:686,XK:383,KW:965,KG:996,LA:856,LV:371,LB:961,LS:266,LR:231,LY:218,LI:423,LT:370,LU:352,MO:853,MG:261,MW:265,MY:60,MV:960,ML:223,MT:356,MH:692,MQ:596,MR:222,MU:230,YT:262,MX:52,FM:691,MD:373,MC:377,MN:976,ME:382,MS:1664,MA:212,MZ:258,MM:95,NA:264,NR:674,NP:977,NL:31,NC:687,NZ:64,NI:505,NE:227,NG:234,NU:683,KP:850,MK:389,MP:1670,NO:47,OM:968,PK:92,PW:680,PS:970,PA:507,PG:675,PY:595,PE:51,PH:63,PL:48,PT:351,PR:1787,QA:974,RE:262,RO:40,RU:7,RW:250,WS:685,SM:378,ST:239,SA:966,SN:221,RS:381,SC:248,SL:232,SG:65,SX:1721,SK:421,SI:386,SB:677,SO:252,ZA:27,KR:82,SS:211,ES:34,LK:94,SD:249,SR:597,SE:46,CH:41,SY:963,TW:886,TJ:992,TZ:255,TH:66,TL:670,TG:228,TK:690,TO:676,TT:1868,TN:216,TR:90,TM:993,TC:1649,TV:688,UG:256,UA:380,AE:971,GB:44,US:1,UY:598,UZ:998,VU:678,VE:58,VN:84,VI:1340,WF:681,YE:967,ZM:260,ZW:263,PM:508,SH:290,KN:1869,LC:1758,VC:1784';
+const PREFERRED = ['ES','DZ','MA','FR','DE','GB','IT','PT','NL','BE','CH','TN','US'];
+const COUNTRIES = {};
+COUNTRY_DATA.split(',').forEach(p => { const [iso, dial] = p.split(':'); COUNTRIES[iso] = { iso, dial }; });
+const countryList = Object.values(COUNTRIES);
+const byDial = {};
+PREFERRED.forEach(i => { const c = COUNTRIES[i]; if (c && !byDial[c.dial]) byDial[c.dial] = c; });
+countryList.forEach(c => { if (!byDial[c.dial]) byDial[c.dial] = c; });
+const flagOf = iso => iso.replace(/./g, ch => String.fromCodePoint(127397 + ch.charCodeAt(0)));
+let phoneCountry = 'ES';
+let _dn = null, _dnLang = null;
+function countryName(iso){
+  try {
+    if (_dnLang !== lang){ _dn = new Intl.DisplayNames([locale()], { type:'region' }); _dnLang = lang; }
+    return _dn.of(iso) || iso;
+  } catch(e){ return iso; }
+}
+const normTxt = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+function detectDial(digits){
+  for (let n = 4; n >= 1; n--){ const d = digits.slice(0, n); if (byDial[d]) return { dial: d, rest: digits.slice(n) }; }
+  return null;
+}
+function nationalDigits(){
+  let d = document.getElementById('inpPhone').value.replace(/\D/g, '');
+  if (phoneCountry !== 'IT') d = d.replace(/^0+/, '');
+  return d;
+}
+function isPhoneValid(){
+  const c = COUNTRIES[phoneCountry];
+  const d = nationalDigits();
+  if (!d) return false;
+  if (c.iso === 'ES') return /^[6-9]\d{8}$/.test(d);
+  if (c.iso === 'MA') return /^[5-7]\d{8}$/.test(d);
+  if (c.iso === 'DZ') return /^[5-7]\d{8}$/.test(d);
+  if (c.iso === 'FR') return /^[1-9]\d{8}$/.test(d);
+  if (c.iso === 'DE') return /^[1-9]\d{9,10}$/.test(d);
+  if (c.iso === 'US' || c.iso === 'CA') return /^[2-9]\d{9}$/.test(d);
+  if (c.iso === 'GB') return /^[1-9]\d{9}$/.test(d);
+  return d.length >= 6 && (c.dial.length + d.length) <= 15;
+}
+function syncPhone(){
+  const c = COUNTRIES[phoneCountry];
+  const d = nationalDigits();
+  phone = d ? '+' + c.dial + ' ' + d : '';
+}
+function renderCountryBtn(){
+  const c = COUNTRIES[phoneCountry];
+  const btn = document.getElementById('countryBtn');
+  if (btn) btn.textContent = flagOf(c.iso) + ' +' + c.dial + ' ▾';
+}
+function normalizePhoneField(){
+  const el = document.getElementById('inpPhone');
+  if (!el) return;
+  const raw = el.value.trim();
+  if (raw.startsWith('+') || raw.startsWith('00')){
+    let digits = raw.replace(/\D/g, '');
+    if (!raw.startsWith('+')) digits = digits.replace(/^00/, '');
+    const hit = detectDial(digits);
+    if (hit){ phoneCountry = byDial[hit.dial].iso; el.value = hit.rest; renderCountryBtn(); }
+  }
+  syncPhone();
+}
+function openCountryPicker(){
+  const s = document.getElementById('countrySearch');
+  s.value = ''; s.placeholder = t().searchCountry;
+  renderCountryList('');
+  document.getElementById('countryOverlay').classList.add('show');
+}
+function closeCountryPicker(){ document.getElementById('countryOverlay').classList.remove('show'); }
+function renderCountryList(q){
+  const list = document.getElementById('countryList');
+  const nq = normTxt(q).replace(/^\+/, '').trim();
+  const items = countryList.map(c => ({ iso: c.iso, dial: c.dial, name: countryName(c.iso) }));
+  const pinned = PREFERRED.map(i => items.find(x => x.iso === i)).filter(Boolean);
+  const rest = items.filter(x => !PREFERRED.includes(x.iso)).sort((a, b) => a.name.localeCompare(b.name, locale()));
+  let all = [...pinned, ...rest];
+  if (nq) all = all.filter(x => normTxt(x.name).includes(nq) || x.dial.startsWith(nq) || x.iso.toLowerCase() === nq);
+  list.innerHTML = '';
+  all.forEach(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'country-item' + (c.iso === phoneCountry ? ' active' : '');
+    b.innerHTML = '<span class="country-flag">' + flagOf(c.iso) + '</span><span class="country-name">' + esc(c.name) + '</span><span class="country-dial">+' + c.dial + '</span>';
+    b.onclick = () => { phoneCountry = c.iso; closeCountryPicker(); renderCountryBtn(); syncPhone(); updateConfirmState(); };
+    list.appendChild(b);
+  });
+}
+
+/* ============ BARBER DASHBOARD ============ */
 async function renderBarberDashboard(){
   const tr = t();
-  document.querySelector('#screen-barber .admin-title').textContent = tr.dashboard;
+  document.getElementById('bdTitle').textContent = tr.dashboard;
   document.getElementById('logoutBtn').textContent = tr.logout;
   document.getElementById('bdEmail').textContent = currentBarber ? currentBarber.email : '';
   document.getElementById('bdShop').textContent = currentBarber ? (currentBarber.shop_name || currentBarber.full_name || '') : '';
@@ -1046,7 +1562,7 @@ async function renderBarberDashboard(){
   document.getElementById('addWorkerBtn').textContent = '➕ ' + tr.addWorker;
 
   // Load workers
-  await loadWorkers();
+  await loadMyWorkers();
   const wr = document.getElementById('bdWorkersRow');
   wr.innerHTML = '';
   if (!workers.length){
@@ -1065,7 +1581,7 @@ async function renderBarberDashboard(){
           async () => {
             const { error } = await sb.from('workers').update({ is_active: false }).eq('id', w.id);
             if (error){ alert(error.message); return; }
-            await loadWorkers();
+            await loadMyWorkers();
             renderBarberDashboard();
           });
       };
@@ -1074,6 +1590,7 @@ async function renderBarberDashboard(){
   }
 
   // Holidays
+  await loadMyHolidays();
   const daysEl = document.getElementById('bdDays');
   daysEl.innerHTML = '';
   futureDates.forEach(d => {
@@ -1124,6 +1641,7 @@ async function renderBarberDashboard(){
 }
 
 function renderQR(){
+  if (!currentBarberId) return;
   const url = location.origin + location.pathname + '?b=' + currentBarberId;
   const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(url);
   const img = document.getElementById('bdQR');
@@ -1140,18 +1658,17 @@ async function toggleHoliday(key){
     ({error} = await sb.from('holidays').insert({ barber_id: currentBarberId, date_key: key }));
   }
   if (error){ alert(error.message); return; }
-  await loadHolidays();
+  await loadMyHolidays();
   renderBarberDashboard();
 }
 
 /* ============ EDIT CENTER ============ */
 async function renderEditCenter(){
   const tr = t();
-  document.querySelector('#screen-editcenter .admin-title').textContent = tr.editCenter;
+  document.getElementById('ecTitle').textContent = tr.editCenter;
   document.getElementById('ecHeroChange').textContent = tr.changeCover;
   document.getElementById('ecAddService').textContent = tr.addService;
 
-  // Hero
   const settings = await loadSettings() || {};
   const heroUrl = settings.hero_url || DEFAULT_HERO;
   const heroPos = parseInt(settings.hero_pos || '50', 10);
@@ -1161,7 +1678,6 @@ async function renderEditCenter(){
   heroPrev.style.visibility = 'visible';
   document.getElementById('ecHeroPos').value = heroPos;
 
-  // Services
   const { data: svcs } = await sb.from('services').select('*').eq('barber_id', currentBarberId).eq('is_active', true).order('sort');
   const list = document.getElementById('ecServices');
   list.innerHTML = '';
@@ -1208,18 +1724,19 @@ async function renderEditCenter(){
   });
 }
 
-/* ============ ADD SERVICE (via prompt) ============ */
+/* ============ ADD SERVICE ============ */
 async function addService(){
-  const nm = prompt(t().serviceName);
+  const tr = t();
+  const nm = prompt(tr.serviceName);
   if (!nm || !nm.trim()) return;
-  const priceStr = prompt(t().price, '15');
+  const priceStr = prompt(tr.price, '15');
   if (priceStr === null) return;
-  const durStr = prompt(t().durMin, '30');
+  const durStr = prompt(tr.durMin, '30');
   if (durStr === null) return;
   const price = parseFloat(String(priceStr).replace(',', '.'));
   const dur = parseInt(durStr, 10);
   if (!(price >= 0 && price <= 10000) || !(dur >= 5 && dur <= 240)){ 
-    showAlert('!', t().invalidNum); return; 
+    showAlert('!', tr.invalidNum); return; 
   }
   const { data: maxSort } = await sb.from('services').select('sort').eq('barber_id', currentBarberId).order('sort', { ascending: false }).limit(1);
   const nextSort = ((maxSort && maxSort[0] && maxSort[0].sort) || 0) + 1;
@@ -1237,7 +1754,7 @@ async function addService(){
 /* ============ ADMIN GALLERY ============ */
 async function renderAdminGallery(){
   const tr = t();
-  document.querySelector('#screen-admingallery .admin-title').textContent = tr.gTitle;
+  document.getElementById('agTitle').textContent = tr.gTitle;
   document.getElementById('agAdd').textContent = tr.gAdd;
   const list = document.getElementById('agList');
   list.innerHTML = '<div class="warning">Loading...</div>';
@@ -1268,7 +1785,6 @@ async function renderAdminGallery(){
     row.querySelector('.del-btn').onclick = () => {
       showConfirm(tr.deletePhotoTitle, tr.deletePhotoMsg, tr.yesDelete, async () => {
         await sb.from('gallery').delete().eq('id', p.id);
-        // Try to delete from storage
         try {
           const path = decodeURIComponent(p.url.split('/').pop().split('?')[0]);
           await sb.storage.from(BUCKET).remove([path]);
@@ -1280,25 +1796,36 @@ async function renderAdminGallery(){
   });
 }
 
+/* ============ ADD / REPLACE PHOTO ============ */
 async function addPhoto(file){
   try {
     const url = await uploadToStorage(file);
-    const { error } = await sb.from('gallery').insert({ barber_id: currentBarberId, url, sort: Date.now() });
+    const nextSort = Math.floor(Date.now() / 1000);
+    const { error } = await sb.from('gallery').insert({ 
+      barber_id: currentBarberId, url, sort: nextSort 
+    });
     if (error) throw error;
     showAlert('✓', t().gDone);
     renderAdminGallery();
-  } catch (err){ alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
 }
+
 async function replacePhoto(id, file){
   try {
     const url = await uploadToStorage(file);
     const { error } = await sb.from('gallery').update({ url }).eq('id', id);
     if (error) throw error;
     renderAdminGallery();
-  } catch (err){ alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
 }
 
-/* ============ IMAGE COMPRESS + UPLOAD ============ */
+/* ============ COMPRESS + UPLOAD ============ */
 async function compressImage(file, maxSize = 1600, quality = 0.85){
   const img = await createImageBitmap(file);
   let w = img.width, h = img.height;
@@ -1317,7 +1844,9 @@ async function uploadToStorage(file, prefix = 'img'){
   const compressed = await compressImage(file);
   const fileName = currentBarberId + '/' + prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.jpg';
   const { error } = await sb.storage.from(BUCKET).upload(fileName, compressed, { 
-    cacheControl:'3600', upsert:false, contentType:'image/jpeg' 
+    cacheControl: 'no-cache, max-age=0', 
+    upsert: false, 
+    contentType: 'image/jpeg' 
   });
   if (error) throw error;
   return sb.storage.from(BUCKET).getPublicUrl(fileName).data.publicUrl;
@@ -1327,16 +1856,50 @@ async function uploadToStorage(file, prefix = 'img'){
 async function changeHero(file){
   try {
     const url = await uploadToStorage(file, 'hero');
-    await sb.from('barber_settings').upsert({ barber_id: currentBarberId, key: 'hero_url', value: url });
+    console.log('Hero uploaded:', url);
+    if (!currentBarberId){ alert('Not logged in'); return; }
+    
+    const { data: existing } = await sb.from('barber_settings')
+      .select('key').eq('barber_id', currentBarberId).eq('key', 'hero_url').maybeSingle();
+    
+    let err;
+    if (existing){
+      ({ error: err } = await sb.from('barber_settings')
+        .update({ value: url }).eq('barber_id', currentBarberId).eq('key', 'hero_url'));
+    } else {
+      ({ error: err } = await sb.from('barber_settings')
+        .insert({ barber_id: currentBarberId, key: 'hero_url', value: url }));
+    }
+    if (err){ console.error(err); alert('Error: ' + err.message); return; }
+    
+    const defaults = [
+      { key: 'hero_pos', value: '50' },
+      { key: 'opening_time', value: '10:00' },
+      { key: 'closing_time', value: '20:00' },
+      { key: 'location', value: 'Mallorca, Spain' },
+      { key: 'phone', value: '' },
+      { key: 'address', value: '' }
+    ];
+    for (const s of defaults){
+      const { data } = await sb.from('barber_settings')
+        .select('key').eq('barber_id', currentBarberId).eq('key', s.key).maybeSingle();
+      if (!data){
+        await sb.from('barber_settings').insert({ barber_id: currentBarberId, key: s.key, value: s.value });
+      }
+    }
+    
     showAlert('✓', t().saved);
     renderEditCenter();
-  } catch (err){ alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
 }
 
 /* ============ WORKER SCREEN ============ */
 function renderWorkerScreen(){
   const tr = t();
-  document.querySelector('#screen-worker .admin-title').textContent = editingWorkerId ? tr.editWorker : tr.addWorker;
+  document.getElementById('workerTitle').textContent = editingWorkerId ? tr.editWorker : tr.addWorker;
   document.getElementById('wPhotoBtn').textContent = '📷 Photo';
   document.getElementById('wSave').textContent = tr.saveWorker;
   document.getElementById('wName').placeholder = tr.workerName;
@@ -1385,224 +1948,172 @@ async function saveWorker(){
   setScreen('barber');
 }
 
-/* ============ COUNTRIES ============ */
-const COUNTRY_DATA = 'AF:93,AL:355,DZ:213,AS:1684,AD:376,AO:244,AI:1264,AG:1268,AR:54,AM:374,AW:297,AU:61,AT:43,AZ:994,BS:1242,BH:973,BD:880,BB:1246,BY:375,BE:32,BZ:501,BJ:229,BM:1441,BT:975,BO:591,BA:387,BW:267,BR:55,IO:246,VG:1284,BN:673,BG:359,BF:226,BI:257,KH:855,CM:237,CA:1,CV:238,KY:1345,CF:236,TD:235,CL:56,CN:86,CO:57,KM:269,CG:242,CD:243,CK:682,CR:506,CI:225,HR:385,CU:53,CW:599,CY:357,CZ:420,DK:45,DJ:253,DM:1767,DO:1809,EC:593,EG:20,SV:503,GQ:240,ER:291,EE:372,SZ:268,ET:251,FK:500,FO:298,FJ:679,FI:358,FR:33,GF:594,PF:689,GA:241,GM:220,GE:995,DE:49,GH:233,GI:350,GR:30,GL:299,GD:1473,GP:590,GU:1671,GT:502,GN:224,GW:245,GY:592,HT:509,HN:504,HK:852,HU:36,IS:354,IN:91,ID:62,IR:98,IQ:964,IE:353,IL:972,IT:39,JM:1876,JP:81,JO:962,KZ:7,KE:254,KI:686,XK:383,KW:965,KG:996,LA:856,LV:371,LB:961,LS:266,LR:231,LY:218,LI:423,LT:370,LU:352,MO:853,MG:261,MW:265,MY:60,MV:960,ML:223,MT:356,MH:692,MQ:596,MR:222,MU:230,YT:262,MX:52,FM:691,MD:373,MC:377,MN:976,ME:382,MS:1664,MA:212,MZ:258,MM:95,NA:264,NR:674,NP:977,NL:31,NC:687,NZ:64,NI:505,NE:227,NG:234,NU:683,KP:850,MK:389,MP:1670,NO:47,OM:968,PK:92,PW:680,PS:970,PA:507,PG:675,PY:595,PE:51,PH:63,PL:48,PT:351,PR:1787,QA:974,RE:262,RO:40,RU:7,RW:250,WS:685,SM:378,ST:239,SA:966,SN:221,RS:381,SC:248,SL:232,SG:65,SX:1721,SK:421,SI:386,SB:677,SO:252,ZA:27,KR:82,SS:211,ES:34,LK:94,SD:249,SR:597,SE:46,CH:41,SY:963,TW:886,TJ:992,TZ:255,TH:66,TL:670,TG:228,TK:690,TO:676,TT:1868,TN:216,TR:90,TM:993,TC:1649,TV:688,UG:256,UA:380,AE:971,GB:44,US:1,UY:598,UZ:998,VU:678,VE:58,VN:84,VI:1340,WF:681,YE:967,ZM:260,ZW:263,PM:508,SH:290,KN:1869,LC:1758,VC:1784';
-const PREFERRED = ['ES','DZ','MA','FR','DE','GB','IT','PT','NL','BE','CH','TN','US'];
-const COUNTRIES = {};
-COUNTRY_DATA.split(',').forEach(p => { const [iso, dial] = p.split(':'); COUNTRIES[iso] = { iso, dial }; });
-const countryList = Object.values(COUNTRIES);
-const byDial = {};
-PREFERRED.forEach(i => { const c = COUNTRIES[i]; if (c && !byDial[c.dial]) byDial[c.dial] = c; });
-countryList.forEach(c => { if (!byDial[c.dial]) byDial[c.dial] = c; });
-const flagOf = iso => iso.replace(/./g, ch => String.fromCodePoint(127397 + ch.charCodeAt(0)));
-let phoneCountry = 'ES';
-let _dn = null, _dnLang = null;
-function countryName(iso){
-  try {
-    if (_dnLang !== lang){ _dn = new Intl.DisplayNames([locale()], { type:'region' }); _dnLang = lang; }
-    return _dn.of(iso) || iso;
-  } catch(e){ return iso; }
+/* ============ WORK MARKET HUB ============ */
+async function renderJobsHub(){
+  const tr = t();
+  document.getElementById('jobsTitle').textContent = tr.jobsTitle;
+  document.getElementById('jtJobTitle').textContent = tr.jtJobTitle;
+  document.getElementById('jtJobSub').textContent = tr.jtJobSub;
+  document.getElementById('jtWorkerTitle').textContent = tr.jtWorkerTitle;
+  document.getElementById('jtWorkerSub').textContent = tr.jtWorkerSub;
+  document.getElementById('jtBrowseTitle').textContent = tr.jtBrowseTitle;
+  document.getElementById('jtBrowseSub').textContent = tr.jtBrowseSub;
+  document.querySelector('#screen-jobs .back').textContent = tr.back;
 }
-const normTxt = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-function detectDial(digits){
-  for (let n = 4; n >= 1; n--){ const d = digits.slice(0, n); if (byDial[d]) return { dial: d, rest: digits.slice(n) }; }
-  return null;
+/* ============ POST JOB ============ */
+let postingType = 'looking_for_job';
+
+async function renderPostJob(){
+  const tr = t();
+  document.querySelector('#screen-postjob .back').textContent = tr.back;
+  document.getElementById('postTitle').textContent = postingType === 'looking_for_job' ? tr.jtJobTitle : tr.jtWorkerTitle;
+  document.getElementById('pjTitle').placeholder = tr.pjTitle;
+  document.getElementById('pjDesc').placeholder = tr.pjDesc;
+  document.getElementById('pjPhone').placeholder = tr.pjPhone;
+  document.getElementById('pjInstagram').placeholder = tr.pjInstagram;
+  document.getElementById('cityLabel').textContent = tr.cityLabel;
+  document.getElementById('pjSubmit').textContent = tr.pjSubmit;
+
+  // Populate cities dropdown
+  if (!cities.length) await loadCities();
+  const sel = document.getElementById('pjCity');
+  sel.innerHTML = `<option value="">${tr.selectCity}</option>`;
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name + ' (' + c.country + ')';
+    sel.appendChild(opt);
+  });
+
+  // Reset form
+  document.getElementById('pjTitle').value = '';
+  document.getElementById('pjDesc').value = '';
+  document.getElementById('pjPhone').value = '';
+  document.getElementById('pjInstagram').value = '';
+  document.getElementById('pjCity').value = '';
+  document.getElementById('pjCityCustom').value = '';
+  document.getElementById('pjCityCustom').style.display = 'none';
 }
-function nationalDigits(){
-  let d = document.getElementById('inpPhone').value.replace(/\D/g, '');
-  if (phoneCountry !== 'IT') d = d.replace(/^0+/, '');
-  return d;
+
+/* ============ BROWSE JOBS ============ */
+async function renderBrowseJobs(){
+  const tr = t();
+  document.querySelector('#screen-browsejobs .back').textContent = tr.back;
+  document.getElementById('browseTitle').textContent = tr.browseTitle;
+  document.getElementById('filterLabel').textContent = tr.filterLabel;
+
+  if (!cities.length) await loadCities();
+
+  const sel = document.getElementById('bjCity');
+  sel.innerHTML = `<option value="">${tr.allCities}</option>`;
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name + (c.jobs_count > 0 ? ' (' + c.jobs_count + ')' : '');
+    if (jobFilter.city_id == c.id) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  await loadJobPosts(jobFilter.city_id, jobFilter.type);
+  renderJobList();
 }
-function isPhoneValid(){
-  const c = COUNTRIES[phoneCountry];
-  const d = nationalDigits();
-  if (!d) return false;
-  // التحقق حسب الدولة
-  if (c.iso === 'ES') return /^[6-9]\d{8}$/.test(d);
-  if (c.iso === 'MA') return /^[5-7]\d{8}$/.test(d);
-  if (c.iso === 'DZ') return /^[5-7]\d{8}$/.test(d);
-  if (c.iso === 'FR') return /^[1-9]\d{8}$/.test(d);
-  if (c.iso === 'DE') return /^[1-9]\d{9,10}$/.test(d);
-  if (c.iso === 'US' || c.iso === 'CA') return /^[2-9]\d{9}$/.test(d);
-  if (c.iso === 'GB') return /^[1-9]\d{9}$/.test(d);
-  // القاعدة العامة: 6-14 رقم للنظام الدولي
-  return d.length >= 6 && (c.dial.length + d.length) <= 15;
-}
-function syncPhone(){
-  const c = COUNTRIES[phoneCountry];
-  const d = nationalDigits();
-  phone = d ? '+' + c.dial + ' ' + d : '';
-}
-function renderCountryBtn(){
-  const c = COUNTRIES[phoneCountry];
-  document.getElementById('countryBtn').textContent = flagOf(c.iso) + ' +' + c.dial + ' ▾';
-}
-function normalizePhoneField(){
-  const el = document.getElementById('inpPhone');
-  const raw = el.value.trim();
-  if (raw.startsWith('+') || raw.startsWith('00')){
-    let digits = raw.replace(/\D/g, '');
-    if (!raw.startsWith('+')) digits = digits.replace(/^00/, '');
-    const hit = detectDial(digits);
-    if (hit){ phoneCountry = byDial[hit.dial].iso; el.value = hit.rest; renderCountryBtn(); }
+
+function renderJobList(){
+  const tr = t();
+  const list = document.getElementById('bjList');
+  if (!jobPosts.length){
+    list.innerHTML = `<div class="empty">${esc(tr.noBookings)}</div>`;
+    return;
   }
-  syncPhone();
-}
-function openCountryPicker(){
-  const s = document.getElementById('countrySearch');
-  s.value = ''; s.placeholder = t().searchCountry;
-  renderCountryList('');
-  document.getElementById('countryOverlay').classList.add('show');
-}
-function closeCountryPicker(){ document.getElementById('countryOverlay').classList.remove('show'); }
-function renderCountryList(q){
-  const list = document.getElementById('countryList');
-  const nq = normTxt(q).replace(/^\+/, '').trim();
-  const items = countryList.map(c => ({ iso: c.iso, dial: c.dial, name: countryName(c.iso) }));
-  const pinned = PREFERRED.map(i => items.find(x => x.iso === i)).filter(Boolean);
-  const rest = items.filter(x => !PREFERRED.includes(x.iso)).sort((a, b) => a.name.localeCompare(b.name, locale()));
-  let all = [...pinned, ...rest];
-  if (nq) all = all.filter(x => normTxt(x.name).includes(nq) || x.dial.startsWith(nq) || x.iso.toLowerCase() === nq);
   list.innerHTML = '';
-  all.forEach(c => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'country-item' + (c.iso === phoneCountry ? ' active' : '');
-    b.innerHTML = '<span class="country-flag">' + flagOf(c.iso) + '</span><span class="country-name">' + esc(c.name) + '</span><span class="country-dial">+' + c.dial + '</span>';
-    b.onclick = () => { phoneCountry = c.iso; closeCountryPicker(); renderCountryBtn(); syncPhone(); updateConfirmState(); };
-    list.appendChild(b);
-  });
-}
-
-/* ============ BOOKING SUBMIT ============ */
-async function handleFinalBooking(){
-  if (submitting) return;
-  normalizePhoneField();
-  
-  if (!name.trim() || !phone.trim() || !selectedDateKey || !time || !selectedService){
-    showAlert('!', t().errF); return;
-  }
-  if (!isPhoneValid()){ showAlert('!', t().phoneInvalid); return; }
-  if (workers.length > 0 && !selectedWorkerId){ showAlert('!', t().selectWorker); return; }
-  
-  submitting = true;
-  document.getElementById('confirmBtn').classList.add('disabled');
-  
-  try {
-    const params = {
-      p_barber_id: viewingBarberId,
-      p_name: name.trim(),
-      p_phone: phone.trim(),
-      p_service_id: Number(selectedService.id),
-      p_date: selectedDateKey,
-      p_start: timeToMinutes(time)
+  jobPosts.forEach(j => {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    const icon = j.post_type === 'looking_for_job' ? '👨‍🦱' : '🏪';
+    const city = j.city_name || j.city_custom || '';
+    card.innerHTML = `
+      <div class="job-card-title">${icon} ${esc(j.title)}</div>
+      ${j.description ? `<div class="job-card-desc">${esc(j.description)}</div>` : ''}
+      ${city ? `<div class="job-card-meta">📍 ${esc(city)}</div>` : ''}
+      <div class="job-card-meta">👁️ ${j.views} views</div>
+      <div class="job-card-actions">
+        <button data-a="call">${esc(tr.contactCall)}</button>
+        ${j.instagram ? `<button data-a="insta">${esc(tr.contactInsta)}</button>` : ''}
+      </div>
+    `;
+    card.querySelector('[data-a="call"]').onclick = () => {
+      sb.rpc('bb_increment_job_views', { p_job_id: j.id }).catch(()=>{});
+      window.open('tel:' + j.phone.replace(/\s/g, ''), '_blank');
     };
-    if (workers.length > 0 && selectedWorkerId){
-      params.p_worker_id = selectedWorkerId;
-    }
-    
-    const { data, error } = await sb.rpc('bb_public_create_booking', params);
-    if (error){ console.error(error); showAlert('!', t().netErr); return; }
-    if (!data || !data.ok){
-      await Promise.all([loadBusy(), loadHolidays()]);
-      time = null; renderBooking();
-      showAlert('!', data && data.error === 'holiday' ? t().holidayNoBooking : t().timeTaken);
-      return;
-    }
-    const selectedDate = keyToDate(selectedDateKey);
-    const displayed = selectedDate.toLocaleDateString(locale(), {weekday:'long', day:'numeric', month:'long'});
-    await loadBusy();
-    showAlert(t().alertTitle, t().alertSuccess(name.trim(), selectedService.name, displayed, time), t().btnOk, () => {
-      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
-      document.getElementById('inpName').value='';
-      document.getElementById('inpPhone').value='';
-      setScreen('home');
-    });
-  } finally {
-    submitting = false;
-    if (screen === 'booking') updateConfirmState();
-  }
-}
-
-/* ============ AUTH ============ */
-async function loadCurrentBarber(){
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user){ currentBarberId = null; currentBarber = null; return null; }
-  currentBarberId = user.id;
-  const { data } = await sb.from('barbers').select('*').eq('id', user.id).single();
-  currentBarber = data;
-  if (data){ viewingBarberId = data.id; }
-  return data;
-}
-
-async function enterBarberMode(){
-  const b = await loadCurrentBarber();
-  if (!b){ alert('Profile not found. Try logging out and back in.'); return; }
-  await Promise.all([loadWorkers(), loadHolidays(), loadPhotos(), loadAdminBookings()]);
-  setScreen('barber');
-}
-
-async function doSignup(){
-  const full_name = document.getElementById('suName').value.trim();
-  const shop_name = document.getElementById('suShop').value.trim();
-  const email = document.getElementById('suEmail').value.trim();
-  const password = document.getElementById('suPassword').value;
-  const msg = document.getElementById('suMsg');
-  const tr = t();
-  
-  if (!full_name || !shop_name){ msg.textContent = tr.errNameShop; return; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.textContent = tr.errEmail; return; }
-  if (password.length < 6){ msg.textContent = tr.errPass; return; }
-  
-  msg.textContent = 'Creating...';
-  const { data, error } = await sb.auth.signUp({
-    email, password,
-    options: { data: { full_name, shop_name } }
+    const instaBtn = card.querySelector('[data-a="insta"]');
+    if (instaBtn) instaBtn.onclick = () => {
+      const handle = j.instagram.replace(/^@/, '');
+      window.open('https://instagram.com/' + handle, '_blank');
+    };
+    list.appendChild(card);
   });
-  if (error){ 
-    if (/already/i.test(error.message)) msg.textContent = tr.errEmailExists;
-    else msg.textContent = error.message;
-    return; 
-  }
-  msg.textContent = tr.signupSuccess;
-  const { error: le } = await sb.auth.signInWithPassword({ email, password });
-  if (le){ msg.textContent = '✓ Created. Please login.'; return; }
-  await enterBarberMode();
 }
 
-async function doLogin(){
-  const email = document.getElementById('blEmail').value.trim();
-  const password = document.getElementById('blPassword').value;
-  const msg = document.getElementById('blMsg');
+/* ============ SUBMIT JOB POST ============ */
+async function submitJobPost(){
   const tr = t();
-  if (!email || !password){ msg.textContent = tr.errEmail; return; }
-  msg.textContent = tr.loginSuccess;
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error){ 
-    if (/invalid/i.test(error.message)) msg.textContent = tr.wrongPassword;
-    else msg.textContent = error.message;
-    return; 
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user){
+    showAlert('!', tr.loginRequired, tr.btnOk, () => setScreen('login'));
+    return;
   }
-  msg.textContent = '';
-  await enterBarberMode();
+  
+  const title = document.getElementById('pjTitle').value.trim();
+  const description = document.getElementById('pjDesc').value.trim();
+  const phone = document.getElementById('pjPhone').value.trim();
+  const instagram = document.getElementById('pjInstagram').value.trim();
+  const cityId = document.getElementById('pjCity').value;
+  const cityCustom = document.getElementById('pjCityCustom').value.trim();
+
+  if (!title){ showAlert('!', 'Please enter a title.'); return; }
+  if (!phone){ showAlert('!', 'Please enter a phone.'); return; }
+  if (!cityId && !cityCustom){ showAlert('!', 'Please select or enter a city.'); return; }
+
+  const payload = {
+    user_id: user.id,
+    post_type: postingType,
+    title,
+    description: description || null,
+    phone,
+    instagram: instagram || null,
+    city_id: cityId ? Number(cityId) : null,
+    city_custom: (!cityId && cityCustom) ? cityCustom : null,
+    is_active: true
+  };
+
+  const { error } = await sb.from('job_posts').insert(payload);
+  if (error){ alert(error.message); return; }
+  
+  showAlert('✓', tr.jobPosted, tr.btnOk, () => setScreen('jobs'));
 }
 
-async function doLogout(){
-  await sb.auth.signOut();
-  currentBarberId = null; currentBarber = null;
-  setScreen('home');
-}
-
-/* ============ RENDER SETTINGS ============ */
-function renderSettings(){
-  // Static — always English labels
-}
-
-/* ============ APPLY LANG ============ */
-function applyLang(){
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+/* ============ SUPER ADMIN ============ */
+async function renderSuperAdmin(){
+  const tr = t();
+  if (!isAdmin){ showAlert('!', 'Access denied'); return; }
+  
+  // Fetch stats
+  const [b, bk, w, j] = await Promise.all([
+    sb.from('barbers').select('id', { count: 'exact', head: true }),
+    sb.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'confirmed'),
+    sb.from('workers').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    sb.from('job_posts').select('id', { count: 'exact', head: true }).eq('is_active', true)
+  ]);
+  
+  const totalBarbers = b.count || 0;
+  const totalBookings = bk.count || 0;
+  const totalWorkers = w.count || 0;
+  const totalJobs = j.count || 0;
+  
+  showAlert(tr.adminPanel, 
+    `${tr.totalBarbers}: ${totalBarbers}\n${tr.totalBookings}: ${totalBookings}\n${tr.totalWorkers}: ${totalWorkers}\n${tr.totalJobs}: ${totalJobs}`, 
+    tr.btnOk);
 }
 
 /* ============ EVENTS ============ */
@@ -1611,13 +2122,25 @@ document.getElementById('adminTrigger').onclick = async () => {
   if (user) await enterBarberMode();
   else setScreen('settings');
 };
+
+// Settings
 document.getElementById('goSignup').onclick = () => setScreen('signup');
 document.getElementById('goLogin').onclick = () => setScreen('login');
+document.getElementById('goJobsFromSettings').onclick = () => setScreen('jobs');
+
+// Home
 document.getElementById('galleryBtn').onclick = () => setScreen('gallery');
+document.getElementById('jobsBtn').onclick = () => setScreen('jobs');
 document.getElementById('nextBtn').onclick = () => {
   if (!selectedService){ showAlert('!', t().errS); return; }
   setScreen('booking');
 };
+document.getElementById('langBox').onclick = () => {
+  const m = document.getElementById('langMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+};
+
+// Booking
 document.getElementById('confirmBtn').onclick = handleFinalBooking;
 document.getElementById('inpName').addEventListener('input', e => { name = e.target.value; updateConfirmState(); });
 document.getElementById('inpPhone').addEventListener('input', () => { normalizePhoneField(); updateConfirmState(); });
@@ -1626,6 +2149,7 @@ document.getElementById('countryClose').onclick = closeCountryPicker;
 document.getElementById('countrySearch').addEventListener('input', e => renderCountryList(e.target.value));
 document.getElementById('countryOverlay').addEventListener('click', e => { if (e.target.id === 'countryOverlay') closeCountryPicker(); });
 
+// Auth
 document.getElementById('signupBtn').onclick = doSignup;
 document.getElementById('loginBtn').onclick = doLogin;
 document.getElementById('forgotBtn').onclick = () => setScreen('reset');
@@ -1649,16 +2173,8 @@ document.getElementById('newpassBtn').onclick = async () => {
   history.replaceState({}, '', location.pathname);
   setScreen('login');
 };
-document.getElementById('cpBtn').onclick = async () => {
-  const password = document.getElementById('cpPassword').value;
-  if (password.length < 6){ alert(t().errPass); return; }
-  const { error } = await sb.auth.updateUser({ password });
-  if (error){ alert(error.message); return; }
-  alert(t().savedPass);
-  document.getElementById('cpPassword').value = '';
-  setScreen('barber');
-};
 
+// Dashboard
 document.getElementById('logoutBtn').onclick = doLogout;
 document.getElementById('bdShare').onclick = async () => {
   const url = location.origin + location.pathname + '?b=' + currentBarberId;
@@ -1670,8 +2186,17 @@ document.getElementById('bdShare').onclick = async () => {
   }
 };
 document.getElementById('bdPassword').onclick = () => setScreen('changepass');
-document.getElementById('bdEditCenter').onclick = () => setScreen('editcenter');
-document.getElementById('bdGallery').onclick = () => setScreen('admingallery');
+document.getElementById('cpBtn').onclick = async () => {
+  const password = document.getElementById('cpPassword').value;
+  if (password.length < 6){ alert(t().errPass); return; }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error){ alert(error.message); return; }
+  alert(t().savedPass);
+  document.getElementById('cpPassword').value = '';
+  setScreen('barber');
+};
+
+// Workers
 document.getElementById('addWorkerBtn').onclick = () => {
   editingWorkerId = null;
   editingWorkerPhotoUrl = null;
@@ -1690,6 +2215,8 @@ document.getElementById('wPhotoInput').addEventListener('change', e => {
 });
 document.getElementById('wSave').onclick = saveWorker;
 
+// Edit Center
+document.getElementById('bdEditCenter').onclick = () => setScreen('editcenter');
 document.getElementById('ecHeroChange').onclick = () => document.getElementById('ecHeroInput').click();
 document.getElementById('ecHeroInput').addEventListener('change', e => {
   if (!e.target.files[0]) return;
@@ -1698,11 +2225,25 @@ document.getElementById('ecHeroInput').addEventListener('change', e => {
 });
 document.getElementById('ecHeroPos').addEventListener('change', async e => {
   const v = String(parseInt(e.target.value, 10));
-  await sb.from('barber_settings').upsert({ barber_id: currentBarberId, key: 'hero_pos', value: v });
   document.getElementById('ecHeroPreview').style.objectPosition = '50% ' + v + '%';
+  
+  const { data: existing } = await sb.from('barber_settings')
+    .select('key').eq('barber_id', currentBarberId).eq('key', 'hero_pos').maybeSingle();
+  
+  let err;
+  if (existing){
+    ({ error: err } = await sb.from('barber_settings')
+      .update({ value: v }).eq('barber_id', currentBarberId).eq('key', 'hero_pos'));
+  } else {
+    ({ error: err } = await sb.from('barber_settings')
+      .insert({ barber_id: currentBarberId, key: 'hero_pos', value: v }));
+  }
+  if (err) console.error(err);
 });
 document.getElementById('ecAddService').onclick = addService;
 
+// Admin Gallery
+document.getElementById('bdGallery').onclick = () => setScreen('admingallery');
 document.getElementById('agAdd').onclick = () => document.getElementById('agInput').click();
 document.getElementById('agInput').addEventListener('change', e => {
   if (!e.target.files[0]) return;
@@ -1710,6 +2251,40 @@ document.getElementById('agInput').addEventListener('change', e => {
   e.target.value = '';
 });
 
+// Work Market
+document.getElementById('jobTypeJob').onclick = () => {
+  postingType = 'looking_for_job';
+  setScreen('postjob');
+};
+document.getElementById('jobTypeWorker').onclick = () => {
+  postingType = 'looking_for_worker';
+  setScreen('postjob');
+};
+document.getElementById('jobTypeBrowse').onclick = () => {
+  jobFilter = { city_id: null, type: null };
+  setScreen('browsejobs');
+};
+document.getElementById('pjSubmit').onclick = submitJobPost;
+document.getElementById('pjCity').addEventListener('change', e => {
+  const custom = document.getElementById('pjCityCustom');
+  custom.style.display = e.target.value ? 'none' : 'block';
+});
+document.getElementById('bjCity').addEventListener('change', async e => {
+  jobFilter.city_id = e.target.value ? Number(e.target.value) : null;
+  await loadJobPosts(jobFilter.city_id, jobFilter.type);
+  renderJobList();
+});
+document.querySelectorAll('#bjChips .chip').forEach(chip => {
+  chip.onclick = async () => {
+    document.querySelectorAll('#bjChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    jobFilter.type = chip.dataset.type || null;
+    await loadJobPosts(jobFilter.city_id, jobFilter.type);
+    renderJobList();
+  };
+});
+
+// Back buttons
 document.querySelectorAll('.back').forEach(b => {
   b.onclick = () => {
     const go = b.dataset.goto;
@@ -1722,6 +2297,7 @@ document.querySelectorAll('.back').forEach(b => {
   };
 });
 
+// Scroll months
 const bookingDaysEl = document.getElementById('bookingDays');
 if (bookingDaysEl) bookingDaysEl.addEventListener('scroll', () => { 
   document.getElementById('bookingMonth').textContent = getMonthLabel(bookingDaysEl); 
@@ -1741,228 +2317,65 @@ if (bParam){
   if (stored) viewingBarberId = stored;
 }
 
+/* ============ PWA MANIFEST ============ */
+const pwaManifest = {
+  name: 'Barber Reserve',
+  short_name: 'Barber',
+  start_url: './',
+  display: 'standalone',
+  background_color: '#111111',
+  theme_color: '#D4AF37',
+  icons: [
+    { src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 fill=%22%23111%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 font-size=%22280%22 text-anchor=%22middle%22 fill=%22%23D4AF37%22%3E✂%3C/text%3E%3C/svg%3E', sizes: '512x512', type: 'image/svg+xml' }
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(pwaManifest)], { type: 'application/json' });
+const manifestLink = document.createElement('link');
+manifestLink.rel = 'manifest';
+manifestLink.href = URL.createObjectURL(manifestBlob);
+document.head.appendChild(manifestLink);
+
+// Theme color meta
+const themeMeta = document.createElement('meta');
+themeMeta.name = 'theme-color';
+themeMeta.content = '#D4AF37';
+document.head.appendChild(themeMeta);
+
 /* ============ INIT ============ */
 (async () => {
   applyLang();
   renderCountryBtn();
+  
   const { data: { session } } = await sb.auth.getSession();
-  if (session){ await loadCurrentBarber(); }
+  if (session){
+    await loadCurrentBarber();
+  }
+  
   if (viewingBarberId){
     await Promise.all([loadBusy(), loadHolidays(), loadPhotos()]);
   }
+  
+  await loadCities();
   await renderHome();
 })();
 
+// Listen to auth
 sb.auth.onAuthStateChange((event) => {
   console.log('Auth event:', event);
 });
-</script>
-<script>
-let xInfo = { holidays: [], hours: [] }, xOpen = OPENING_TIME, xClose = CLOSING_TIME, xSel = null;
-const xT = { en:{hol:'Day off / Holiday',hrs:'Working hours',shop:'Salon working hours',open:'Opens',close:'Closes',filter:'Filter by Worker',def:'Use salon hours',hint:'Tap the days this worker is off'},
- ar:{hol:'عطلة / إجازة',hrs:'ساعات العمل',shop:'ساعات عمل الصالون',open:'الفتح',close:'الإغلاق',filter:'تصفية حسب العامل',def:'استعمال ساعات الصالون',hint:'اضغط على الأيام التي يغيب فيها العامل'},
- fr:{hol:'Congé',hrs:'Horaires',shop:'Horaires du salon',open:'Ouverture',close:'Fermeture',filter:'Filtrer par coiffeur',def:'Horaires du salon',hint:'Touchez les jours d\'absence'},
- es:{hol:'Vacaciones',hrs:'Horario',shop:'Horario del salón',open:'Apertura',close:'Cierre',filter:'Filtrar por barbero',def:'Usar horario del salón',hint:'Toca los días de ausencia'},
- de:{hol:'Urlaub',hrs:'Arbeitszeit',shop:'Salon-Arbeitszeit',open:'Öffnung',close:'Schluss',filter:'Nach Barbier filtern',def:'Salonzeiten verwenden',hint:'Abwesenheitstage antippen'} };
-const xt = () => xT[lang] || xT.en;
-const xOff = (w, k) => xInfo.holidays.some(h => String(h.w) === String(w) && h.d === k);
-const xHours = w => { const h = xInfo.hours.find(x => String(x.w) === String(w)); return [(h && h.o) || xOpen, (h && h.c) || xClose]; };
 
-document.getElementById('langBox').onclick = () => { const m = document.getElementById('langMenu'); m.style.display = m.style.display === 'none' ? 'block' : 'none'; };
-const xSS = setScreen;
-setScreen = function (s) { xSS(s); document.querySelectorAll('.back').forEach(b => { if (!b.textContent.trim()) b.textContent = t().back; }); };
-
-const xLS = loadSettings;
-loadSettings = async function () { const s = await xLS(); if (s) { xOpen = s.opening_time || OPENING_TIME; xClose = s.closing_time || CLOSING_TIME; } return s; };
-const xLB = loadBusy;
-loadBusy = async function () {
-  const r = await xLB();
-  if (viewingBarberId) { const { data } = await sb.rpc('bb_public_worker_info', { p_barber_id: viewingBarberId }); if (data) xInfo = data; }
-  return r;
-};
-
-const xIB = isWorkerBusy;
-isWorkerBusy = (w, k, tm, s) => (k && xOff(w, k)) || xIB(w, k, tm, s);
-const xRB = renderBooking;
-renderBooking = async function () {
-  await xRB();
-  if (!selectedDateKey) return;
-  document.querySelectorAll('#workersRow .worker-circle').forEach((c, i) => {
-    const w = workers[i];
-    if (w && xOff(w.id, selectedDateKey)) { c.classList.add('busy'); c.onclick = () => {}; }
-  });
-};
-generateAvailableTimes = function () {
-  if (!selectedDateKey || !selectedService || isHoliday(selectedDateKey)) return [];
-  const wid = workers.length ? selectedWorkerId : null;
-  if (wid && xOff(wid, selectedDateKey)) return [];
-  const [o, c] = xHours(wid);
-  const opening = timeToMinutes(o), closing = timeToMinutes(c), dur = Number(selectedService.duration);
-  const now = new Date(), isToday = selectedDateKey === dateToKey(now), nowMin = now.getHours() * 60 + now.getMinutes();
-  const out = [];
-  for (let start = opening; start + dur <= closing; start += 5) {
-    if (isToday && start <= nowMin) continue;
-    const end = start + dur;
-    const overlap = busySlots.some(b => b.dateKey === selectedDateKey
-      && (workers.length > 0 ? b.workerId === selectedWorkerId : (b.workerId === null || b.workerId === undefined))
-      && start < (b.start + b.duration) && end > b.start);
-    if (!overlap) out.push(minutesToTime(start));
+// Add Super Admin button if user is admin
+setTimeout(async () => {
+  if (isAdmin && document.getElementById('bdEditCenter')){
+    const btn = document.createElement('button');
+    btn.className = 'btn-secondary';
+    btn.textContent = t().adminPanel;
+    btn.onclick = renderSuperAdmin;
+    btn.style.borderColor = '#ff4d4d';
+    btn.style.color = '#ff4d4d';
+    document.getElementById('bdEditCenter').before(btn);
   }
-  return out;
-};
-
-const xRD = renderBarberDashboard;
-renderBarberDashboard = async function () { await xRD(); if (screen === 'barber') xDecorate(); };
-
-function xDecorate() {
-  document.querySelectorAll('#bdWorkersRow .worker-circle').forEach((c, i) => {
-    const w = workers[i]; if (!w) return;
-    c.onclick = e => { e.stopPropagation(); xMenu(c, w); };
-  });
-  const list = document.getElementById('bdBookings');
-  let f = document.getElementById('xFilter');
-  if (!f) { f = document.createElement('div'); f.id = 'xFilter'; list.before(f); }
-  f.innerHTML = '';
-  if (workers.length) {
-    f.innerHTML = `<div class="section-title-small">${esc(xt().filter)}</div><div class="workers-row"></div>`;
-    const row = f.querySelector('.workers-row');
-    workers.forEach(w => {
-      const d = document.createElement('div');
-      d.className = 'worker-circle'; d.dataset.id = String(w.id);
-      const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
-      d.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt=""><div class="worker-name">${esc(w.name)}</div>`;
-      d.onclick = () => { xSel = (xSel === String(w.id)) ? null : String(w.id); xApply(); };
-      row.appendChild(d);
-    });
-  }
-  if (xSel && !workers.some(w => String(w.id) === xSel)) xSel = null;
-  xApply();
-}
-
-function xApply() {
-  const w = workers.find(x => String(x.id) === xSel);
-  let n = 0;
-  document.querySelectorAll('#bdBookings .admin-item').forEach((el, i) => {
-    const b = adminBookings[i], ok = !w || (b && b.workerName === w.name);
-    el.style.display = ok ? '' : 'none'; if (ok) n++;
-  });
-  let e = document.getElementById('xEmpty');
-  if (!e) { e = document.createElement('div'); e.id = 'xEmpty'; e.className = 'empty'; document.getElementById('bdBookings').after(e); }
-  e.textContent = (w && !n) ? t().noBookings : '';
-  document.querySelectorAll('#xFilter .worker-circle').forEach(c => c.classList.toggle('active', c.dataset.id === xSel));
-}
-
-function xMenu(c, w) {
-  const old = document.getElementById('xMenu'); if (old) old.remove();
-  const m = document.createElement('div'); m.id = 'xMenu';
-  const r = c.getBoundingClientRect();
-  m.style.cssText = `position:fixed;z-index:120;background:#252525;border:1px solid var(--gold);border-radius:12px;padding:6px;min-width:180px;top:${Math.max(8, Math.min(r.bottom + 6, innerHeight - 190))}px;left:${Math.max(8, Math.min(r.left, innerWidth - 196))}px`;
-  const add = (txt, fn, danger) => {
-    const b = document.createElement('button'); b.textContent = txt;
-    b.style.cssText = 'display:block;width:100%;text-align:start;background:none;border:none;padding:12px;font-size:15px;cursor:pointer;color:' + (danger ? '#ff4d4d' : '#fff');
-    b.onclick = () => { m.remove(); fn(); }; m.appendChild(b);
-  };
-  const tr = t();
-  add('🏖️ ' + xt().hol, () => xHolScreen(w));
-  add('⏰ ' + xt().hrs, () => xWorkerHours(w));
-  add('🗑️ ' + tr.deleteWorkerTitle, () => showConfirm(tr.deleteWorkerTitle, w.name + ' — ' + tr.deleteWorkerMsg, tr.yesDelete, async () => {
-    const { error } = await sb.from('workers').update({ is_active: false }).eq('id', w.id);
-    if (error) { alert(error.message); return; }
-    await loadWorkers(); renderBarberDashboard();
-  }), true);
-  document.body.appendChild(m);
-  setTimeout(() => document.addEventListener('click', () => m.remove(), { once: true }), 0);
-}
-
-function xScreen(id) {
-  let s = document.getElementById('screen-' + id);
-  if (!s) { s = document.createElement('div'); s.className = 'card screen'; s.id = 'screen-' + id; document.querySelector('.container').appendChild(s); }
-  return s;
-}
-
-async function xHolScreen(w) {
-  const s = xScreen('xwh'), wid = String(w.id);
-  const { data } = await sb.from('worker_holidays').select('date_key').eq('barber_id', currentBarberId).eq('worker_id', wid);
-  let off = (data || []).map(r => r.date_key);
-  s.innerHTML = `<button class="back">${esc(t().back)}</button><div class="admin-title">🏖️ ${esc(w.name)}</div><div class="warning" style="margin-bottom:10px">${esc(xt().hint)}</div><div class="month-box"></div><div class="days-scroll"></div>`;
-  s.querySelector('.back').onclick = () => setScreen('barber');
-  const days = s.querySelector('.days-scroll'), mb = s.querySelector('.month-box');
-  const draw = () => {
-    days.innerHTML = '';
-    futureDates.forEach(d => {
-      const k = dateToKey(d), on = off.includes(k), b = document.createElement('div');
-      b.className = 'day-box' + (on ? ' holiday-selected' : '');
-      b.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${on ? '<div class="holiday-mini" style="color:var(--gold)">✓</div>' : ''}`;
-      b.onclick = async () => {
-        const q = sb.from('worker_holidays');
-        const r = on ? await q.delete().eq('barber_id', currentBarberId).eq('worker_id', wid).eq('date_key', k)
-                     : await q.insert({ barber_id: currentBarberId, worker_id: wid, date_key: k });
-        if (r.error) { alert(r.error.message); return; }
-        off = on ? off.filter(x => x !== k) : [...off, k];
-        const sl = days.scrollLeft; draw(); days.scrollLeft = sl;
-      };
-      days.appendChild(b);
-    });
-    mb.textContent = getMonthLabel(days);
-  };
-  draw(); days.onscroll = () => { mb.textContent = getMonthLabel(days); };
-  setScreen('xwh'); mb.textContent = getMonthLabel(days);
-}
-
-function xHoursScreen(title, o, c, back, onSave, onReset) {
-  const s = xScreen('xhr'); let O = timeToMinutes(o), C = timeToMinutes(c);
-  s.innerHTML = `<button class="back">${esc(t().back)}</button><div class="admin-title">⏰ ${esc(title)}</div><div class="xb"></div><button class="btn">${esc(t().save)}</button>` + (onReset ? `<button class="btn-secondary xr">${esc(xt().def)}</button>` : '');
-  s.querySelector('.back').onclick = () => setScreen(back);
-  const body = s.querySelector('.xb');
-  const stepper = (label, get, step) => {
-    const d = document.createElement('div');
-    d.style.cssText = 'display:flex;align-items:center;gap:10px;margin:14px 0';
-    d.innerHTML = `<div style="flex:1;font-weight:600">${esc(label)}</div><button class="logout" style="padding:12px 18px;font-size:18px">−</button><div style="min-width:70px;text-align:center;color:var(--gold);font-size:22px;font-weight:bold"></div><button class="logout" style="padding:12px 18px;font-size:18px">+</button>`;
-    const v = d.children[2], bs = d.querySelectorAll('button'), show = () => { v.textContent = minutesToTime(get()); };
-    bs[0].onclick = () => { step(-30); show(); }; bs[1].onclick = () => { step(30); show(); }; show();
-    return d;
-  };
-  body.appendChild(stepper(xt().open, () => O, d => { O = Math.max(0, Math.min(O + d, C - 30)); }));
-  body.appendChild(stepper(xt().close, () => C, d => { C = Math.min(1440, Math.max(C + d, O + 30)); }));
-  s.querySelector('.btn').onclick = async () => {
-    const err = await onSave(minutesToTime(O), minutesToTime(C));
-    if (err) { alert(err.message); return; }
-    showAlert('✓', t().saved, null, () => setScreen(back));
-  };
-  if (onReset) s.querySelector('.xr').onclick = async () => {
-    const err = await onReset(); if (err) { alert(err.message); return; }
-    showAlert('✓', t().saved, null, () => setScreen(back));
-  };
-  setScreen('xhr');
-}
-
-async function xWorkerHours(w) {
-  const { data } = await sb.from('workers').select('open_time,close_time').eq('id', w.id).single();
-  xHoursScreen(w.name + ' — ' + xt().hrs, (data && data.open_time) || xOpen, (data && data.close_time) || xClose, 'barber',
-    async (o, c) => (await sb.from('workers').update({ open_time: o, close_time: c }).eq('id', w.id)).error,
-    async () => (await sb.from('workers').update({ open_time: null, close_time: null }).eq('id', w.id)).error);
-}
-
-const xRE = renderEditCenter;
-renderEditCenter = async function () {
-  await xRE();
-  let b = document.getElementById('xShopHrs');
-  if (!b) { b = document.createElement('button'); b.id = 'xShopHrs'; b.className = 'btn-secondary'; document.querySelector('#screen-editcenter .admin-title').after(b); }
-  b.textContent = '⏰ ' + xt().shop;
-  b.onclick = async () => {
-    await loadSettings();
-    xHoursScreen(xt().shop, xOpen, xClose, 'editcenter', async (o, c) => {
-      const { error } = await sb.from('barber_settings').upsert([{ barber_id: currentBarberId, key: 'opening_time', value: o }, { barber_id: currentBarberId, key: 'closing_time', value: c }]);
-      if (!error) { xOpen = o; xClose = c; }
-      return error;
-    });
-  };
-};
+}, 1000);
 </script>
-
-  
 </body>
 </html>
-  
-
-  
