@@ -6,8 +6,8 @@
 <title>BARBER RESERVE</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root { --gold:#D4AF37;: --bg:#111; --card:#1c1c1c; --boxvar:#252525; --line:#333; --(--white:#fff; --gray:#aaa; }
-  * { box-sizing:box); marginborder-box; margin:0; padding:0; font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif; -webkit-tap-highlight-color:transparent; }
+  :root { --gold:#D4AF37; --bg:#111; --card:#1c1c1c; --box:#252525; --line:#333; --white:#fff; --gray:#aaa; }
+  * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif; -webkit-tap-highlight-color:transparent; }
   body { background:var(--bg); color:var(--white); min-height:100vh; padding:40px 16px 60px; }
   .container { max-width:560px; margin:0 auto; }
   [dir="rtl"] { text-align:right; }
@@ -20,7 +20,7 @@
   .lang-box .gold { color:var(--gold); font-weight:bold; }
   .gray { color:var(--gray); }
   .language-menu { margin-bottom:10px; }
-  .language-item { display:block; width:100%; text-align:start; padding:12px; background-top:3px; border-radius:8px; color:var(--white); border:none; cursor:pointer; font-size:15px; }
+  .language-item { display:block; width:100%; text-align:start; padding:12px; background:var(--box); margin-top:3px; border-radius:8px; color:var(--white); border:none; cursor:pointer; font-size:15px; }
   .hero-image { width:100%; height:220px; object-fit:cover; border-radius:14px; margin-top:15px; }
   .barber-name { color:var(--white); font-size:24px; font-weight:bold; margin-top:15px; }
   .location { color:var(--gray); font-size:14px; margin-top:6px; }
@@ -29,18 +29,18 @@
   .section-title-small { color:var(--white); font-size:18px; font-weight:bold; margin:10px 0 12px; }
   .item { background:var(--box); border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1.5px solid transparent; cursor:pointer; width:100%; color:var(--white); text-align:start; }
   .item.active { border-color:var(--gold); background:#2d2d2d; }
-  .service-name { font-size:16px; font-weight:600; }
-  .service-time { color:#888; font-size:13px; margin-top:4px; }
-  .price { color:var(--gold); font-size:18px; font-weight:bold; }
-  .working-hours { color:#777; font-size:12px; text-align:center; margin-top:8px; }
-  .btn { background:var(--gold); color:#111; border:none; padding:17px; border-radius:12px; width:100%; margin-top:25px; font-size:14px; font-weight:bold; cursor:pointer; }
+(--  .service-name { font-size:16px; font-weight:line600; }
+  .service-time { color:#888;); border-radius font-size:13px; margin-top:4px:; }
+  .price { color:var(--gold); font-size:1218px; fontpx-weight:bold; }
+  .working-hours { color:#777;; font-size:12px; text-align:center; margin-top:8px padding; }
+  .btn { background:var(--gold); color:#111; border:none; padding::17px; border-radius12:12px; width:100%; margin-top:25pxpx; font-size:14px; font-weight:bold; cursor:pointer; }
   .btn.disabled { opacity:.5; pointer-events:none; }
   .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; margin-top:10px; }
   .back { color:var(--gold); font-size:15px; margin-bottom:15px; font-weight:600; background:none; border:none; cursor:pointer; }
   .input { background:var(--box); color:var(--white); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; width:100%; font-size:16px; }
   .input::placeholder { color:#666; }
   select.input { appearance:none; -webkit-appearance:none; }
-  .month-box { background:var(--box); border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
+  .month-box { background:var(--box); border:1px solid var 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
   .days-scroll { display:flex; overflow-x:auto; padding:5px 2px; gap:8px; }
   .day-box { min-width:70px; height:78px; background:var(--box); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1.5px solid transparent; cursor:pointer; }
   .day-box.active { border-color:var(--gold); background:#2d2d2d; }
@@ -121,285 +121,1448 @@
   .job-card-actions { display:flex; gap:8px; margin-top:12px; }
   .job-card-actions button { flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--gold); background:none; color:var(--gold); font-size:13px; font-weight:bold; cursor:pointer; }
   .filter-chips { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; padding:4px 0; }
-  .chip { padding:10px 18px; background:var(--box); border:1.5px solid var(--line); border-radius:20px; color:var(--gray); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .chip.active { border-color:var(--gold); color:var(--gold); background:#2d2d2d; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div>
-      <div class="logo" id="logoText">BARBER RESERVE</div>
-      <div class="subtitle" id="subText"></div>
-    </div>
-    <button class="admin-trigger" id="adminTrigger">⚙️</button>
-  </div>
 
-  <!-- HOME -->
-  <div class="card screen active" id="screen-home">
-    <button class="lang-box" id="langBox">
-      <span class="gray" id="labelText"></span>
-      <span class="gold" id="langName"></span>
-    </button>
-    <div class="language-menu" id="langMenu" style="display:none"></div>
-    <img class="hero-image" id="heroImg" alt="" style="visibility:hidden">
-    <div class="barber-name" id="shopName">Barber</div>
-    <div class="location" id="locText"></div>
-    <div class="line"></div>
-    <button class="btn-secondary" id="jobsBtn" style="margin-bottom:14px">💼 Work Market</button>
-    <div class="section-title" id="titleText"></div>
-    <div id="servicesList"></div>
-    <button class="btn-secondary" id="galleryBtn"></button>
-    <div class="line"></div>
-    <div class="working-hours" id="workingHours"></div>
-    <button class="btn" id="nextBtn"></button>
-  </div>
+  <script>
+/* ============ CONFIG ============ */
+const SUPABASE_URL = 'https://fpwksmmsogvxgqyyngfs.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const BUCKET = 'gallery';
+const DEFAULT_HERO = 'https://images.unsplash.com/photo-1702865272115-5afdbae975af?fm=jpg&q=60&w=1200&auto=format&fit=crop';
+const BOOKING_DAYS_AHEAD = 30;
 
-  <!-- BOOKING -->
-  <div class="card screen" id="screen-booking">
-    <button class="back" data-goto="home"></button>
-    <div id="workersSection" style="display:none">
-      <div class="section-title-small" id="wLabel"></div>
-      <div class="workers-row" id="workersRow"></div>
-    </div>
-    <div class="section-title-small" id="cdLabel"></div>
-    <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name">
-    <div class="phone-row">
-      <button type="button" class="country-btn" id="countryBtn"></button>
-      <input class="input" id="inpPhone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel-national">
-    </div>
-    <div class="line"></div>
-    <div class="section-title-small" id="dLabel"></div>
-    <div class="month-box" id="bookingMonth"></div>
-    <div class="days-scroll" id="bookingDays"></div>
-    <div id="bookingHolidayMsg"></div>
-    <div class="section-title-small" id="tLabel"></div>
-    <div id="timesArea"></div>
-    <button class="btn" id="confirmBtn"></button>
-  </div>
+/* ============ STATE ============ */
+let lang = localStorage.getItem('barber_lang') || 'en';
+let currentBarberId = null;
+let currentBarber = null;
+let currentSettings = {};
+let viewingBarberId = null;
+let currentBarberData = null;
+let selectedService = null;
+let selectedWorkerId = null;
+let workers = [];
+let busySlots = [];
+let holidayDates = [];
+let workerHolidays = [];
+let galleryPhotos = [];
+let adminBookings = [];
+let cities = [];
+let jobPosts = [];
+let jobFilter = { city_id: null, type: null };
+let screen = 'home';
+let selectedDateKey = null;
+let time = null;
+let name = '';
+let phone = '';
+let submitting = false;
+let isAdmin = false;
+let postingType = 'looking_for_job';
+let editingWorkerId = null;
+let mwPhotoFile = null;
+let mwPhotoUrl = null;
+let mwSelectedDate = null;
 
-  <!-- GALLERY (customers) -->
-  <div class="card screen" id="screen-gallery">
-    <button class="back" data-goto="home"></button>
-    <div class="admin-title" id="galleryTitle"></div>
-    <div id="galleryList"></div>
-  </div>
+const futureDates = (() => {
+  const out = []; const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0;i<BOOKING_DAYS_AHEAD;i++){ const d=new Date(today); d.setDate(today.getDate()+i); out.push(d); }
+  return out;
+})();
 
-  <!-- SETTINGS HUB -->
-  <div class="card screen" id="screen-settings">
-    <button class="back" data-goto="home"></button>
-    <div class="admin-title">⚙️ Settings</div>
-    <button class="settings-card" id="goSignup">
-      <span class="sc-icon">📝</span>
-      <span class="sc-text"><span class="sc-title">Sign Up (New Barber)</span><span class="sc-sub">Create your own account</span></span>
-    </button>
-    <button class="settings-card" id="goLogin">
-      <span class="sc-icon">🔐</span>
-      <span class="sc-text"><span class="sc-title">Login (Barber)</span><span class="sc-sub">Access your dashboard</span></span>
-    </button>
-    <button class="settings-card" id="goJobsFromSettings">
-      <span class="sc-icon">💼</span>
-      <span class="sc-text"><span class="sc-title">Work Market</span><span class="sc-sub">Find jobs & workers</span></span>
-    </button>
-  </div>
+/* ============ LANGUAGES ============ */
+const langNames = { en:'English', ar:'العربية', fr:'Français', es:'Español', de:'Deutsch' };
+const locales = { en:'en-US', ar:'ar', fr:'fr-FR', es:'es-ES', de:'de-DE' };
 
-  <!-- SIGN UP -->
-  <div class="card screen" id="screen-signup">
-    <button class="back" data-goto="settings"></button>
-    <div class="admin-title">📝 Sign Up</div>
-    <input class="input" id="suName" type="text" placeholder="Full name">
-    <input class="input" id="suShop" type="text" placeholder="Shop name">
-    <input class="input" id="suEmail" type="email" placeholder="Email">
-    <input class="input" id="suPassword" type="password" placeholder="Password (min 6)">
-    <button class="btn" id="signupBtn">CREATE ACCOUNT</button>
-    <p id="suMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
-  </div>
+/* ============ TRANSLATIONS (CORE) ============ */
+var translations = {
+  en: { logo:'BARBER RESERVE', sub:'Book easily', label:'Language / اللغة', title:'Choose service', btn1:'NEXT', btn2:'CONFIRM BOOKING', back:'‹ Back', dLabel:'Select Day', tLabel:'Available Times', pName:'Full Name', pPhone:'Phone Number', wLabel:'Select your barber', cdLabel:'Customer Details', noTimes:'No available time for this service on this day.', holidayNoBooking:'This day is a holiday. No bookings.', alertTitle:'Confirmed', alertSuccess:(n,s,d,t)=>`Thank you ${n}! ${s} booked on ${d} at ${t}.`, errS:'Please select a service.', errF:'Please enter name, phone, day and time.', timeTaken:'This time has just been booked. Please choose another time.', netErr:'Connection error. Please try again.', phoneInvalid:'Please enter a valid phone number for the selected country.', searchCountry:'Search country', settings:'Settings', loginTitle:'Barber Login', passwordPlaceholder:'Password', login:'LOGIN', wrongPassword:'IncorrectPassword email or password.', dashboard:'My Dashboard', noBookings:':'🔑No bookings yet.', phone:'Phone', service:'Service', day:'Day', time:'Time', duration:'Duration', deleteTitle:'Delete', deleteMessage:'Are you sure?', deleteBookingTitle:'Delete booking', deleteBookingMessage:'Cancel this booking and free the time?', cancel:'Cancel', yesDelete:'Yes, delete', logout:'Logout', btnOk:'OK', gTitle:'My Work Photos', gBtn:'🖼️ My Work Photos', gAdd:'📷 Add Photo', gChange:'Change', gEmpty:'No photos yet.', gDone:'Photo saved.', deletePhotoTitle:'Delete photo', deletePhotoMsg:'Delete this photo?', addWorker:'Add Worker', editWorker:'Edit Worker', workerName:'Worker name', saveWorker:'SAVE WORKER', deleteWorkerTitle:'Delete worker', deleteWorkerMsg:'Delete this worker and all their info?', copyLink:'📋 Copy my public link', linkCopied:'✓ Link copied!', editCenter:'🛠️ Edit Center', addService:'➕ Add Service', deleteServiceTitle:'Delete service', deleteServiceMsg:'Delete this service?', serviceName:'Service name', price:'Price (€)', durMin:'Duration (min)', save:'Save', saved:'Saved.', invalidNum:'Please enter valid price and duration.', coverImage:'Cover Image', changeCover:'📷 Change Cover', changePassword:'🔑 Change password', myTeam:'My Team (Workers)', shareWithClients:'🔗 Share with clients', errNameShop:'Please enter your name and shop name.', errEmail:'Please enter a valid email.', errPass:'Password must be at least 6 characters.', errEmailExists:'This email is already registered.', signupSuccess:'✓ Account created! Logging in...', loginSuccess:'Logging in...', resetSent:'✓ Reset link sent. Check your email.', emailNotFound:'Email not found.', newPassword:'New password', savedPass:'✓ Password updated.', selectWorker:'Please select a barber first.', qrTitle:'Scan to book', jobsBtn:'💼 Work Market', jobsTitle:'💼 Work Market', jtJobTitle:'Looking for a Job', jtJobSub:'Post your profile so salons can find you', jtWorkerTitle:'Looking for a Worker', jtWorkerSub:'Post a job offer for barbers', jtBrowseTitle:'Browse Offers', jtBrowseSub:'See all barbers and salons looking to connect', postTitle:'New Post', browseTitle:'👀 Browse', pjTitle:'Title (e.g. Experienced barber available)', pjDesc:'Description (optional)', pjPhone:'Phone number', pjInstagram:'Instagram handle (optional)', cityLabel:'City', pjSubmit:'POST', filterLabel:'Filter by city', allCities:'All cities', typeAll:'All', typeBarbers:'👨‍🦱 Barbers', typeSalons:'🏪 Salons', contactCall:'📱 Call', contactInsta:'📷 Instagram', jobPosted:'✓ Posted successfully', jobDeleted:'✓ Deleted', loginRequired:'Please login or sign up to post', editProfile:'✏️ Edit My Profile', fullName:'Full Name', shopName:'Shop Name', addressLabel:'Address', phoneLabel:'Phone', holidays:'Holidays', whatsappConfirm:'📱 Confirm via WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Total Barbers', totalBookings:'Total Bookings', totalWorkers:'Total Workers', totalJobs:'Total Jobs', selectCity:'Select a city', other:'Other' },
+  ar: { logo:'حجوزات الصالون', sub:'احجز بسهولة', label:'اللغة / Language', title:'اختر الخدمة', btn1:'التالي', btn2:'تأكيد الحجز', back:'‹ العودة', dLabel:'اختر اليوم', tLabel:'الأوقات المتاحة', pName:'الاسم الكامل', pPhone:'رقم الهاتف', wLabel:'اختر الحلاق', cdLabel:'بيانات العميل', noTimes:'لا يوجد وقت متاح لهذه الخدمة في هذا اليوم.', holidayNoBooking:'هذا اليوم عطلة. لا يمكن الحجز.', alertTitle:'تم التأكيد', alertSuccess:(n,s,d,t)=>`شكراً يا ${n}! تم حجز ${s} يوم ${d} الساعة ${t}.`, errS:'اختر الخدمة أولاً.', errF:'الرجاء كتابة الاسم والهاتف واختيار اليوم والوقت.', timeTaken:'تم حجز هذا الوقت للتو. اختر وقتاً آخر.', netErr:'خطأ في الاتصال. حاول مرة أخرى.', phoneInvalid:'الرجاء إدخال رقم صحيح للدولة المختارة.', searchCountry:'ابحث عن دولة', settings:'الإعدادات', loginTitle:'دخول الحلاق', passwordPlaceholder:'كلمة المرور', login:'دخول', wrongPassword:'البريد الإلكتروني أو كلمة المرور غير صحيحة.', dashboard:'لوحتي', noBookings:'لا توجد حجوزات.', phone:'الهاتف', service:'الخدمة', day:'اليوم', time:'الوقت', duration:'المدة', deleteTitle:'حذف', deleteMessage:'هل أنت متأكد؟', deleteBookingTitle:'حذف الحجز', deleteBookingMessage:'هل أنت متأكد من إلغاء هذا الحجز؟', cancel:'تراجع', yesDelete:'نعم، احذف', logout:'خروج', btnOk:'حسناً', gTitle:'صور أعمالي', gBtn:'🖼️ صور أعمالي', gAdd:'📷 إضافة صورة', gChange:'تغيير', gEmpty:'لا توجد صور بعد.', gDone:'تم حفظ الصورة.', deletePhotoTitle:'حذف الصورة', deletePhotoMsg:'حذف هذه الصورة؟', addWorker:'إضافة عامل', editWorker:'تعديل عامل', workerName:'اسم العامل', saveWorker:'حفظ العامل', deleteWorkerTitle:'حذف العامل', deleteWorkerMsg:'حذف هذا العامل وكل معلوماته؟', copyLink:'📋 نسخ رابطي العام', linkCopied:'✓ تم نسخ الرابط!', editCenter:'🛠️ مركز التعديلات', addService:'➕ إضافة خدمة', deleteServiceTitle:'حذف الخدمة', deleteServiceMsg:'حذف هذه الخدمة؟', serviceName:'اسم الخدمة', price:'السعر (€)', durMin:'المدة (دقيقة)', save:'حفظ', saved:'تم الحفظ.', invalidNum:'أدخل سعراً ومدة صحيحين.', coverImage:'صورة الغلاف', changeCover:'📷 تغيير الغلاف', changePassword:'🔑 تغيير كلمة المرور', myTeam:'فريقي (العمال)', shareWithClients:'🔗 شارك مع الزبائن', errNameShop:'الرجاء إدخال الاسم واسم الصالون.', errEmail:'الرجاء إدخال بريد إلكتروني صحيح.', errPass:'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', errEmailExists:'هذا البريد مسجل مسبقاً.', signupSuccess:'✓ تم إنشاء الحساب! جاري الدخول...', loginSuccess:'جاري الدخول...', resetSent:'✓ تم إرسال الرابط. تحقق من بريدك.', emailNotFound:'البريد غير موجود.', newPassword:'كلمة مرور جديدة', savedPass:'✓ تم تحديث كلمة المرور.', selectWorker:'اختر الحلاق أولاً.', qrTitle:'امسح للحجز', jobsBtn:'💼 سوق العمل', jobsTitle:'💼 سوق العمل', jtJobTitle:'أبحث عن عمل', jtJobSub:'انشر ملفك ليجدك أصحاب الصالونات', jtWorkerTitle:'أبحث عن عامل', jtWorkerSub:'انشر عرض عمل للحلاقين', jtBrowseTitle:'مشاهدة', jtBrowseSub:'اطلع على كل الحلاقين والصالونات', postTitle:'نشر جديد', browseTitle:'👀 مشاهدة', pjTitle:'العنوان (مثال: حلاق محترف متاح)', pjDesc:'الوصف (اختياري)', pjPhone:'رقم الهاتف', pjInstagram:'حساب إنستغرام (اختياري)', cityLabel:'المدينة', pjSubmit:'نشر', filterLabel:'تصفية حسب المدينة', allCities:'كل المدن', typeAll:'الكل', typeBarbers:'👨‍🦱 حلاقون', typeSalons:'🏪 صالونات', contactCall:'📱 اتصل', contactInsta:'📷 إنستغرام', jobPosted:'✓ تم النشر بنجاح', jobDeleted:'✓ تم الحذف', loginRequired:'الرجاء تسجيل الدخول للنشر', editProfile:'✏️ تعديل ملفي', fullName:'الاسم الكامل', shopName:'اسم الصالون', addressLabel:'العنوان', phoneLabel:'الهاتف', holidays:'العطل', whatsappConfirm:'📱 تأكيد عبر واتساب', adminPanel:'👑 الإدارة العليا', totalBarbers:'إجمالي الحلاقين', totalBookings:'إجمالي الحجوزات', totalWorkers:'إجمالي العمال', totalJobs:'إجمالي الطلبات', selectCity:'اختر مدينة', other:'أخرى' },
+  fr: { logo:'BARBER RESERVE', sub:'Réservez facilement', label:'Langue', title:'Choisissez un service', btn1:'SUIVANT', btn2:'CONFIRMER', back:'‹ Retour', dLabel:'Choisir le jour', tLabel:'Heures disponibles', pName:'Nom complet', pPhone:'Téléphone', wLabel:'Choisissez votre barbier', cdLabel:'Coordonnées client', noTimes:'Aucune heure disponible.', holidayNoBooking:'Ce jour est fermé.', alertTitle:'Confirmé', alertSuccess:(n,s,d,t)=>`Merci ${n}! ${s} réservé le ${d} à ${t}.`, errS:'Choisissez un service.', errF:'Remplissez tous les champs.', timeTaken:'Cette heure vient d\'être réservée.', netErr:'Erreur de connexion.', phoneInvalid:'Numéro invalide.', searchCountry:'Rechercher un pays', settings:'Réglages', loginTitle:'Connexion barbier', passwordPlaceholder:'Mot de passe', login:'CONNEXION', wrongPassword:'Email ou mot de passe incorrect.', dashboard:'Mon tableau', noBookings:'Aucune réservation.', phone:'Téléphone', service:'Service', day:'Jour', time:'Heure', duration:'Durée', deleteTitle:'Supprimer', deleteMessage:'Êtes-vous sûr ?', deleteBookingTitle:'Supprimer la réservation', deleteBookingMessage:'Annuler cette réservation ?', cancel:'Annuler', yesDelete:'Oui, supprimer', logout:'Déconnexion', btnOk:'OK', gTitle:'Photos de mon travail', gBtn:'🖼️ Photos', gAdd:'📷 Ajouter photo', gChange:'Changer', gEmpty:'Pas de photos.', gDone:'Photo enregistrée.', deletePhotoTitle:'Supprimer', deletePhotoMsg:'Supprimer cette photo ?', addWorker:'Ajouter un coiffeur', editWorker:'Modifier', workerName:'Nom', saveWorker:'ENREGISTRER', deleteWorkerTitle:'Supprimer', deleteWorkerMsg:'Supprimer ce coiffeur ?', copyLink:'📋 Copier mon lien', linkCopied:'✓ Lien copié !', editCenter:'🛠️ Centre d\'édition', addService:'➕ Ajouter service', deleteServiceTitle:'Supprimer service', deleteServiceMsg:'Supprimer ce service ?', serviceName:'Nom', price:'Prix (€)', durMin:'Durée (min)', save:'Enregistrer', saved:'Enregistré.', invalidNum:'Prix/durée invalide.', coverImage:'Image de couverture', changeCover:'📷 Changer', change Changer mot de passe', myTeam:'Mon équipe', shareWithClients:'🔗 Partager', errNameShop:'Entrez nom et salon.', errEmail:'Email invalide.', errPass:'Mot de passe: 6+ caractères.', errEmailExists:'Email déjà utilisé.', signupSuccess:'✓ Compte créé ! Connexion...', loginSuccess:'Connexion...', resetSent:'✓ Lien envoyé.', emailNotFound:'Email introuvable.', newPassword:'Nouveau mot de passe', savedPass:'✓ Mot de passe changé.', selectWorker:'Choisissez un barbier.', qrTitle:'Scanner pour réserver', jobsBtn:'💼 Marché du travail', jobsTitle:'💼 Marché du travail', jtJobTitle:'Je cherche un emploi', jtJobSub:'Publiez votre profil', jtWorkerTitle:'Je cherche un coiffeur', jtWorkerSub:'Publiez une offre', jtBrowseTitle:'Parcourir', jtBrowseSub:'Voir toutes les annonces', postTitle:'Nouvelle annonce', browseTitle:'👀 Parcourir', pjTitle:'Titre', pjDesc:'Description', pjPhone:'Téléphone', pjInstagram:'Instagram (optionnel)', cityLabel:'Ville', pjSubmit:'PUBLIER', filterLabel:'Filtrer par ville', allCities:'Toutes les villes', typeAll:'Tout', typeBarbers:'👨‍🦱 Coiffeurs', typeSalons:'🏪 Salons', contactCall:'📱 Appeler', contactInsta:'📷 Instagram', jobPosted:'✓ Publié', jobDeleted:'✓ Supprimé', loginRequired:'Connectez-vous pour publier', editProfile:'✏️ Modifier', fullName:'Nom', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Téléphone', holidays:'Congés', whatsappConfirm:'📱 Confirmer via WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Coiffeurs', totalBookings:'Réservations', totalWorkers:'Employés', totalJobs:'Annonces', selectCity:'Choisir une ville', other:'Autre' },
+  es: { logo:'BARBER RESERVE', sub:'Reserva fácilmente', label:'Idioma', title:'Elige un servicio', btn1:'SIGUIENTE', btn2:'CONFIRMAR', back:'‹ Volver', dLabel:'Elige el día', tLabel:'Horarios disponibles', pName:'Nombre completo', pPhone:'Teléfono', wLabel:'Elige tu barbero', cdLabel:'Datos del cliente', noTimes:'Sin horarios disponibles.', holidayNoBooking:'Día festivo.', alertTitle:'Confirmado', alertSuccess:(n,s,d,t)=>`Gracias ${n}! ${s} reservado el ${d} a las ${t}.`, errS:'Elige un servicio.', errF:'Completa todos los datos.', timeTaken:'Esta hora acaba de ser reservada.', netErr:'Error de conexión.', phoneInvalid:'Número inválido.', searchCountry:'Buscar país', settings:'Ajustes', loginTitle:'Acceso barbero', passwordPlaceholder:'Contraseña', login:'ENTRAR', wrongPassword:'Email o contraseña incorrectos.', dashboard:'Mi Panel', noBookings:'Sin reservas.', phone:'Teléfono', service:'Servicio', day:'Día', time:'Hora', duration:'Duración', deleteTitle:'Eliminar', deleteMessage:'¿Seguro?', deleteBookingTitle:'Eliminar reserva', deleteBookingMessage:'¿Cancelar esta reserva?', cancel:'Cancelar', yesDelete:'Sí, eliminar', logout:'Salir', btnOk:'OK', gTitle:'Fotos de mi trabajo', gBtn:'🖼️ Fotos', gAdd:'📷 Añadir foto', gChange:'Cambiar', gEmpty:'Sin fotos.', gDone:'Foto guardada.', deletePhotoTitle:'Eliminar', deletePhotoMsg:'¿Eliminar esta foto?', addWorker:'Añadir barbero', editWorker:'Editar', workerName:'Nombre', saveWorker:'GUARDAR', deleteWorkerTitle:'Eliminar', deleteWorkerMsg:'¿Eliminar este barbero?', copyLink:'📋 Copiar mi enlace', linkCopied:'✓ ¡Enlace copiado!', editCenter:'🛠️ Centro de edición', addService:'➕ Añadir servicio', deleteServiceTitle:'Eliminar servicio', deleteServiceMsg:'¿Eliminar?', serviceName:'Nombre', price:'Precio (€)', durMin:'Duración (min)', save:'Guardar', saved:'Guardado.', invalidNum:'Precio/duración inválidos.', coverImage:'Imagen de portada', changeCover:'📷 Cambiar', changePassword:'🔑 Cambiar contraseña', myTeam:'Mi equipo', shareWithClients:'🔗 Compartir', errNameShop:'Introduce nombre y salón.', errEmail:'Email inválido.', errPass:'Contraseña: 6+ caracteres.', errEmailExists:'Email ya registrado.', signupSuccess:'✓ ¡Cuenta creada! Entrando...', loginSuccess:'Entrando...', resetSent:'✓ Enlace enviado.', emailNotFound:'Email no encontrado.', newPassword:'Nueva contraseña', savedPass:'✓ Contraseña cambiada.', selectWorker:'Elige un barbero.', qrTitle:'Escanea para reservar', jobsBtn:'💼 Mercado laboral', jobsTitle:'💼 Mercado laboral', jtJobTitle:'Busco trabajo', jtJobSub:'Publica tu perfil', jtWorkerTitle:'Busco un barbero', jtWorkerSub:'Publica una oferta', jtBrowseTitle:'Explorar', jtBrowseSub:'Ver todas las ofertas', postTitle:'Nueva publicación', browseTitle:'👀 Explorar', pjTitle:'Título', pjDesc:'Descripción', pjPhone:'Teléfono', pjInstagram:'Instagram (opcional)', cityLabel:'Ciudad', pjSubmit:'PUBLICAR', filterLabel:'Filtrar por ciudad', allCities:'Todas las ciudades', typeAll:'Todo', typeBarbers:'👨‍🦱 Barberos', typeSalons:'🏪 Salones', contactCall:'📱 Llamar', contactInsta:'📷 Instagram', jobPosted:'✓ Publicado', jobDeleted:'✓ Eliminado', loginRequired:'Inicia sesión para publicar', editProfile:'✏️ Editar', fullName:'Nombre', shopName:'Salón', addressLabel:'Dirección', phoneLabel:'Teléfono', holidays:'Vacaciones', whatsappConfirm:'📱 Confirmar por WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Barberos', totalBookings:'Reservas', totalWorkers:'Empleados', totalJobs:'Anuncios', selectCity:'Elige una ciudad', other:'Otro' },
+  de: { logo:'BARBER RESERVE', sub:'Einfach buchen', label:'Sprache', title:'Service wählen', btn1:'WEITER', btn2:'BESTÄTIGEN', back:'‹ Zurück', dLabel:'Tag wählen', tLabel:'Verfügbare Zeiten', pName:'Vollständiger Name', pPhone:'Telefonnummer', wLabel:'Wähle deinen Barbier', cdLabel:'Kundendaten', noTimes:'Keine Zeiten verfügbar.', holidayNoBooking:'Feiertag.', alertTitle:'Bestätigt', alertSuccess:(n,s,d,t)=>`Danke ${n}! ${s} am ${d} um ${t}.`, errS:'Service wählen.', errF:'Alle Felder ausfüllen.', timeTaken:'Gerade gebucht.', netErr:'Verbindungsfehler.', phoneInvalid:'Ungültige Nummer.', searchCountry:'Land suchen', settings:'Einstellungen', loginTitle:'Barbier-Anmeldung', passwordPlaceholder:'Passwort', login:'ANMELDEN', wrongPassword:'Email oder Passwort falsch.', dashboard:'Mein Dashboard', noBookings:'Keine Buchungen.', phone:'Telefon', service:'Service', day:'Tag', time:'Zeit', duration:'Dauer', deleteTitle:'Löschen', deleteMessage:'Sicher?', deleteBookingTitle:'Buchung löschen', deleteBookingMessage:'Diese Buchung löschen?', cancel:'Abbrechen', yesDelete:'Ja, löschen', logout:'Abmelden', btnOk:'OK', gTitle:'Meine Arbeitsfotos', gBtn:'🖼️ Fotos', gAdd:'📷 Foto hinzufügen', gChange:'Ändern', gEmpty:'Keine Fotos.', gDone:'Foto gespeichert.', deletePhotoTitle:'Löschen', deletePhotoMsg:'Dieses Foto löschen?', addWorker:'Barbier hinzufügen', editWorker:'Bearbeiten', workerName:'Name', saveWorker:'SPEICHERN', deleteWorkerTitle:'Löschen', deleteWorkerMsg:'Diesen Barbier löschen?', copyLink:'📋 Link kopieren', linkCopied:'✓ Link kopiert!', editCenter:'🛠️ Bearbeitungszentrum', addService:'➕ Service hinzufügen', deleteServiceTitle:'Service löschen', deleteServiceMsg:'Löschen?', serviceName:'Name', price:'Preis (€)', durMin:'Dauer (min)', save:'Speichern', saved:'Gespeichert.', invalidNum:'Ungültig.', coverImage:'Titelbild', changeCover:'📷 Ändern', changePassword:'🔑 Passwort ändern', myTeam:'Mein Team', shareWithClients:'🔗 Teilen', errNameShop:'Name und Salon eingeben.', errEmail:'Ungültige Email.', errPass:'Passwort: 6+ Zeichen.', errEmailExists:'Email bereits registriert.', signupSuccess:'✓ Konto erstellt! Anmeldung...', loginSuccess:'Anmeldung...', resetSent:'✓ Link gesendet.', emailNotFound:'Email nicht gefunden.', newPassword:'Neues Passwort', savedPass:'✓ Passwort geändert.', selectWorker:'Barbier wählen.', qrTitle:'Scannen zum Buchen', jobsBtn:'💼 Jobbörse', jobsTitle:'💼 Jobbörse', jtJobTitle:'Ich suche Arbeit', jtJobSub:'Profil veröffentlichen', jtWorkerTitle:'Ich suche Barbier', jtWorkerSub:'Stelle veröffentlichen', jtBrowseTitle:'Durchsuchen', jtBrowseSub:'Alle Anzeigen ansehen', postTitle:'Neue Anzeige', browseTitle:'👀 Durchsuchen', pjTitle:'Titel', pjDesc:'Beschreibung', pjPhone:'Telefon', pjInstagram:'Instagram (optional)', cityLabel:'Stadt', pjSubmit:'POSTEN', filterLabel:'Nach Stadt filtern', allCities:'Alle Städte', typeAll:'Alle', typeBarbers:'👨‍🦱 Barbiere', typeSalons:'🏪 Salons', contactCall:'📱 Anrufen', contactInsta:'📷 Instagram', jobPosted:'✓ Gepostet', jobDeleted:'✓ Gelöscht', loginRequired:'Bitte anmelden zum Posten', editProfile:'✏️ Bearbeiten', fullName:'Name', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Telefon', holidays:'Urlaub', whatsappConfirm:'📱 Via WhatsApp bestätigen', adminPanel:'👑 Super Admin', totalBarbers:'Barbiere', totalBookings:'Buchungen', totalWorkers:'Mitarbeiter', totalJobs:'Anzeigen', selectCity:'Stadt wählen', other:'Andere' }
+};
 
-  <!-- LOGIN -->
-  <div class="card screen" id="screen-login">
-    <button class="back" data-goto="settings"></button>
-    <div class="admin-title">🔐 Login</div>
-    <input class="input" id="blEmail" type="email" placeholder="Email">
-    <input class="input" id="blPassword" type="password" placeholder="Password">
-    <button class="btn" id="loginBtn">LOGIN</button>
-    <button class="btn-secondary" id="forgotBtn">Forgot password?</button>
-    <p id="blMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
-  </div>
+const t = () => translations[lang];
+const locale = () => locales[lang];
 
-  <!-- RESET -->
-  <div class="card screen" id="screen-reset">
-    <button class="back" data-goto="login"></button>
-    <div class="admin-title">Reset password</div>
-    <input class="input" id="rpEmail" type="email" placeholder="Email">
-    <button class="btn" id="resetBtn">SEND RESET LINK</button>
-    <p id="rpMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
-  </div>
+/* ============ HELPERS ============ */
+const pad = n => String(n).padStart(2,'0');
+const dateToKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const keyToDate = k => { const [y,m,dd]=k.split('-').map(Number); return new Date(y,m-1,dd); };
+const timeToMinutes = v => { const [h,m]=v.split(':').map(Number); return h*60+m; };
+const minutesToTime = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const getShortDayName = d => d.toLocaleDateString(locale(), {weekday:'short'});
+const isHoliday = k => holidayDates.includes(k);
+const isWorkerHoliday = (wId, k) => workerHolidays.some(h => h.worker_id === wId && h.date_key === k);
 
-  <!-- NEW PASSWORD -->
-  <div class="card screen" id="screen-newpass">
-    <div class="admin-title">New password</div>
-    <input class="input" id="npPassword" type="password" placeholder="New password">
-    <button class="btn" id="newpassBtn">SAVE</button>
-  </div>
+function getMonthLabel(scrollEl){
+  const itemW=78, left=scrollEl?scrollEl.scrollLeft:0, width=scrollEl?scrollEl.clientWidth:300;
+  const s=Math.max(0,Math.min(futureDates.length-1,Math.floor(Math.abs(left)/itemW)));
+  const e=Math.max(s,Math.min(futureDates.length-1,Math.floor((Math.abs(left)+width-1)/itemW)));
+  const seen=[];
+  for(let i=s;i<=e;i++){ const d=futureDates[i]; const k=`${d.getFullYear()}-${d.getMonth()}`; if(!seen.some(x=>x.k===k)) seen.push({k,d}); }
+  if(!seen.length) return '';
+  if(seen.length===1) return seen[0].d.toLocaleDateString(locale(),{month:'long',year:'numeric'});
+  return seen.map(x=>x.d.toLocaleDateString(locale(),{month:'long',year:'numeric'})).join(' / ');
+}
 
-  <!-- BARBER DASHBOARD -->
-  <div class="card screen" id="screen-barber">
-    <div class="dashboard-header">
-      <div class="admin-title" style="margin-bottom:0" id="bdTitle">My Dashboard</div>
-      <button class="logout" id="logoutBtn">Logout</button>
-    </div>
-    <div class="line"></div>
-    <div class="admin-info">📧 <span id="bdEmail"></span></div>
-    <div class="admin-info">🏪 <span id="bdShop"></span></div>
-    <button class="btn-secondary" id="bdEditProfile" style="margin-top:10px">✏️ Edit My Profile</button>
+/* ============ MODAL ============ */
+function showAlert(title, msg, okText, onOk){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMsg').textContent = msg;
+  const cancelBtn = document.getElementById('modalCancel');
+  const okBtn = document.getElementById('modalOk');
+  okBtn.textContent = okText || t().btnOk;
+  okBtn.className = 'modal-ok';
+  cancelBtn.style.display = 'none';
+  document.getElementById('modalOverlay').classList.add('show');
+  okBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); onOk && onOk(); };
+}
+function showConfirm(title, msg, okText, onOk){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMsg').textContent = msg;
+  const cancelBtn = document.getElementById('modalCancel');
+  const okBtn = document.getElementById('modalOk');
+  cancelBtn.textContent = t().cancel;
+  okBtn.textContent = okText;
+  okBtn.className = 'modal-ok danger';
+  cancelBtn.style.display = '';
+  document.getElementById('modalOverlay').classList.add('show');
+  cancelBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); };
+  okBtn.onclick = () => { document.getElementById('modalOverlay').classList.remove('show'); onOk && onOk(); };
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
+});
+
+/* ============ SCREEN MANAGEMENT ============ */
+function setScreen(s){
+  screen = s;
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  const el = document.getElementById('screen-'+s);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  if (s==='home') renderHome();
+  if (s==='booking') renderBooking();
+  if (s==='gallery') renderGallery();
+  if (s==='barber') renderBarberDashboard();
+  if (s==='editcenter') renderEditCenter();
+  if (s==='admingallery') renderAdminGallery();
+  if (s==='jobs') renderJobsHub();
+  if (s==='postjob') renderPostJob();
+  if (s==='browsejobs') renderBrowseJobs();
+  if (s==='editprofile') renderEditProfile();
+  if (s==='manageworker') renderManageWorker();
+}
+
+/* ============ SUPABASE LOADERS ============ */
+async function loadBarberConfig(){
+  if (!viewingBarberId) return null;
+  const { data, error } = await sb.rpc('bb_public_get_barber', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return null; }
+  currentBarberData = data;
+  workers = (data && data.workers) || [];
+  currentSettings = (data && data.settings) || {};
+  return data;
+}
+async function loadBusy(){
+  if (!viewingBarberId){ busySlots=[]; return false; }
+  const { data, error } = await sb.rpc('bb_public_busy', { p_barber_id: viewingBarberId });
+  if (error){ console.error(error); return false; }
+  busySlots = (data||[]).map(r=>({dateKey:r.date_key, start:r.start_min, duration:r.duration, workerId:r.worker_id}));
+  return true;
+}
+async function loadHolidays(){
+  if (!viewingBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
+  const [h1, h2] = await Promise.all([
+    sb.rpc('bb_public_holidays', { p_barber_id: viewingBarberId }),
+    sb.rpc('bb_public_worker_holidays', { p_barber_id: viewingBarberId })
+  ]);
+  if (!h1.error) holidayDates = (h1.data||[]).map(r=>r.date_key).sort();
+  if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
+  return true;
+}
+async function loadPhotos(){
+  if (!viewingBarberId){ galleryPhotos=[]; return false; }
+  const { data, error } = await sb.from('gallery').select('id,url,sort').eq('barber_id', viewingBarberId).order('sort');
+  if (error){ console.error(error); return false; }
+  galleryPhotos = (data||[]).map(r=>({id:String(r.id), url:r.url}));
+  return true;
+}
+async function loadMyWorkers(){
+  if (!currentBarberId){ workers=[]; return false; }
+  const { data, error } = await sb.from('workers')
+    .select('*').eq('barber_id', currentBarberId).eq('is_active', true).order('sort').order('id');
+  if (error){ console.error(error); return false; }
+  workers = (data||[]).map(w => ({ id: w.id, name: w.name, photo_url: w.photo_url, sort: w.sort, open_time: w.open_time, close_time: w.close_time }));
+  return true;
+}
+async function loadAdminBookings(){
+  if (!currentBarberId){ adminBookings=[]; return false; }
+  const { data, error } = await sb.from('bookings')
+    .select('*, workers(name)').eq('barber_id', currentBarberId).eq('status','confirmed')
+    .gte('date_key', dateToKey(new Date()))
+    .order('date_key').order('start_min');
+  if (error){ console.error(error); return false; }
+  adminBookings = (data||[]).map(r=>({
+    id:r.id, workerId: r.worker_id, clientName:r.client_name, clientPhone:r.client_phone,
+    serviceName:r.service_name, dateKey:r.date_key,
+    startTime:minutesToTime(r.start_min), duration:r.duration,
+    workerName: r.workers ? r.workers.name : null
+  }));
+  return true;
+}
+async function loadMyHolidays(){
+  if (!currentBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
+  const [h1, h2] = await Promise.all([
+    sb.from('holidays').select('date_key').eq('barber_id', currentBarberId).gte('date_key', dateToKey(new Date())),
+    sb.from('worker_holidays').select('worker_id,date_key').
+
+  ]);
+  if (!h1.error) holidayDates = (h1.data||[]).map(r=>r.date_key);
+  if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
+  return true;
+}
+async function loadCities(){
+  const { data, error } = await sb.rpc('bb_public_cities');
+  if (error){ console.error(error); return false; }
+  cities = (data||[]).map(c=>({ id: Number(c.id), name: c.name, country: c.country, jobs_count: Number(c.jobs_count||0) }));
+  return true;
+}
+async function loadJobPosts(cityId = null, type = null){
+  const params = {};
+  if (cityId) params.p_city_id = cityId;
+  if (type) params.p_type = type;
+  const { data, error } = await sb.rpc('bb_public_jobs', params);
+  if (error){ console.error(error); return false; }
+  jobPosts = (data||[]).map(j=>({
+    id: Number(j.id), post_type: j.post_type, title: j.title, description: j.description,
+    phone: j.phone, instagram: j.instagram, city_name: j.city_name, city_custom: j.city_custom,
+    views: Number(j.views||0), created_at: j.created_at
+  }));
+  return true;
+}
+async function loadSettings(){
+  if (!viewingBarberId) return null;
+  const { data, error } = await sb.from('barber_settings').select('key,value').eq('barber_id', viewingBarberId);
+  if (error){ console.error(error); return null; }
+  const settings = {};
+  (data||[]).forEach(r => settings[r.key] = r.value);
+  currentSettings = settings;
+  return settings;
+}
+
+/* ============ AUTH ============ */
+async function loadCurrentBarber(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user){ currentBarberId = null; currentBarber = null; isAdmin = false; return null; }
+  currentBarberId = user.id;
+  const { data } = await sb.from('barbers').select('*').eq('id', user.id).single();
+  currentBarber = data;
+  isAdmin = !!(data && data.is_super_admin);
+  if (data){ viewingBarberId = data.id; }
+  return data;
+}
+async function enterBarberMode(){
+  const b = await loadCurrentBarber();
+  if (!b){ alert('Profile not found. Try logging out and back in.'); return; }
+  await Promise.all([loadMyWorkers(), loadMyHolidays(), loadPhotos(), loadAdminBookings(), loadSettings()]);
+  setScreen('barber');
+}
+async function doSignup(){
+  const full_name = document.getElementById('suName').value.trim();
+  const shop_name = document.getElementById('suShop').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const password = document.getElementById('suPassword').value;
+  const msg = document.getElementById('suMsg');
+  const tr = t();
+  if (!full_name || !shop_name){ msg.textContent = tr.errNameShop; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.textContent = tr.errEmail; return; }
+  if (password.length < 6){ msg.textContent = tr.errPass; return; }
+  msg.textContent = 'Creating...';
+  const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name, shop_name } } });
+  if (error){ 
+    if (/already/i.test(error.message)) msg.textContent = tr.errEmailExists;
+    else msg.textContent = error.message;
+    return; 
+  }
+  msg.textContent = tr.signupSuccess;
+  const { error: le } = await sb.auth.signInWithPassword({ email, password });
+  if (le){ msg.textContent = '✓ Created. Please login.'; return; }
+  await enterBarberMode();
+}
+async function doLogin(){
+  const email = document.getElementById('blEmail').value.trim();
+  const password = document.getElementById('blPassword').value;
+  const msg = document.getElementById('blMsg');
+  const tr = t();
+  if (!email || !password){ msg.textContent = tr.errEmail; return; }
+  msg.textContent = tr.loginSuccess;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ 
+    if (/invalid/i.test(error.message)) msg.textContent = tr.wrongPassword;
+    else msg.textContent = error.message;
+    return; 
+  }
+  msg.textContent = '';
+  await enterBarberMode();
+}
+async function doLogout(){
+  await sb.auth.signOut();
+  currentBarberId = null; currentBarber = null; isAdmin = false;
+  setScreen('home');
+}
+
+/* ============ LANGUAGE ============ */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const els = {
+    'jobsBtn': 'jobsBtn', 'bdTitle': 'dashboard', 'myTeamLabel': 'myTeam', 'bdEditCenter': 'editCenter',
+    'bdGallery': 'gBtn', 'shareLabel': 'shareWithClients', 'bdShare': 'copyLink', 'bdPassword': 'changePassword',
+    'holidaysLabel': 'holidays', 'myBookingsLabel': 'noBookings', 'cpTitle': 'changePassword',
+    'ecTitle': 'editCenter', 'coverLabel': 'coverImage', 'ecHeroChange': 'changeCover',
+    'servicesLabel': 'title', 'ecAddService': 'addService', 'agTitle': 'gTitle', 'agAdd': 'gAdd',
+    'workerTitle': 'addWorker', 'wSave': 'saveWorker', 'jobsTitle': 'jobsTitle',
+    'jtJobTitle': 'jtJobTitle', 'jtJobSub': 'jtJobSub', 'jtWorkerTitle': 'jtWorkerTitle',
+    'jtWorkerSub': 'jtWorkerSub', 'jtBrowseTitle': 'jtBrowseTitle', 'jtBrowseSub': 'jtBrowseSub',
+    'postTitle': 'postTitle', 'browseTitle': 'browseTitle', 'cityLabel': 'cityLabel',
+    'pjSubmit': 'pjSubmit', 'filterLabel': 'filterLabel', 'wLabel': 'wLabel', 'cdLabel': 'cdLabel',
+    'pName': 'pName', 'dLabel': 'dLabel', 'tLabel': 'tLabel', 'btn2': 'btn2'
+  };
+  Object.keys(els).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && els[id]) el.textContent = t()[els[id]] || el.textContent;
+  });
+  const ph = {
+    'inpName': 'pName', 'pjTitle': 'pjTitle', 'pjDesc': 'pjDesc', 'pjPhone': 'pjPhone', 'pjInstagram': 'pjInstagram'
+  };
+  Object.keys(ph).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = t()[ph[id]] || '';
+  });
+  document.querySelectorAll('#bjChips .chip').forEach(c => {
+    const type = c.dataset.type;
+    if (!type) c.textContent = t().typeAll;
+    else if (type === 'looking_for_job') c.textContent = t().typeBarbers;
+    else if (type === 'looking_for_worker') c.textContent = t().typeSalons;
+  });
+}
+
+/* ============ HOME ============ */
+async function renderHome(){
+  const tr = t();
+  document.getElementById('logoText').textContent = tr.logo;
+  document.getElementById('subText').textContent = tr.sub;
+  document.getElementById('labelText').textContent = tr.label;
+  document.getElementById('langName').textContent = langNames[lang] + ' ▾';
+  document.getElementById('titleText').textContent = tr.title;
+  document.getElementById('galleryBtn').textContent = tr.gBtn;
+  document.getElementById('nextBtn').textContent = tr.btn1;
+
+  const menu = document.getElementById('langMenu');
+  menu.innerHTML = '';
+  Object.keys(langNames).forEach(k=>{
+    const b = document.createElement('button');
+    b.className = 'language-item';
+    b.textContent = langNames[k];
+    b.onclick = () => {
+      lang = k; localStorage.setItem('barber_lang', lang); menu.style.display='none';
+      applyLang(); renderHome();
+    };
+    menu.appendChild(b);
+  });
+
+  const list = document.getElementById('servicesList');
+  if (!viewingBarberId){
+    document.getElementById('shopName').textContent = 'Barber';
+    document.getElementById('locText').textContent = '';
+    document.getElementById('heroImg').style.visibility = 'hidden';
+    list.innerHTML = '<div class="warning">Open a barber link or sign up to start. Tap ⚙️.</div>';
+    document.getElementById('nextBtn').classList.add('disabled');
+    return;
+  }
+
+  list.innerHTML = '<div class="warning">Loading...</div>';
+  const [data, settings] = await Promise.all([loadBarberConfig(), loadSettings()]);
+  if (!data || !data.barber){ 
+    list.innerHTML='<div class="warning">Barber not found.</div>'; 
+    document.getElementById('nextBtn').classList.add('disabled');
+    return; 
+  }
+
+  document.getElementById('shopName').textContent = data.barber.shop_name || data.barber.full_name || 'Barber';
+  document.getElementById('locText').textContent = (settings && settings.location) ? ('📍 ' + settings.location) : '';
+  
+  const open = (settings && settings.opening_time) || '10:00';
+  const close = (settings && settings.closing_time) || '20:00';
+  document.getElementById('workingHours').textContent = `${open} - ${close}`;
+
+  const hero = document.getElementById('heroImg');
+  const url = (settings && settings.hero_url) || DEFAULT_HERO;
+  hero.src = url;
+  hero.style.objectPosition = '50% ' + ((settings && settings.hero_pos) || '50') + '%';
+  hero.style.visibility = 'visible';
+
+  const svcs = data.services || [];
+  if (!svcs.length){ 
+    list.innerHTML='<div class="warning">No services yet.</div>'; 
+    document.getElementById('nextBtn').classList.add('disabled');
+    return; 
+  }
+  
+  list.innerHTML = '';
+  svcs.forEach(sv=>{
+    const sName = sv['name_' + lang] || sv.name_en || 'Service';
+    const b = document.createElement('button');
+    b.className = 'item' + (selectedService && selectedService.id===String(sv.id) ? ' active' : '');
+    b.innerHTML = `<div style="flex:1"><div class="service-name">${esc(sName)}</div><div class="service-time">${sv.duration} min</div></div><div class="price">€${esc(sv.price)}</div>`;
+    b.onclick = () => {
+      selectedService = { id:String(sv.id), name: sName, duration:sv.duration, price:sv.price };
+      time = null;
+      renderHome();
+    };
+    list.appendChild(b);
+  });
+  document.getElementById('nextBtn').classList.remove('disabled');
+}
+
+/* ============ BOOKING ============ */
+function updateConfirmState(){
+  const hasWorkerRequirement = workers.length > 0;
+  const workerOK = !hasWorkerRequirement || selectedWorkerId !== null;
+  const disabled = submitting || !name.trim() || !phone.trim() || !selectedDateKey || !time 
+    || isHoliday(selectedDateKey) || !workerOK;
+  document.getElementById('confirmBtn').classList.toggle('disabled', disabled);
+}
+async function renderBooking(){
+  const tr = t();
+  const daysEl = document.getElementById('bookingDays');
+  const prevScroll = daysEl.scrollLeft;
+  
+  document.querySelector('#screen-booking .back').textContent = tr.back;
+  document.getElementById('dLabel').textContent = tr.dLabel;
+  document.getElementById('tLabel').textContent = tr.tLabel;
+  document.getElementById('inpName').placeholder = tr.pName;
+  document.getElementById('inpPhone').placeholder = tr.pPhone;
+  document.getElementById('cdLabel').textContent = tr.cdLabel;
+  document.getElementById('confirmBtn').textContent = tr.btn2;
+
+  const workersSection = document.getElementById('workersSection');
+  const workersRow = document.getElementById('workersRow');
+  if (workers.length > 0){
+    workersSection.style.display = 'block';
+    document.getElementById('wLabel').textContent = tr.wLabel;
+    workersRow.innerHTML = '';
     
-    <div class="line"></div>
-    <div class="section-title-small" id="myTeamLabel">👥 My Team (Workers)</div>
-    <div class="workers-row" id="bdWorkersRow"></div>
-    <button class="btn-secondary" id="addWorkerBtn">➕ Add Worker</button>
-    <div class="line"></div>
-    <button class="btn-secondary" id="bdEditCenter">🛠️ Edit Center</button>
-    <button class="btn-secondary" id="bdGallery">🖼️ My Work Photos</button>
-    <div class="line"></div>
-    <div class="section-title-small" id="shareLabel">🔗 Share with clients</div>
-    <button class="btn-secondary" id="bdShare">📋 Copy my public link</button>
-    <div class="qr-box"><img id="bdQR" alt="QR"></div>
-    <div class="line"></div>
-    <button class="btn-secondary" id="bdPassword">🔑 Change password</button>
-    <div class="line"></div>
-    <div class="section-title-small" id="holidaysLabel">📅 Holidays (tap to toggle)</div>
-    <div class="month-box" id="bdMonth"></div>
-    <div class="days-scroll" id="bdDays"></div>
-    <div class="line"></div>
-    <div class="section-title-small" id="myBookingsLabel">📋 My Bookings</div>
-    <div id="bdBookings"></div>
-  </div>
+    workers.forEach(w => {
+      const div = document.createElement('div');
+      const wHoliday = selectedDateKey && isWorkerHoliday(w.id, selectedDateKey);
+      const isBusy = selectedDateKey && time && isWorkerBusy(w.id, selectedDateKey, time, selectedService);
+      div.className = 'worker-circle' 
+        + (selectedWorkerId === w.id ? ' active' : '')
+        + ((isBusy || wHoliday) ? ' busy' : '');
+      const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
+      div.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt="">
+                       <div class="worker-name">${esc(w.name)}</div>`;
+      div.onclick = () => {
+        if (wHoliday) return;
+        selectedWorkerId = w.id;
+        time = null;
+        renderBooking();
+      };
+      workersRow.appendChild(div);
+    });
+  } else {
+    workersSection.style.display = 'none';
+    selectedWorkerId = null;
+  }
 
-  <!-- EDIT MY PROFILE -->
-  <div class="card screen" id="screen-editprofile">
-    <button class="back" data-goto="barber"></button>
-    <div class="admin-title">✏️ Edit My Profile</div>
-    <input class="input" id="epName" type="text" placeholder="Full Name">
-    <input class="input" id="epShop" type="text" placeholder="Shop Name">
-    <input class="input" id="epPhone" type="tel" placeholder="Phone Number">
-    <input class="input" id="epAddress" type="text" placeholder="Address (e.g. Mallorca, Spain)">
-    <button class="btn" id="epSave">SAVE CHANGES</button>
-  </div>
+  daysEl.innerHTML = '';
+  futureDates.forEach(d=>{
+    const key = dateToKey(d);
+    const box = document.createElement('div');
+    box.className = 'day-box' + (selectedDateKey===key ? ' active' : '') + (isHoliday(key) ? ' holiday' : '');
+    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${isHoliday(key)?'<div class="holiday-mini">🚫</div>':''}`;
+    box.onclick = () => { selectedDateKey = key; time=null; renderBooking(); };
+    daysEl.appendChild(box);
+  });
+  daysEl.scrollLeft = prevScroll;
+  document.getElementById('bookingMonth').textContent = getMonthLabel(daysEl);
 
-  <!-- MANAGE WORKER -->
-  <div class="card screen" id="screen-manageworker">
-    <button class="back" data-goto="barber"></button>
-    <div class="admin-title" id="mwTitle">Manage Worker</div>
-    <img class="hero-image" id="mwPhotoPreview" alt="" style="visibility:hidden">
-    <button class="btn-secondary" id="mwPhotoBtn">📷 Change Photo</button>
-    <input type="file" id="mwPhotoInput" accept="image/*" style="display:none">
-    <input class="input" id="mwName" type="text" placeholder="Worker name" style="margin-top:14px">
+  document.getElementById('bookingHolidayMsg').innerHTML =
+    (selectedDateKey && isHoliday(selectedDateKey))
+      ? `<div class="holiday-message">🚫 ${esc(tr.holidayNoBooking)}</div>` : '';
+
+  const area = document.getElementById('timesArea');
+  const needWorker = workers.length > 0 && !selectedWorkerId;
+  
+  if (!selectedDateKey){ 
+    area.innerHTML = `<div class="warning">${esc(tr.dLabel)}</div>`; 
+  } else if (isHoliday(selectedDateKey)){ 
+    area.innerHTML = `<div class="warning">${esc(tr.holidayNoBooking)}</div>`; 
+  } else if (needWorker){
+    area.innerHTML = `<div class="warning">${esc(tr.selectWorker)}</div>`;
+  } else {
+    const times = generateAvailableTimes();
+    if (!times.length){ area.innerHTML = `<div class="warning">${esc(tr.noTimes)}</div>`; }
+    else {
+      area.innerHTML = '<div class="times-scroll">' + times.map(tm=>`<button class="time-box${time===tm?' active':''}" data-time="${tm}">${tm}</button>`).join('') + '</div>';
+      area.querySelectorAll('.time-box').forEach(b=>{ 
+        b.onclick = () => { time=b.dataset.time; renderBooking(); }; 
+      });
+    }
+  }
+  updateConfirmState();
+}
+function isWorkerBusy(workerId, dateKey, timeStr, service){
+  if (!service || !timeStr) return false;
+  const start = timeToMinutes(timeStr);
+  const dur = Number(service.duration);
+  const end = start + dur;
+  return busySlots.some(b => 
+    b.dateKey === dateKey 
+    && b.workerId === workerId 
+    && start < (b.start + b.duration) 
+    && end > b.start
+  );
+}
+function getWorkerHours(workerId){
+  const w = workers.find(x => x.id === workerId);
+  const open = (w && w.open_time) || currentSettings.opening_time || '10:00';
+  const close = (w && w.close_time) || currentSettings.closing_time || '20:00';
+  return [open, close];
+}
+function generateAvailableTimes(){
+  if (!selectedDateKey || !selectedService) return [];
+  if (isHoliday(selectedDateKey)) return [];
+  if (workers.length > 0 && !selectedWorkerId) return [];
+  if (selectedWorkerId && isWorkerHoliday(selectedWorkerId, selectedDateKey)) return [];
+  
+  const [openStr, closeStr] = workers.length > 0 
+    ? getWorkerHours(selectedWorkerId)
+    : [currentSettings.opening_time || '10:00', currentSettings.closing_time || '20:00'];
+  
+  const opening = timeToMinutes(openStr), closing = timeToMinutes(closeStr);
+  const dur = Number(selectedService.duration);
+  const now = new Date();
+  const isToday = selectedDateKey === dateToKey(now);
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const out = [];
+  
+  for (let start=opening; start+dur<=closing; start+=5){
+    if (isToday && start <= nowMin) continue;
+    const cand = minutesToTime(start);
+    const end = start + dur;
     
-    <div class="line"></div>
-    <div class="section-title-small">⏰ Working Hours (Optional)</div>
-    <div style="display:flex; gap:10px; margin-bottom:10px">
-       <input class="input" id="mwOpen" type="text" placeholder="Open (e.g. 10:00)">
-       <input class="input" id="mwClose" type="text" placeholder="Close (e.g. 20:00)">
-    </div>
+    let overlap;
+    if (workers.length > 0){
+      overlap = busySlots.some(b => 
+        b.dateKey === selectedDateKey 
+        && b.workerId === selectedWorkerId 
+        && start < (b.start + b.duration) 
+        && end > b.start
+      );
+    } else {
+      overlap = busySlots.some(b => 
+        b.dateKey === selectedDateKey 
+        && (b.workerId === null || b.workerId === undefined)
+        && start < (b.start + b.duration) 
+        && end > b.start
+      );
+    }
+    if (!overlap) out.push(cand);
+  }
+  return out;
+}
+async function handleFinalBooking(){
+  if (submitting) return;
+  normalizePhoneField();
+  if (!name.trim() || !phone.trim() || !selectedDateKey || !time || !selectedService){
+    showAlert('!', t().errF); return;
+  }
+  if (!isPhoneValid()){ showAlert('!', t().phoneInvalid); return; }
+  if (workers.length > 0 && !selectedWorkerId){ showAlert('!', t().selectWorker); return; }
+  
+  submitting = true;
+  document.getElementById('confirmBtn').classList.add('disabled');
+  
+  try {
+    const params = {
+      p_barber_id: viewingBarberId, p_name: name.trim(), p_phone: phone.trim(),
+      p_service_id: Number(selectedService.id), p_date: selectedDateKey, p_start: timeToMinutes(time)
+    };
+    if (workers.length > 0 && selectedWorkerId) params.p_worker_id = selectedWorkerId;
     
-    <div class="line"></div>
-    <div class="section-title-small">📅 Days Off (Holidays)</div>
-    <div class="month-box" id="mwMonth"></div>
-    <div class="days-scroll" id="mwDays"></div>
+    const { data, error } = await sb.rpc('bb_public_create_booking', params);
+    if (error){ console.error(error); showAlert('!', t().netErr); return; }
+    if (!data || !data.ok){
+      await Promise.all([loadBusy(), loadHolidays()]);
+      time = null; renderBooking();
+      showAlert('!', data && data.error === 'holiday' ? t().holidayNoBooking 
+                : (data && data.error === 'worker_holiday' ? t().holidayNoBooking : t().timeTaken));
+      return;
+    }
     
-    <button class="btn" id="mwSave" style="margin-top:20px">SAVE WORKER</button>
-    <button class="btn-secondary" id="mwDelete" style="border-color:#ff4d4d; color:#ff4d4d; margin-top:10px">DELETE WORKER</button>
-  </div>
-
-  <!-- CHANGE PASSWORD -->
-  <div class="card screen" id="screen-changepass">
-    <button class="back" data-goto="barber"></button>
-    <div class="admin-title" id="cpTitle">Change password</div>
-    <input class="input" id="cpPassword" type="password" placeholder="New password">
-    <button class="btn" id="cpBtn">SAVE</button>
-  </div>
-
-  <!-- EDIT CENTER -->
-  <div class="card screen" id="screen-editcenter">
-    <button class="back" data-goto="barber"></button>
-    <div class="admin-title" id="ecTitle">🛠️ Edit Center</div>
+    const selectedDate = keyToDate(selectedDateKey);
+    const displayed = selectedDate.toLocaleDateString(locale(), {weekday:'long', day:'numeric', month:'long'});
+    await loadBusy();
     
-    <div class="section-title-small">⏰ Salon Working Hours</div>
-    <div style="display:flex; gap:10px; margin-bottom:10px">
-       <input class="input" id="ecOpenTime" type="text" placeholder="Open (e.g. 10:00)">
-       <input class="input" id="ecCloseTime" type="text" placeholder="Close (e.g. 20:00)">
-    </div>
-    <button class="btn-secondary" id="ecSaveHours">SAVE SALON HOURS</button>
-
-    <div class="line"></div>
-    <div class="section-title-small" id="coverLabel">🖼️ Cover Image</div>
-    <img class="hero-image" id="ecHeroPreview" alt="" style="visibility:hidden">
-    <input type="range" class="input" id="ecHeroPos" min="0" max="100" value="50" style="padding:8px">
-    <button class="btn-secondary" id="ecHeroChange">📷 Change Cover Image</button>
-    <input type="file" id="ecHeroInput" accept="image/*" style="display:none">
+    const msg = t().alertSuccess(name.trim(), selectedService.name, displayed, time);
+    const waText = encodeURIComponent(`مرحباً، حجزت ${selectedService.name} يوم ${displayed} الساعة ${time}. الاسم: ${name.trim()}`);
     
-    <div class="line"></div>
-    <div class="section-title-small" id="servicesLabel">✂️ Services</div>
-    <div id="ecServices"></div>
-    <button class="btn-secondary" id="ecAddService">➕ Add Service</button>
-  </div>
+    showAlert(t().alertTitle, msg, t().btnOk, () => {
+      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
+      document.getElementById('inpName').value='';
+      document.getElementById('inpPhone').value='';
+      setScreen('home');
+    });
+    
+    setTimeout(() => {
+      const modal = document.querySelector('#modalOverlay .modal');
+      const buttons = modal.querySelector('.modal-buttons');
+      if (buttons && !buttons.parentNode.querySelector('.wa-btn')){
+        const wa = document.createElement('div');
+        wa.className = 'wa-btn';
+        wa.style.marginTop = '10px';
+        wa.innerHTML = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;cursor:pointer">${t().whatsappConfirm}</button>`;
+        buttons.parentNode.insertBefore(wa, buttons.nextSibling);
+      }
+    }, 50);
+  } finally {
+    submitting = false;
+    if (screen === 'booking') updateConfirmState();
+  }
+}
+async function renderGallery(){
+  document.querySelector('#screen-gallery .back').textContent = t().back;
+  document.getElementById('galleryTitle').textContent = t().gTitle;
+  const list = document.getElementById('galleryList');
+  list.innerHTML = '<div class="warning">Loading...</div>';
+  await loadPhotos();
+  if (!galleryPhotos.length){ list.innerHTML = `<div class="warning">${esc(t().gEmpty)}</div>`; return; }
+  list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${esc(p.url)}" alt="" loading="lazy">`).join('');
+}
 
-  <!-- ADMIN GALLERY -->
-  <div class="card screen" id="screen-admingallery">
-    <button class="back" data-goto="barber"></button>
-    <div class="admin-title" id="agTitle">🖼️ My Work Photos</div>
-    <button class="btn-secondary" id="agAdd">📷 Add Photo</button>
-    <input type="file" id="agInput" accept="image/*" style="display:none">
-    <div class="line"></div>
-    <div id="agList"></div>
-  </div>
+/* ============ COUNTRIES ============ */
+const COUNTRY_DATA = 'AF:93,AL:355,DZ:213,AS:1684,AD:376,AO:244,AI:1264,AG:1268,AR:54,AM:374,AW:297,AU:61,AT:43,AZ:994,BS:1242,BH:973,BD:880,BB:1246,BY:375,BE:32,BZ:501,BJ:229,BM:1441,BT:975,BO:591,BA:387,BW:267,BR:55,IO:246,VG:1284,BN:673,BG:359,BF:226,BI:257,KH:855,CM:237,CA:1,CV:238,KY:1345,CF:236,TD:235,CL:56,CN:86,CO:57,KM:269,CG:242,CD:243,CK:682,CR:506,CI:225,HR:385,CU:53,CW:599,CY:357,CZ:420,DK:45,DJ:253,DM:1767,DO:1809,EC:593,EG:20,SV:503,GQ:240,ER:291,EE:372,SZ:268,ET:251,FK:500,FO:298,FJ:679,FI:358,FR:33,GF:594,PF:689,GA:241,GM:220,GE:995,DE:49,GH:233,GI:350,GR:30,GL:299,GD:1473,GP:590,GU:1671,GT:502,GN:224,GW:245,GY:592,HT:509,HN:504,HK:852,HU:36,IS:354,IN:91,ID:62,IR:98,IQ:964,IE:353,IL:972,IT:39,JM:1876,JP:81,JO:962,KZ:7,KE:254,KI:686,XK:383,KW:965,KG:996,LA:856,LV:371,LB:961,LS:266,LR:231,LY:218,LI:423,LT:370,LU:352,MO:853,MG:261,MW:265,MY:60,MV:960,ML:223,MT:356,MH:692,MQ:596,MR:222,MU:230,YT:262,MX:52,FM:691,MD:373,MC:377,MN:976,ME:382,MS:1664,MA:212,MZ:258,MM:95,NA:264,NR:674,NP:977,NL:31,NC:687,NZ:64,NI:505,NE:227,NG:234,NU:683,KP:850,MK:389,MP:1670,NO:47,OM:968,PK:92,PW:680,PS:970,PA:507,PG:675,PY:595,PE:51,PH:63,PL:48,PT:351,PR:1787,QA:974,RE:262,RO:40,RU:7,RW:250,WS:685,SM:378,ST:239,SA:966,SN:221,RS:381,SC:248,SL:232,SG:65,SX:1721,SK:421,SI:386,SB:677,SO:252,ZA:27,KR:82,SS:211,ES:34,LK:94,SD:249,SR:597,SE:46,CH:41,SY:963,TW:886,TJ:992,TZ:255,TH:66,TL:670,TG:228,TK:690,TO:676,TT:1868,TN:216,TR:90,TM:993,TC:1649,TV:688,UG:256,UA:380,AE:971,GB:44,US:1,UY:598,UZ:998,VU:678,VE:58,VN:84,VI:1340,WF:681,YE:967,ZM:260,ZW:263,PM:508,SH:290,KN:1869,LC:1758,VC:1784';
+const PREFERRED = ['ES','DZ','MA','FR','DE','GB','IT','PT','NL','BE','CH','TN','US'];
+const COUNTRIES = {};
+COUNTRY_DATA.split(',').forEach(p => { const [iso, dial] = p.split(':'); COUNTRIES[iso] = { iso, dial }; });
+const countryList = Object.values(COUNTRIES);
+const byDial = {};
+PREFERRED.forEach(i => { const c = COUNTRIES[i]; if (c && !byDial[c.dial]) byDial[c.dial] = c; });
+countryList.forEach(c => { if (!byDial[c.dial]) byDial[c.dial] = c; });
+const flagOf = iso => iso.replace(/./g, ch => String.fromCodePoint(127397 + ch.charCodeAt(0)));
+let phoneCountry = 'ES';
+let _dn = null, _dnLang = null;
+function countryName(iso){
+  try {
+    if (_dnLang !== lang){ _dn = new Intl.DisplayNames([locale()], { type:'region' }); _dnLang = lang; }
+    return _dn.of(iso) || iso;
+  } catch(e){ return iso; }
+}
+const normTxt = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function detectDial(digits){
+  for (let n = 4; n >= 1; n--){ const d = digits.slice(0, n); if (byDial[d]) return { dial: d, rest: digits.slice(n) }; }
+  return null;
+}
+function nationalDigits(){
+  let d = document.getElementById('inpPhone').value.replace(/\D/g, '');
+  if (phoneCountry !== 'IT') d = d.replace(/^0+/, '');
+  return d;
+}
+function isPhoneValid(){
+  const c = COUNTRIES[phoneCountry];
+  const d = nationalDigits();
+  if (!d) return false;
+  if (c.iso === 'ES') return /^[6-9]\d{8}$/.test(d);
+  if (c.iso === 'MA') return /^[5-7]\d{8}$/.test(d);
+  if (c.iso === 'DZ') return /^[5-7]\d{8}$/.test(d);
+  if (c.iso === 'FR') return /^[1-9]\d{8}$/.test(d);
+  if (c.iso === 'DE') return /^[1-9]\d{9,10}$/.test(d);
+  if (c.iso === 'US' || c.iso === 'CA') return /^[2-9]\d{9}$/.test(d);
+  if (c.iso === 'GB') return /^[1-9]\d{9}$/.test(d);
+  return d.length >= 6 && (c.dial.length + d.length) <= 15;
+}
+function syncPhone(){
+  const c = COUNTRIES[phoneCountry];
+  const d = nationalDigits();
+  phone = d ? '+' + c.dial + ' ' + d : '';
+}
+function renderCountryBtn(){
+  const c = COUNTRIES[phoneCountry];
+  const btn = document.getElementById('countryBtn');
+  if (btn) btn.textContent = flagOf(c.iso) + ' +' + c.dial + ' ▾';
+}
+function normalizePhoneField(){
+  const el = document.getElementById('inpPhone');
+  if (!el) return;
+  const raw = el.value.trim();
+  if (raw.startsWith('+') || raw.startsWith('00')){
+    let digits = raw.replace(/\D/g, '');
+    if (!raw.startsWith('+')) digits = digits.replace(/^00/, '');
+    const hit = detectDial(digits);
+    if (hit){ phoneCountry = byDial[hit.dial].iso; el.value = hit.rest; renderCountryBtn(); }
+  }
+  syncPhone();
+}
+function openCountryPicker(){
+  const s = document.getElementById('countrySearch');
+  s.value = ''; s.placeholder = t().searchCountry;
+  renderCountryList('');
+  document.getElementById('countryOverlay').classList.add('show');
+}
+function closeCountryPicker(){ document.getElementById('countryOverlay').classList.remove('show'); }
+function renderCountryList(q){
+  const list = document.getElementById('countryList');
+  const nq = normTxt(q).replace(/^\+/, '').trim();
+  const items = countryList.map(c => ({ iso: c.iso, dial: c.dial, name: countryName(c.iso) }));
+  const pinned = PREFERRED.map(i => items.find(x => x.iso === i)).filter(Boolean);
+  const rest = items.filter(x => !PREFERRED.includes(x.iso)).sort((a, b) => a.name.localeCompare(b.name, locale()));
+  let all = [...pinned, ...rest];
+  if (nq) all = all.filter(x => normTxt(x.name).includes(nq) || x.dial.startsWith(nq) || x.iso.toLowerCase() === nq);
+  list.innerHTML = '';
+  all.forEach(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'country-item' + (c.iso === phoneCountry ? ' active' : '');
+    b.innerHTML = '<span class="country-flag">' + flagOf(c.iso) + '</span><span class="country-name">' + esc(c.name) + '</span><span class="country-dial">+' + c.dial + '</span>';
+    b.onclick = () => { phoneCountry = c.iso; closeCountryPicker(); renderCountryBtn(); syncPhone(); updateConfirmState(); };
+    list.appendChild(b);
+  });
+}
 
-  <!-- WORK MARKET HUB -->
-  <div class="card screen" id="screen-jobs">
-    <button class="back" data-goto="home"></button>
-    <div class="admin-title" id="jobsTitle">💼 Work Market</div>
-    <button class="job-type-btn" id="jobTypeJob">
-      <span class="job-type-icon">👨‍🦱</span>
+/* ============ BARBER DASHBOARD ============ */
+async function renderBarberDashboard(){
+  const tr = t();
+  document.getElementById('bdTitle').textContent = tr.dashboard;
+  document.getElementById('logoutBtn').textContent = tr.logout;
+  document.getElementById('bdEmail').textContent = currentBarber ? currentBarber.email : '';
+  document.getElementById('bdShop').textContent = currentBarber ? (currentBarber.shop_name || currentBarber.full_name || '') : '';
+  document.getElementById('bdEditCenter').textContent = tr.editCenter;
+  document.getElementById('bdGallery').textContent = tr.gBtn;
+  document.getElementById('bdShare').textContent = tr.copyLink;
+  document.getElementById('bdPassword').textContent = tr.changePassword;
+  document.getElementById('bdEditProfile').textContent = tr.editProfile;
+  document.getElementById('addWorkerBtn').textContent = '➕ ' + tr.addWorker;
+
+  await loadMyWorkers();
+  const wr = document.getElementById('bdWorkersRow');
+  wr.innerHTML = '';
+  if (!workers.length){
+    wr.innerHTML = '<div class="warning" style="padding:10px">No workers yet. Add one below.</div>';
+  } else {
+    workers.forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'worker-circle';
+      const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
+      div.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt=""><div class="worker-name">${esc(w.name)}</div>`;
+      div.onclick = () => openManageWorker(w);
+      wr.appendChild(div);
+    });
+  }
+
+  await loadMyHolidays();
+  const daysEl = document.getElementById('bdDays');
+  daysEl.innerHTML = '';
+  futureDates.forEach(d => {
+    const key = dateToKey(d);
+    const sel = isHoliday(key);
+    const box = document.createElement('div');
+    box.className = 'day-box' + (sel ? ' holiday-selected' : '');
+    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${sel?'<div class="holiday-mini" style="color:var(--gold)">✓</div>':''}`;
+    box.onclick = () => toggleHoliday(key);
+    daysEl.appendChild(box);
+  });
+  document.getElementById('bdMonth').textContent = getMonthLabel(daysEl);
+
+  renderQR();
+
+  await loadAdminBookings();
+  const list = document.getElementById('bdBookings');
+  if (!adminBookings.length){
+    list.innerHTML = `<div class="empty">${esc(tr.noBookings)}</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  adminBookings.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'admin-item';
+    const workerLine = item.workerName ? `<div class="admin-info">👤 ${esc(item.workerName)}</div>` : '';
+    div.innerHTML = `
       <div style="flex:1">
-        <div class="job-type-title" id="jtJobTitle">Looking for a Job</div>
-        <div class="job-type-sub" id="jtJobSub">Post your profile so salons can find you</div>
+        <div class="client-name">${esc(item.clientName)}</div>
+        <div class="admin-info">📞 ${esc(item.clientPhone)}</div>
+        <div class="admin-info">✂️ ${esc(item.serviceName)}</div>
+        ${workerLine}
+        <div class="admin-info">📅 ${esc(item.dateKey)} — ⏰ ${esc(item.startTime)}</div>
       </div>
-    </button>
-    <button class="job-type-btn" id="jobTypeWorker">
-      <span class="job-type-icon">🏪</span>
-      <div style="flex:1">
-        <div class="job-type-title" id="jtWorkerTitle">Looking for a Worker</div>
-        <div class="job-type-sub" id="jtWorkerSub">Post a job offer for barbers</div>
-      </div>
-    </button>
-    <button class="job-type-btn" id="jobTypeBrowse">
-      <span class="job-type-icon">👀</span>
-      <div style="flex:1">
-        <div class="job-type-title" id="jtBrowseTitle">Browse Offers</div>
-        <div class="job-type-sub" id="jtBrowseSub">See all barbers and salons looking to connect</div>
-      </div>
-    </button>
-  </div>
+      <button class="delete-btn">🗑️</button>`;
+    div.querySelector('.delete-btn').
 
-  <!-- POST JOB FORM -->
-  <div class="card screen" id="screen-postjob">
-    <button class="back" data-goto="jobs"></button>
-    <div class="admin-title" id="postTitle">New Post</div>
-    <input class="input" id="pjTitle" type="text" placeholder="Title (e.g. Experienced barber available)">
-    <textarea class="input" id="pjDesc" rows="4" placeholder="Description (optional)" style="resize:vertical"></textarea>
-    <input class="input" id="pjPhone" type="tel" placeholder="Phone number">
-    <input class="input" id="pjInstagram" type="text" placeholder="Instagram handle (optional)">
-    <div class="section-title-small" id="cityLabel">City</div>
-    <select class="input" id="pjCity"></select>
-    <input class="input" id="pjCityCustom" type="text" placeholder="City name" style="display:none">
-    <button class="btn" id="pjSubmit">POST</button>
-  </div>
+    div.querySelector('.delete-btn').onclick = () => {
+      showConfirm(tr.deleteBookingTitle, tr.deleteBookingMessage, tr.yesDelete, async () => {
+        const { error } = await sb.from('bookings').update({ status: 'cancelled' }).eq('id', item.id);
+        if (error){ alert(error.message); return; }
+        await Promise.all([loadAdminBookings(), loadBusy()]);
+        renderBarberDashboard();
+      });
+    };
+    list.appendChild(div);
+  });
+}
 
-  <!-- BROWSE JOBS -->
-  <div class="card screen" id="screen-browsejobs">
-    <button class="back" data-goto="jobs"></button>
-    <div class="admin-title" id="browseTitle">👀 Browse</div>
-    <div class="section-title-small" id="filterLabel">Filter by city</div>
-    <select class="input" id="bjCity">
-      <option value="">All cities</option>
-    </select>
+function renderQR(){
+  if (!currentBarberId) return;
+  const url = location.origin + location.pathname + '?b=' + currentBarberId;
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(url);
+  const img = document.getElementById('bdQR');
+  if (img) img.src = qrUrl;
+}
+
+async function toggleHoliday(key){
+  if (!currentBarberId) return;
+  const isOn = isHoliday(key);
+  let error;
+  if (isOn){
+    ({error} = await sb.from('holidays').delete().eq('barber_id', currentBarberId).eq('date_key', key));
+  } else {
+    ({error} = await sb.from('holidays').insert({ barber_id: currentBarberId, date_key: key }));
+  }
+  if (error){ alert(error.message); return; }
+  await loadMyHolidays();
+  renderBarberDashboard();
+}
+
+/* ============ EDIT PROFILE (BARBER) ============ */
+function renderEditProfile(){
+  document.getElementById('epName').value = currentBarber ? (currentBarber.full_name || '') : '';
+  document.getElementById('epShop').value = currentBarber ? (currentBarber.shop_name || '') : '';
+  document.getElementById('epPhone').value = currentSettings.phone || '';
+  document.getElementById('epAddress').value = currentSettings.location || '';
+}
+
+/* ============ MANAGE WORKER ============ */
+function renderManageWorker(){
+  const w = workers.find(x => x.id === editingWorkerId);
+  if (!w){ setScreen('barber'); return; }
+  document.getElementById('mwTitle').textContent = 'Manage: ' + w.name;
+  document.getElementById('mwName').value = w.name;
+  document.getElementById('mwOpen').value = w.open_time || '';
+  document.getElementById('mwClose').value = w.close_time || '';
+  const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
+  const preview = document.getElementById('mwPhotoPreview');
+  preview.src = photo;
+  preview.style.visibility = 'visible';
+  mwPhotoFile = null;
+  mwPhotoUrl = w.photo_url;
+  
+  const daysEl = document.getElementById('mwDays');
+  daysEl.innerHTML = '';
+  futureDates.forEach(d => {
+    const key = dateToKey(d);
+    const sel = isWorkerHoliday(w.id, key);
+    const box = document.createElement('div');
+    box.className = 'day-box' + (sel ? ' holiday-selected' : '');
+    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${sel?'<div class="holiday-mini" style="color:var(--gold)">✓</div>':''}`;
+    box.onclick = async () => {
+      const isOn = isWorkerHoliday(w.id, key);
+      let err;
+      if (isOn) {
+        ({ error: err } = await sb.from('worker_holidays').delete().eq('worker_id', w.id).eq('date_key', key));
+      } else {
+        ({ error: err } = await sb.from('worker_holidays').insert({ barber_id: currentBarberId, worker_id: w.id, date_key: key }));
+      }
+      if (err) { alert(err.message); return; }
+      await loadMyHolidays();
+      renderManageWorker();
+    };
+    daysEl.appendChild(box);
+  });
+  document.getElementById('mwMonth').textContent = getMonthLabel(daysEl);
+}
+
+/* ============ EDIT CENTER ============ */
+async function renderEditCenter(){
+  const tr = t();
+  document.getElementById('ecTitle').textContent = tr.editCenter;
+  document.getElementById('ecHeroChange').textContent = tr.changeCover;
+  document.getElementById('ecAddService').textContent = tr.addService;
+
+  const settings = await loadSettings() || {};
+  document.getElementById('ecOpenTime').value = settings.opening_time || '10:00';
+  document.getElementById('ecCloseTime').value = settings.closing_time || '20:00';
+
+  const heroUrl = settings.hero_url || DEFAULT_HERO;
+  const heroPos = parseInt(settings.hero_pos || '50', 10);
+  const heroPrev = document.getElementById('ecHeroPreview');
+  heroPrev.src = heroUrl;
+  heroPrev.style.objectPosition = '50% ' + heroPos + '%';
+  heroPrev.style.visibility = 'visible';
+  document.getElementById('ecHeroPos').value = heroPos;
+
+  const { data: svcs } = await sb.from('services').select('*').eq('barber_id', currentBarberId).eq('is_active', true).order('sort');
+  const list = document.getElementById('ecServices');
+  list.innerHTML = '';
+  (svcs||[]).forEach(sv => {
+    const card = document.createElement('div');
+    card.className = 'admin-item';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'stretch';
+    const sNameAr = sv.name_ar || sv.name_en;
+    card.innerHTML = `
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        <input class="input" type="text" data-f="name" value="${esc(sv.name_en)}" placeholder="English Name" style="margin:0;flex:1">
+        <input class="input" type="text" data-f="nameAr" value="${esc(sNameAr)}" placeholder="Arabic Name" style="margin:0;flex:1">
+        <button class="delete-btn" data-f="del">🗑️</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label style="color:var(--gray);font-size:12px">${esc(tr.price)}</label>
+          <input class="input" type="text" inputmode="decimal" data-f="price" value="${esc(sv.price)}" style="margin:0">
+        </div>
+        <div>
+          <label style="color:var(--gray);font-size:12px">${esc(tr.durMin)}</label>
+          <input class="input" type="text" inputmode="numeric" data-f="dur" value="${esc(sv.duration)}" style="margin:0">
+        </div>
+      </div>
+      <button class="btn" data-f="save" style="margin-top:10px">${esc(tr.save)}</button>
+    `;
+    card.querySelector('[data-f="save"]').onclick = async () => {
+      const price = parseFloat(String(card.querySelector('[data-f="price"]').value).replace(',', '.'));
+      const dur = parseInt(card.querySelector('[data-f="dur"]').value, 10);
+      const nm = card.querySelector('[data-f="name"]').value.trim();
+      const nmAr = card.querySelector('[data-f="nameAr"]').value.trim();
+      if (!nm || !(price >= 0 && price <= 10000) || !(dur >= 5 && dur <= 240)){ 
+        showAlert('!', tr.invalidNum); return; 
+      }
+      const { error } = await sb.from('services').update({ name_en: nm, name_ar: nmAr, price, duration: dur }).eq('id', sv.id);
+      if (error){ alert(error.message); return; }
+      showAlert('✓', tr.saved);
+    };
+    card.querySelector('[data-f="del"]').onclick = () => {
+      showConfirm(tr.deleteServiceTitle, tr.deleteServiceMsg, tr.yesDelete, async () => {
+        await sb.from('services').update({ is_active: false }).eq('id', sv.id);
+        renderEditCenter();
+      });
+    };
+    list.appendChild(card);
+  });
+}
+
+/* ============ ADD SERVICE ============ */
+async function addService(){
+  const tr = t();
+  const nm = prompt("English Name (e.g. Haircut)");
+  if (!nm || !nm.trim()) return;
+  const nmAr = prompt("Arabic Name (e.g. قص شعر)", nm);
+  const priceStr = prompt(tr.price, '15');
+  if (priceStr === null) return;
+  const durStr = prompt(tr.durMin, '30');
+  if (durStr === null) return;
+  const price = parseFloat(String(priceStr).replace(',', '.'));
+  const dur = parseInt(durStr, 10);
+  if (!(price >= 0 && price <= 10000) || !(dur >= 5 && dur <= 240)){ 
+    showAlert('!', tr.invalidNum); return; 
+  }
+  const { data: maxSort } = await sb.from('services').select('sort').eq('barber_id', currentBarberId).order('sort', { ascending: false }).limit(1);
+  const nextSort = ((maxSort && maxSort[0] && maxSort[0].sort) || 0) + 1;
+  const { error } = await sb.from('services').insert({
+    barber_id: currentBarberId, name_en: nm.trim(), name_ar: nmAr ? nmAr.trim() : null,
+    price, duration: dur, sort: nextSort, is_active: true
+  });
+  if (error){ alert(error.message); return; }
+  renderEditCenter();
+}
+
+/* ============ ADMIN GALLERY ============ */
+async function renderAdminGallery(){
+  const tr = t();
+  document.getElementById('agTitle').textContent = tr.gTitle;
+  document.getElementById('agAdd').textContent = tr.gAdd;
+  const list = document.getElementById('agList');
+  list.innerHTML = '<div class="warning">Loading...</div>';
+  await loadPhotos();
+  if (!galleryPhotos.length){
+    list.innerHTML = `<div class="warning">${esc(tr.gEmpty)}</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  galleryPhotos.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'gallery-row';
+    row.innerHTML = `
+      <img class="gallery-thumb" src="${esc(p.url)}" alt="">
+      <div class="gallery-actions">
+        <button class="logout change-btn">${esc(tr.gChange)}</button>
+        <button class="delete-btn del-btn">🗑️</button>
+      </div>`;
+    row.querySelector('.change-btn').onclick = () => {
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'image/*';
+      inp.onchange = async () => {
+        if (!inp.files[0]) return;
+        await replacePhoto(p.id, inp.files[0]);
+      };
+      inp.click();
+    };
+    row.querySelector('.del-btn').onclick = () => {
+      showConfirm(tr.deletePhotoTitle, tr.deletePhotoMsg, tr.yesDelete, async () => {
+        await sb.from('gallery').delete().eq('id', p.id);
+        try {
+          const path = decodeURIComponent(p.url.split('/').pop().split('?')[0]);
+          await sb.storage.from(BUCKET).remove([path]);
+        } catch(e){}
+        renderAdminGallery();
+      });
+    };
+    list.appendChild(row);
+  });
+}
+
+async function addPhoto(file){
+  try {
+    const url = await uploadToStorage(file);
+    const nextSort = Math.floor(Date.now() / 1000);
+    const { error } = await sb.from('gallery').insert({ barber_id: currentBarberId, url, sort: nextSort });
+    if (error) throw error;
+    showAlert('✓', t().gDone);
+    renderAdminGallery();
+  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+}
+async function replacePhoto(id, file){
+  try {
+    const url = await uploadToStorage(file);
+    const { error } = await sb.from('gallery').update({ url }).eq('id', id);
+    if (error) throw error;
+    renderAdminGallery();
+  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+}
+
+/* ============ COMPRESS + UPLOAD ============ */
+async function compressImage(file, maxSize = 1600, quality = 0.85){
+  const img = await createImageBitmap(file);
+  let w = img.width, h = img.height;
+  if (w > maxSize || h > maxSize){
+    const r = Math.min(maxSize / w, maxSize / h);
+    w = Math.round(w * r); h = Math.round(h * r);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+  return new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+}
+async function uploadToStorage(file, prefix = 'img'){
+  const compressed = await compressImage(file);
+  const fileName = currentBarberId + '/' + prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.jpg';
+  const { error } = await sb.storage.from(BUCKET).upload(fileName, compressed, { 
+    cacheControl: 'no-cache, max-age=0', upsert: false, contentType: 'image/jpeg' 
+  });
+  if (error) throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(fileName).data.publicUrl;
+}
+
+/* ============ HERO IMAGE ============ */
+async function changeHero(file){
+  try {
+    const url = await uploadToStorage(file, 'hero');
+    if (!currentBarberId){ alert('Not logged in'); return; }
+    const { data: existing } = await sb.from('barber_settings').select('key').eq('barber_id', currentBarberId).eq('key', 'hero_url').maybeSingle();
+    let err;
+    if (existing){
+      ({ error: err } = await sb.from('barber_settings').update({ value: url }).eq('barber_id', currentBarberId).eq('key', 'hero_url'));
+    } else {
+      ({ error: err } = await sb.from('barber_settings').insert({ barber_id: currentBarberId, key: 'hero_url', value: url }));
+    }
+    if (err){ console.error(err); alert('Error: ' + err.message); return; }
+    showAlert('✓', t().saved);
+    renderEditCenter();
+  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+}
+
+/* ============ WORK MARKET HUB ============ */
+async function renderJobsHub(){
+  const tr = t();
+  document.getElementById('jobsTitle').textContent = tr.jobsTitle;
+  document.getElementById('jtJobTitle').textContent = tr.jtJobTitle;
+  document.getElementById('jtJobSub').textContent = tr.jtJobSub;
+  document.getElementById('jtWorkerTitle').textContent = tr.jtWorkerTitle;
+  document.getElementById('jtWorkerSub').textContent = tr.jtWorkerSub;
+  document.getElementById('jtBrowseTitle').textContent = tr.jtBrowseTitle;
+  document.getElementById('jtBrowseSub').textContent = tr.jtBrowseSub;
+  document.querySelector('#screen-jobs .back').textContent = tr.back;
+}
+
+/* ============ POST JOB ============ */
+async function renderPostJob(){
+  const tr = t();
+  document.querySelector('#screen-postjob .back').textContent = tr.back;
+  document.getElementById('postTitle').textContent = postingType === 'looking_for_job' ? tr.jtJobTitle : tr.jtWorkerTitle;
+  document.getElementById('pjTitle').placeholder = tr.pjTitle;
+  document.getElementById('pjDesc').placeholder = tr.pjDesc;
+  document.getElementById('pjPhone').placeholder = tr.pjPhone;
+  document.getElementById('pjInstagram').placeholder = tr.pjInstagram;
+  document.getElementById('cityLabel').textContent = tr.cityLabel;
+  document.getElementById('pjSubmit').textContent = tr.pjSubmit;
+
+  if (!cities.length) await loadCities();
+  const sel = document.getElementById('pjCity');
+  sel.innerHTML = `<option value="">${tr.selectCity}</option>`;
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name + ' (' + c.country + ')';
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('pjTitle').value = '';
+  document.getElementById('pjDesc').value = '';
+  document.getElementById('pjPhone').value = '';
+  document.getElementById('pjInstagram').value = '';
+  document.getElementById('pjCity').value = '';
+  document.getElementById('pjCityCustom').value = '';
+  document.getElementById('pjCityCustom').style.display = 'none';
+}
+
+/* ============ BROWSE JOBS ============ */
+async function renderBrowseJobs(){
+  const tr = t();
+  document.querySelector('#screen-browsejobs .back').textContent = tr.back;
+  document.getElementById('browseTitle').textContent = tr.browseTitle;
+  document.getElementById('filterLabel').textContent = tr.filterLabel;
+
+  if (!cities.length) await loadCities();
+  const sel = document.getElementById('bjCity');
+  sel.innerHTML = `<option value="">${tr.allCities}</option>`;
+  cities.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name + (c.jobs_count > 0 ? ' (' + c.jobs_count + ')' : '');
+    if (jobFilter.city_id == c.id) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  await loadJobPosts(jobFilter.city_id, jobFilter.type);
+  renderJobList();
+}
+function renderJobList(){
+  const tr = t();
+  const list = document.getElementById('bjList');
+  if (!jobPosts.length){
+    list.innerHTML = `<div class="empty">${esc(tr.noBookings)}</div>`;
+    return;
+  }
+  list.innerHTML = '';
+  jobPosts.forEach(j => {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    const icon = j.post_type === 'looking_for_job' ? '👨‍🦱' : '🏪';
+    const city = j.city_name || j.city_custom || '';
+    card.innerHTML = `
+      <div class="job-card-title">${icon} ${esc(j.title)}</div>
+      ${j.description ? `<div class="job-card-desc">${esc(j.description)}</div>` : ''}
+      ${city ? `<div class="job-card-meta">📍 ${esc(city)}</div>` : ''}
+      <div class="job-card-actions">
+        <button data-a="call">${esc(tr.contactCall)}</button>
+        ${j.instagram ? `<button data-a="insta">${esc(tr.contactInsta)}</button>` : ''}
+      </div>
+    `;
+    card.querySelector('[data-a="call"]').onclick = () => {
+      sb.rpc('bb_increment_job_views', { p_job_id: j.id }).catch(()=>{});
+      window.open('tel:' + j.phone.replace(/\s/g, ''), '_blank');
+    };
+    const instaBtn = card.querySelector('[data-a="insta"]');
+    if (instaBtn) instaBtn.onclick = () => window.open('https://instagram.com/' + j.instagram.replace(/^@/, ''), '_blank');
+    list.appendChild(card);
+  });
+}
+
+/* ============ SUBMIT JOB POST ============ */
+async function submitJobPost(){
+  const tr = t();
+  const { data: { user } } = await sb.auth.getUser();
+  
+  // إصلاح: التحقق من وجود currentBarberId (وليس user فقط) لضمان أن الحلاق مسجل
+  if (!currentBarberId){
+    showAlert('!', tr.loginRequired, tr.btnOk, () => setScreen('login'));
+    return;
+  }
+  
+  const title = document.getElementById('pjTitle').value.trim();
+  const description = document.getElementById('pjDesc').value.trim();
+  const phone = document.getElementById('pjPhone').value.trim();
+  const instagram = document.getElementById('pjInstagram').value.trim();
+  const cityId = document.getElementById('pjCity').value;
+  const cityCustom = document.getElementById('pjCityCustom').value.trim();
+
+  if (!title){ showAlert('!', 'Please enter a title.'); return; }
+  if (!phone){ showAlert('!', 'Please enter a phone.'); return; }
+  if (!cityId && !cityCustom){ showAlert('!', 'Please select or enter a city.'); return; }
+
+  const payload = {
+    user_id: user.id, post_type: postingType, title, description: description || null,
+    phone, instagram: instagram || null, city_id: cityId ? Number(cityId) : null,
+    city_custom: (!cityId && cityCustom) ? cityCustom : null, is_active: true
+  };
+
+  const { error } = await sb.from('job_posts').insert(payload);
+  if (error){ alert(error.message); return; }
+  showAlert('✓', tr.jobPosted, tr.btnOk, () => setScreen('jobs'));
+}
+
+/* ============ EVENTS ============ */
+document.getElementById('adminTrigger').onclick = async () => {
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) await enterBarberMode();
+  else setScreen('settings');
+};
+document.getElementById('goSignup').onclick = () => setScreen('signup');
+document.getElementById('goLogin').onclick = () => setScreen('login');
+document.getElementById('goJobsFromSettings').onclick = () => setScreen('jobs');
+
+document.getElementById('galleryBtn').onclick = () => setScreen('gallery');
+document.getElementById('jobsBtn').onclick = () => setScreen('jobs');
+document.getElementById('nextBtn').onclick = () => {
+  if (!selectedService){ showAlert('!', t().errS); return; }
+  setScreen('booking');
+};
+document.getElementById('langBox').onclick = () => {
+  const m = document.getElementById('langMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+};
+
+document.getElementById('confirmBtn').onclick = handleFinalBooking;
+document.getElementById('inpName').addEventListener('input', e => { name = e.target.value; updateConfirmState(); });
+document.getElementById('inpPhone').addEventListener('input', () => { normalizePhoneField(); updateConfirmState(); });
+document.getElementById('countryBtn').onclick = openCountryPicker;
+document.getElementById('countryClose').onclick = closeCountryPicker;
+document.getElementById('countrySearch').addEventListener('input', e => renderCountryList(e.target.value));
+document.getElementById('countryOverlay').addEventListener('click', e => { if (e.target.id === 'countryOverlay') closeCountryPicker(); });
+
+document.getElementById('signupBtn').onclick = doSignup;
+document.getElementById('loginBtn').onclick = doLogin;
+document.getElementById('forgotBtn').onclick = () => setScreen('reset');
+document.getElementById('resetBtn').onclick = async () => {
+  const email = document.getElementById('rpEmail').value.trim();
+  const msg = document.getElementById('rpMsg');
+  if (!email){ msg.textContent = t().errEmail; return; }
+  msg.textContent = 'Sending...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname + '?reset=1' });
+  if (error){ msg.textContent = error.message; return; }
+  msg.textContent = t().resetSent;
+};
+document.getElementById('newpassBtn').onclick = async () => {
+  const password = document.getElementById('npPassword').value;
+  if (password.length < 6){ alert(t().errPass); return; }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error){ alert(error.message); return; }
+  alert(t().savedPass);
+  history.replaceState({}, '', location.pathname);
+  setScreen('login');
+};
+
+document.getElementById('logoutBtn').onclick = doLogout;
+document.getElementById('bdShare').onclick = async () => {
+  const url = location.origin + location.pathname + '?b=' + currentBarberId;
+  try {
+    await navigator.clipboard.writeText(url);
+    showAlert('✓', t().linkCopied + '\n\n' + url, t().btnOk);
+  } catch(e){ showAlert('📋', url, t().btnOk); }
+};
+document.getElementById('bdPassword').onclick = () => setScreen('changepass');
+document.getElementById('cpBtn').onclick = async () => {
+  const password = document.getElementById('cpPassword').value;
+  if (password.length < 6){ alert(t().errPass); return; }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error){ alert(error.message); return; }
+  alert(t().savedPass);
+  document.getElementById('cpPassword').value = '';
+  setScreen('barber');
+};
+
+/* --- PROFILE EVENTS --- */
+document.getElementById('bdEditProfile').onclick = () => setScreen('editprofile');
+document.getElementById('epSave').onclick = async () => {
+  const name = document.getElementById('epName').value.trim();
+  const shop = document.getElementById('epShop').value.trim();
+  const phone = document.getElementById('epPhone').value.trim();
+  const address = document.getElementById('epAddress').value.trim();
+  if (!name || !shop) { showAlert('!', t().errNameShop); return; }
+  
+  const { error: bErr } = await sb.from('barbers').update({ full_name: name, shop_name: shop }).eq('id', currentBarberId);
+  if (bErr) { alert(bErr.message); return; }
+  
+  await sb.from('barber_settings').upsert([
+    { barber_id: currentBarberId, key: 'phone', value: phone },
+    { barber_id: currentBarberId, key: 'location', value: address }
+  ]);
+  
+  await loadCurrentBarber();
+  showAlert('✓', t().saved);
+  setScreen('barber');
+};
+
+/* --- WORKER EVENTS --- */
+document.getElementById('addWorkerBtn').onclick = () => {
+  editingWorkerId = 'new';
+  document.getElementById('mwTitle').textContent = t().addWorker;
+  document.getElementById('mwName').value = '';
+  document.getElementById('mwOpen').value = '';
+  document.getElementById('mwClose').value = '';
+  document.getElementById('mwPhotoPreview').style.visibility = 'hidden';
+  mwPhotoFile = null;
+  mwPhotoUrl = null;
+  document.getElementById('mwDays').innerHTML = '';
+  setScreen('manageworker');
+};
+function openManageWorker(w){
+  editingWorkerId = w.id;
+  setScreen('manageworker');
+}
+document.getElementById('mwPhotoBtn').onclick = () => document.getElementById('mwPhotoInput').click();
+document.getElementById('mwPhotoInput').addEventListener('change', e => {
+  if (!e.target.files[0]) return;
+  mwPhotoFile = e.target.files[0];
+  const preview = document.getElementById('mwPhotoPreview');
+  preview.src = URL.createObjectURL(mwPhotoFile);
+  preview.style.visibility = 'visible';
+  e.target.value = '';
+});
+document.getElementById('mwSave').onclick = async () => {
+  const name = document.getElementById('mwName').value.trim();
+  const open = document.getElementById('mwOpen').value.trim();
+  const close = document.getElementById('mwClose').value.trim();
+  if (!name) { alert(t().workerName); return; }
+  
+  let photoUrl = mwPhotoUrl;
+  if (mwPhotoFile) {
+    try { photoUrl = await uploadToStorage(mwPhotoFile, 'worker'); } 
+    catch(err) { alert(err.message); return; }
+  }
+  
+  if (editingWorkerId === 'new') {
+    const { error } = await sb.from('workers').insert({
+      barber_id: currentBarberId, name, photo_url: photoUrl,
+      open_time: open || null, close_time: close || null, is_active: true, sort: workers.length + 1
+    });
+    if (error) { alert(error.message); return; }
+  } else {
+    const { error } = await sb.from('workers').update({ name, photo_url: photoUrl, open_time: open || null, close_time: close || null }).eq('id', editingWorkerId);
+    if (error) { alert(error.message); return; }
+  }
+  
+  await loadMyWorkers();
+  showAlert('✓', t().saved);
+  setScreen('barber');
+};
+document.getElementById('mwDelete').onclick = () => {
+  if (editingWorkerId === 'new') { setScreen('barber'); return; }
+  showConfirm(t().deleteWorkerTitle, t().deleteWorkerMsg, t().yesDelete, async () => {
+    const { error } = await sb.from('workers').update({ is_active: false }).eq('id', editingWorkerId);
+    if (error) { alert(error.message); return; }
+    await loadMyWorkers();
+    setScreen('barber');
+  });
+};
+
+/* --- EDIT CENTER EVENTS --- */
+document.getElementById('bdEditCenter').onclick = () => setScreen('editcenter');
+document.getElementById('ecSaveHours').onclick = async () => {
+  const open = document.getElementById('ecOpenTime').value.trim();
+  const close = document.getElementById('ecCloseTime').value.trim();
+  if (!open || !close) return;
+  await sb.from('barber_settings').upsert([
+    { barber_id: currentBarberId, key: 'opening_time', value: open },
+    { barber_id: currentBarberId, key: 'closing_time', value: close }
+  ]);
+  showAlert('✓', t().saved);
+  renderEditCenter();
+};
+document.getElementById('ecHeroChange').onclick = () => document.getElementById('ecHeroInput').click();
+document.getElementById('ecHeroInput').addEventListener('change', e => {
+  if (!e.target.files[0]) return;
+  changeHero(e.target.files[0]);
+  e.target.value = '';
+});
+document.getElementById('ecHeroPos').addEventListener('change', async e => {
+  const v = String(parseInt(e.target.value, 10));
+  document.getElementById('ecHeroPreview').style.objectPosition = '50% ' + v + '%';
+  await sb.from('barber_settings').upsert([{ barber_id: currentBarberId, key: 'hero_pos', value: v }]);
+});
+document.getElementById('ecAddService').onclick = addService;
+
+/* --- ADMIN GALLERY EVENTS --- */
+document.getElementById('bdGallery').onclick = () => setScreen('admingallery');
+document.getElementById('agAdd').onclick = () => document.getElementById('agInput').click();
+document.getElementById('agInput').addEventListener('change', e => {
+  if (!e.target.files[0]) return;
+  addPhoto(e.target.files[0]);
+  e.target.value = '';
+});
+
+/* --- WORK MARKET EVENTS --- */
+document.getElementById('jobTypeJob').onclick = () => { postingType = 'looking_for_job'; setScreen('postjob'); };
+document.getElementById('jobTypeWorker').onclick = () => { postingType = 'looking_for_worker'; setScreen('postjob'); };
+document.getElementById('jobTypeBrowse').onclick = () => { jobFilter = { city_id: null, type: null }; setScreen('browsejobs'); };
+document.getElementById('pjSubmit').onclick = submitJobPost;
+document.getElementById('pjCity').addEventListener('change', e => {
+  document.getElementById('pjCityCustom').style.display = e.target.value ? 'none' : 'block';
+});
+document.getElementById('bjCity').addEventListener('change', async e => {
+  jobFilter.city_id = e.target.value ? Number(e.target.value) : null;
+  await loadJobPosts(jobFilter.city_id, jobFilter.type);
+  renderJobList();
+});
+document.querySelectorAll('#bjChips .chip').forEach(chip => {
+  chip.onclick = async () => {
+    document.querySelectorAll('#bjChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    jobFilter.type = chip.dataset.type || null;
+    await loadJobPosts(jobFilter.city_id, jobFilter.type);
+    renderJobList();
+  };
+});
+
+/* --- BACK BUTTONS --- */
+document.querySelectorAll('.back').forEach(b => {
+  b.onclick = () => {
+    let go = b.dataset.goto;
+    if (go === 'home' && screen === 'booking'){
+      name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
+      document.getElementById('inpName').value=''; document.getElementById('inpPhone').value='';
+    }
+    setScreen(go);
+  };
+});
+
+const bookingDaysEl = document.getElementById('bookingDays');
+if (bookingDaysEl) bookingDaysEl.addEventListener('scroll', () => { 
+  document.getElementById('bookingMonth').textContent = getMonthLabel(bookingDaysEl); 
+});
+
+/* ============ URL PARAMS ============ */
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.get('reset') === '1'){ setTimeout(() => setScreen('newpass'), 400); }
+const bParam = urlParams.get('b');
+if (bParam){ viewingBarberId = bParam; localStorage.setItem('viewing_barber', bParam); }
+else { const stored = localStorage.getItem('viewing_barber'); if (stored) viewingBarberId = stored; }
+
+/* ============ INIT ============ */
+(async () => {
+  applyLang();
+  renderCountryBtn();
+  const { data: { session } } = await sb.auth.getSession();
+  if (session){ await loadCurrentBarber(); }
+  if (viewingBarberId){ await Promise.all([loadBusy(), loadHolidays(), loadPhotos()]); }
+  await loadCities();
+  await renderHome();
+})();
+sb.auth.onAuthStateChange((event) => { console.log('Auth event:', event); });
+</script>
+</body>
+</html>
+  
+  .chip { padding:10px 18px; background:var(--box); border:1
+  
