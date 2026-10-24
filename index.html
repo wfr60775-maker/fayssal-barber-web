@@ -29,18 +29,18 @@
   .section-title-small { color:var(--white); font-size:18px; font-weight:bold; margin:10px 0 12px; }
   .item { background:var(--box); border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1.5px solid transparent; cursor:pointer; width:100%; color:var(--white); text-align:start; }
   .item.active { border-color:var(--gold); background:#2d2d2d; }
-(--  .service-name { font-size:16px; font-weight:line600; }
-  .service-time { color:#888;); border-radius font-size:13px; margin-top:4px:; }
-  .price { color:var(--gold); font-size:1218px; fontpx-weight:bold; }
-  .working-hours { color:#777;; font-size:12px; text-align:center; margin-top:8px padding; }
-  .btn { background:var(--gold); color:#111; border:none; padding::17px; border-radius12:12px; width:100%; margin-top:25pxpx; font-size:14px; font-weight:bold; cursor:pointer; }
+  .service-name { font-size:16px; font-weight:600; }
+  .service-time { color:#888; font-size:13px; margin-top:4px; }
+  .price { color:var(--gold); font-size:18px; font-weight:bold; }
+  .working-hours { color:#777; font-size:12px; text-align:center; margin-top:8px; }
+  .btn { background:var(--gold); color:#111; border:none; padding:17px; border-radius:12px; width:100%; margin-top:25px; font-size:14px; font-weight:bold; cursor:pointer; }
   .btn.disabled { opacity:.5; pointer-events:none; }
   .btn-secondary { background:var(--box); border:1.5px solid var(--gold); color:var(--gold); padding:16px; border-radius:12px; width:100%; font-size:15px; font-weight:bold; cursor:pointer; text-align:center; margin-top:10px; }
   .back { color:var(--gold); font-size:15px; margin-bottom:15px; font-weight:600; background:none; border:none; cursor:pointer; }
   .input { background:var(--box); color:var(--white); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; width:100%; font-size:16px; }
   .input::placeholder { color:#666; }
   select.input { appearance:none; -webkit-appearance:none; }
-  .month-box { background:var(--box); border:1px solid var 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
+  .month-box { background:var(--box); border:1px solid var(--line); border-radius:12px; padding:12px 15px; margin-bottom:10px; text-align:center; color:var(--gold); font-size:16px; font-weight:bold; }
   .days-scroll { display:flex; overflow-x:auto; padding:5px 2px; gap:8px; }
   .day-box { min-width:70px; height:78px; background:var(--box); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1.5px solid transparent; cursor:pointer; }
   .day-box.active { border-color:var(--gold); background:#2d2d2d; }
@@ -121,8 +121,285 @@
   .job-card-actions { display:flex; gap:8px; margin-top:12px; }
   .job-card-actions button { flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--gold); background:none; color:var(--gold); font-size:13px; font-weight:bold; cursor:pointer; }
   .filter-chips { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; padding:4px 0; }
+  .chip { padding:10px 18px; background:var(--box); border:1.5px solid var(--line); border-radius:20px; color:var(--gray); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .chip.active { border-color:var(--gold); color:var(--gold); background:#2d2d2d; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="logo" id="logoText">BARBER RESERVE</div>
+      <div class="subtitle" id="subText"></div>
+    </div>
+    <button class="admin-trigger" id="adminTrigger">⚙️</button>
+  </div>
 
-  <script>
+  <!-- HOME -->
+  <div class="card screen active" id="screen-home">
+    <button class="lang-box" id="langBox">
+      <span class="gray" id="labelText"></span>
+      <span class="gold" id="langName"></span>
+    </button>
+    <div class="language-menu" id="langMenu" style="display:none"></div>
+    <img class="hero-image" id="heroImg" alt="" style="visibility:hidden">
+    <div class="barber-name" id="shopName">Barber</div>
+    <div class="location" id="locText"></div>
+    <div class="line"></div>
+    <button class="btn-secondary" id="jobsBtn" style="margin-bottom:14px">💼 Work Market</button>
+    <div class="section-title" id="titleText"></div>
+    <div id="servicesList"></div>
+    <button class="btn-secondary" id="galleryBtn"></button>
+    <div class="line"></div>
+    <div class="working-hours" id="workingHours"></div>
+    <button class="btn" id="nextBtn"></button>
+  </div>
+
+  <!-- BOOKING -->
+  <div class="card screen" id="screen-booking">
+    <button class="back" data-goto="home"></button>
+    <div id="workersSection" style="display:none">
+      <div class="section-title-small" id="wLabel"></div>
+      <div class="workers-row" id="workersRow"></div>
+    </div>
+    <div class="section-title-small" id="cdLabel"></div>
+    <input class="input" id="inpName" type="text" maxlength="80" autocomplete="name">
+    <div class="phone-row">
+      <button type="button" class="country-btn" id="countryBtn"></button>
+      <input class="input" id="inpPhone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel-national">
+    </div>
+    <div class="line"></div>
+    <div class="section-title-small" id="dLabel"></div>
+    <div class="month-box" id="bookingMonth"></div>
+    <div class="days-scroll" id="bookingDays"></div>
+    <div id="bookingHolidayMsg"></div>
+    <div class="section-title-small" id="tLabel"></div>
+    <div id="timesArea"></div>
+    <button class="btn" id="confirmBtn"></button>
+  </div>
+
+  <!-- GALLERY (customers) -->
+  <div class="card screen" id="screen-gallery">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title" id="galleryTitle"></div>
+    <div id="galleryList"></div>
+  </div>
+
+  <!-- SETTINGS HUB -->
+  <div class="card screen" id="screen-settings">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title">⚙️ Settings</div>
+    <button class="settings-card" id="goSignup">
+      <span class="sc-icon">📝</span>
+      <span class="sc-text"><span class="sc-title">Sign Up (New Barber)</span><span class="sc-sub">Create your own account</span></span>
+    </button>
+    <button class="settings-card" id="goLogin">
+      <span class="sc-icon">🔐</span>
+      <span class="sc-text"><span class="sc-title">Login (Barber)</span><span class="sc-sub">Access your dashboard</span></span>
+    </button>
+    <button class="settings-card" id="goJobsFromSettings">
+      <span class="sc-icon">💼</span>
+      <span class="sc-text"><span class="sc-title">Work Market</span><span class="sc-sub">Find jobs & workers</span></span>
+    </button>
+  </div>
+
+  <!-- SIGN UP -->
+  <div class="card screen" id="screen-signup">
+    <button class="back" data-goto="settings"></button>
+    <div class="admin-title">📝 Sign Up</div>
+    <input class="input" id="suName" type="text" placeholder="Full name">
+    <input class="input" id="suShop" type="text" placeholder="Shop name">
+    <input class="input" id="suEmail" type="email" placeholder="Email">
+    <input class="input" id="suPassword" type="password" placeholder="Password (min 6)">
+    <button class="btn" id="signupBtn">CREATE ACCOUNT</button>
+    <p id="suMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card screen" id="screen-login">
+    <button class="back" data-goto="settings"></button>
+    <div class="admin-title">🔐 Login</div>
+    <input class="input" id="blEmail" type="email" placeholder="Email">
+    <input class="input" id="blPassword" type="password" placeholder="Password">
+    <button class="btn" id="loginBtn">LOGIN</button>
+    <button class="btn-secondary" id="forgotBtn">Forgot password?</button>
+    <p id="blMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- RESET -->
+  <div class="card screen" id="screen-reset">
+    <button class="back" data-goto="login"></button>
+    <div class="admin-title">Reset password</div>
+    <input class="input" id="rpEmail" type="email" placeholder="Email">
+    <button class="btn" id="resetBtn">SEND RESET LINK</button>
+    <p id="rpMsg" style="color:var(--gold);margin-top:12px;font-size:14px;text-align:center"></p>
+  </div>
+
+  <!-- NEW PASSWORD -->
+  <div class="card screen" id="screen-newpass">
+    <div class="admin-title">New password</div>
+    <input class="input" id="npPassword" type="password" placeholder="New password">
+    <button class="btn" id="newpassBtn">SAVE</button>
+  </div>
+
+  <!-- BARBER DASHBOARD -->
+  <div class="card screen" id="screen-barber">
+    <div class="dashboard-header">
+      <div class="admin-title" style="margin-bottom:0" id="bdTitle">My Dashboard</div>
+      <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+    <div class="line"></div>
+    <div class="admin-info">📧 <span id="bdEmail"></span></div>
+    <div class="admin-info">🏪 <span id="bdShop"></span></div>
+    <div class="line"></div>
+    <div class="section-title-small" id="myTeamLabel">👥 My Team (Workers)</div>
+    <div class="workers-row" id="bdWorkersRow"></div>
+    <button class="btn-secondary" id="addWorkerBtn">➕ Add Worker</button>
+    <div class="line"></div>
+    <button class="btn-secondary" id="bdEditCenter">🛠️ Edit Center</button>
+    <button class="btn-secondary" id="bdGallery">🖼️ My Work Photos</button>
+    <div class="line"></div>
+    <div class="section-title-small" id="shareLabel">🔗 Share with clients</div>
+    <button class="btn-secondary" id="bdShare">📋 Copy my public link</button>
+    <div class="qr-box"><img id="bdQR" alt="QR"></div>
+    <div class="line"></div>
+    <button class="btn-secondary" id="bdPassword">🔑 Change password</button>
+    <div class="line"></div>
+    <div class="section-title-small" id="holidaysLabel">📅 Holidays (tap to toggle)</div>
+    <div class="month-box" id="bdMonth"></div>
+    <div class="days-scroll" id="bdDays"></div>
+    <div class="line"></div>
+    <div class="section-title-small" id="myBookingsLabel">📋 My Bookings</div>
+    <div id="bdBookings"></div>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="card screen" id="screen-changepass">
+    <button class="back" data-goto="barber"></button>
+    <div class="admin-title" id="cpTitle">Change password</div>
+    <input class="input" id="cpPassword" type="password" placeholder="New password">
+    <button class="btn" id="cpBtn">SAVE</button>
+  </div>
+
+  <!-- EDIT CENTER -->
+  <div class="card screen" id="screen-editcenter">
+    <button class="back" data-goto="barber"></button>
+    <div class="admin-title" id="ecTitle">🛠️ Edit Center</div>
+    <div class="section-title-small" id="coverLabel">🖼️ Cover Image</div>
+    <img class="hero-image" id="ecHeroPreview" alt="" style="visibility:hidden">
+    <input type="range" class="input" id="ecHeroPos" min="0" max="100" value="50" style="padding:8px">
+    <button class="btn-secondary" id="ecHeroChange">📷 Change Cover Image</button>
+    <input type="file" id="ecHeroInput" accept="image/*" style="display:none">
+    <div class="line"></div>
+    <div class="section-title-small" id="servicesLabel">✂️ Services</div>
+    <div id="ecServices"></div>
+    <button class="btn-secondary" id="ecAddService">➕ Add Service</button>
+  </div>
+
+  <!-- ADMIN GALLERY -->
+  <div class="card screen" id="screen-admingallery">
+    <button class="back" data-goto="barber"></button>
+    <div class="admin-title" id="agTitle">🖼️ My Work Photos</div>
+    <button class="btn-secondary" id="agAdd">📷 Add Photo</button>
+    <input type="file" id="agInput" accept="image/*" style="display:none">
+    <div class="line"></div>
+    <div id="agList"></div>
+  </div>
+
+  <!-- ADD/EDIT WORKER -->
+  <div class="card screen" id="screen-worker">
+    <button class="back" data-goto="barber"></button>
+    <div class="admin-title" id="workerTitle">Add Worker</div>
+    <img class="hero-image" id="wPhotoPreview" alt="" style="visibility:hidden">
+    <button class="btn-secondary" id="wPhotoBtn">📷 Photo</button>
+    <input type="file" id="wPhotoInput" accept="image/*" style="display:none">
+    <input class="input" id="wName" type="text" placeholder="Worker name" style="margin-top:14px">
+    <button class="btn" id="wSave">SAVE WORKER</button>
+  </div>
+
+  <!-- WORK MARKET HUB -->
+  <div class="card screen" id="screen-jobs">
+    <button class="back" data-goto="home"></button>
+    <div class="admin-title" id="jobsTitle">💼 Work Market</div>
+    <button class="job-type-btn" id="jobTypeJob">
+      <span class="job-type-icon">👨‍🦱</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtJobTitle">Looking for a Job</div>
+        <div class="job-type-sub" id="jtJobSub">Post your profile so salons can find you</div>
+      </div>
+    </button>
+    <button class="job-type-btn" id="jobTypeWorker">
+      <span class="job-type-icon">🏪</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtWorkerTitle">Looking for a Worker</div>
+        <div class="job-type-sub" id="jtWorkerSub">Post a job offer for barbers</div>
+      </div>
+    </button>
+    <button class="job-type-btn" id="jobTypeBrowse">
+      <span class="job-type-icon">👀</span>
+      <div style="flex:1">
+        <div class="job-type-title" id="jtBrowseTitle">Browse Offers</div>
+        <div class="job-type-sub" id="jtBrowseSub">See all barbers and salons looking to connect</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- POST JOB FORM -->
+  <div class="card screen" id="screen-postjob">
+    <button class="back" data-goto="jobs"></button>
+    <div class="admin-title" id="postTitle">New Post</div>
+    <input class="input" id="pjTitle" type="text" placeholder="Title (e.g. Experienced barber available)">
+    <textarea class="input" id="pjDesc" rows="4" placeholder="Description (optional)" style="resize:vertical"></textarea>
+    <input class="input" id="pjPhone" type="tel" placeholder="Phone number">
+    <input class="input" id="pjInstagram" type="text" placeholder="Instagram handle (optional)">
+    <div class="section-title-small" id="cityLabel">City</div>
+    <select class="input" id="pjCity"></select>
+    <input class="input" id="pjCityCustom" type="text" placeholder="City name" style="display:none">
+    <button class="btn" id="pjSubmit">POST</button>
+  </div>
+
+  <!-- BROWSE JOBS -->
+  <div class="card screen" id="screen-browsejobs">
+    <button class="back" data-goto="jobs"></button>
+    <div class="admin-title" id="browseTitle">👀 Browse</div>
+    <div class="section-title-small" id="filterLabel">Filter by city</div>
+    <select class="input" id="bjCity">
+      <option value="">All cities</option>
+    </select>
+    <div class="filter-chips" id="bjChips">
+      <button class="chip active" data-type="">All</button>
+      <button class="chip" data-type="looking_for_job">👨‍🦱 Barbers</button>
+      <button class="chip" data-type="looking_for_worker">🏪 Salons</button>
+    </div>
+    <div id="bjList"></div>
+  </div>
+
+</div>
+
+<!-- Country picker -->
+<div class="country-overlay" id="countryOverlay">
+  <div class="country-sheet">
+    <div class="country-head">
+      <input class="input" id="countrySearch" type="text" autocomplete="off" placeholder="Search">
+      <button type="button" class="country-close" id="countryClose">✕</button>
+    </div>
+    <div class="country-list" id="countryList"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle"></h3>
+    <p id="modalMsg"></p>
+    <div class="modal-buttons">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-ok" id="modalOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
 /* ============ CONFIG ============ */
 const SUPABASE_URL = 'https://fpwksmmsogvxgqyyngfs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uEo18A5zHn6nD0ZuaovDDA_d-GUCa95';
@@ -133,6 +410,9 @@ const BOOKING_DAYS_AHEAD = 30;
 
 /* ============ STATE ============ */
 let lang = localStorage.getItem('barber_lang') || 'en';
+if (!translations) var translations = {};
+if (!translations[lang]) lang = 'en';
+
 let currentBarberId = null;
 let currentBarber = null;
 let currentSettings = {};
@@ -155,12 +435,10 @@ let time = null;
 let name = '';
 let phone = '';
 let submitting = false;
-let isAdmin = false;
-let postingType = 'looking_for_job';
 let editingWorkerId = null;
-let mwPhotoFile = null;
-let mwPhotoUrl = null;
-let mwSelectedDate = null;
+let editingWorkerPhotoUrl = null;
+let pendingWorkerPhotoFile = null;
+let isAdmin = false;
 
 const futureDates = (() => {
   const out = []; const today = new Date(); today.setHours(0,0,0,0);
@@ -172,13 +450,375 @@ const futureDates = (() => {
 const langNames = { en:'English', ar:'العربية', fr:'Français', es:'Español', de:'Deutsch' };
 const locales = { en:'en-US', ar:'ar', fr:'fr-FR', es:'es-ES', de:'de-DE' };
 
-/* ============ TRANSLATIONS (CORE) ============ */
+/* ============ TRANSLATIONS ============ */
 var translations = {
-  en: { logo:'BARBER RESERVE', sub:'Book easily', label:'Language / اللغة', title:'Choose service', btn1:'NEXT', btn2:'CONFIRM BOOKING', back:'‹ Back', dLabel:'Select Day', tLabel:'Available Times', pName:'Full Name', pPhone:'Phone Number', wLabel:'Select your barber', cdLabel:'Customer Details', noTimes:'No available time for this service on this day.', holidayNoBooking:'This day is a holiday. No bookings.', alertTitle:'Confirmed', alertSuccess:(n,s,d,t)=>`Thank you ${n}! ${s} booked on ${d} at ${t}.`, errS:'Please select a service.', errF:'Please enter name, phone, day and time.', timeTaken:'This time has just been booked. Please choose another time.', netErr:'Connection error. Please try again.', phoneInvalid:'Please enter a valid phone number for the selected country.', searchCountry:'Search country', settings:'Settings', loginTitle:'Barber Login', passwordPlaceholder:'Password', login:'LOGIN', wrongPassword:'IncorrectPassword email or password.', dashboard:'My Dashboard', noBookings:':'🔑No bookings yet.', phone:'Phone', service:'Service', day:'Day', time:'Time', duration:'Duration', deleteTitle:'Delete', deleteMessage:'Are you sure?', deleteBookingTitle:'Delete booking', deleteBookingMessage:'Cancel this booking and free the time?', cancel:'Cancel', yesDelete:'Yes, delete', logout:'Logout', btnOk:'OK', gTitle:'My Work Photos', gBtn:'🖼️ My Work Photos', gAdd:'📷 Add Photo', gChange:'Change', gEmpty:'No photos yet.', gDone:'Photo saved.', deletePhotoTitle:'Delete photo', deletePhotoMsg:'Delete this photo?', addWorker:'Add Worker', editWorker:'Edit Worker', workerName:'Worker name', saveWorker:'SAVE WORKER', deleteWorkerTitle:'Delete worker', deleteWorkerMsg:'Delete this worker and all their info?', copyLink:'📋 Copy my public link', linkCopied:'✓ Link copied!', editCenter:'🛠️ Edit Center', addService:'➕ Add Service', deleteServiceTitle:'Delete service', deleteServiceMsg:'Delete this service?', serviceName:'Service name', price:'Price (€)', durMin:'Duration (min)', save:'Save', saved:'Saved.', invalidNum:'Please enter valid price and duration.', coverImage:'Cover Image', changeCover:'📷 Change Cover', changePassword:'🔑 Change password', myTeam:'My Team (Workers)', shareWithClients:'🔗 Share with clients', errNameShop:'Please enter your name and shop name.', errEmail:'Please enter a valid email.', errPass:'Password must be at least 6 characters.', errEmailExists:'This email is already registered.', signupSuccess:'✓ Account created! Logging in...', loginSuccess:'Logging in...', resetSent:'✓ Reset link sent. Check your email.', emailNotFound:'Email not found.', newPassword:'New password', savedPass:'✓ Password updated.', selectWorker:'Please select a barber first.', qrTitle:'Scan to book', jobsBtn:'💼 Work Market', jobsTitle:'💼 Work Market', jtJobTitle:'Looking for a Job', jtJobSub:'Post your profile so salons can find you', jtWorkerTitle:'Looking for a Worker', jtWorkerSub:'Post a job offer for barbers', jtBrowseTitle:'Browse Offers', jtBrowseSub:'See all barbers and salons looking to connect', postTitle:'New Post', browseTitle:'👀 Browse', pjTitle:'Title (e.g. Experienced barber available)', pjDesc:'Description (optional)', pjPhone:'Phone number', pjInstagram:'Instagram handle (optional)', cityLabel:'City', pjSubmit:'POST', filterLabel:'Filter by city', allCities:'All cities', typeAll:'All', typeBarbers:'👨‍🦱 Barbers', typeSalons:'🏪 Salons', contactCall:'📱 Call', contactInsta:'📷 Instagram', jobPosted:'✓ Posted successfully', jobDeleted:'✓ Deleted', loginRequired:'Please login or sign up to post', editProfile:'✏️ Edit My Profile', fullName:'Full Name', shopName:'Shop Name', addressLabel:'Address', phoneLabel:'Phone', holidays:'Holidays', whatsappConfirm:'📱 Confirm via WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Total Barbers', totalBookings:'Total Bookings', totalWorkers:'Total Workers', totalJobs:'Total Jobs', selectCity:'Select a city', other:'Other' },
-  ar: { logo:'حجوزات الصالون', sub:'احجز بسهولة', label:'اللغة / Language', title:'اختر الخدمة', btn1:'التالي', btn2:'تأكيد الحجز', back:'‹ العودة', dLabel:'اختر اليوم', tLabel:'الأوقات المتاحة', pName:'الاسم الكامل', pPhone:'رقم الهاتف', wLabel:'اختر الحلاق', cdLabel:'بيانات العميل', noTimes:'لا يوجد وقت متاح لهذه الخدمة في هذا اليوم.', holidayNoBooking:'هذا اليوم عطلة. لا يمكن الحجز.', alertTitle:'تم التأكيد', alertSuccess:(n,s,d,t)=>`شكراً يا ${n}! تم حجز ${s} يوم ${d} الساعة ${t}.`, errS:'اختر الخدمة أولاً.', errF:'الرجاء كتابة الاسم والهاتف واختيار اليوم والوقت.', timeTaken:'تم حجز هذا الوقت للتو. اختر وقتاً آخر.', netErr:'خطأ في الاتصال. حاول مرة أخرى.', phoneInvalid:'الرجاء إدخال رقم صحيح للدولة المختارة.', searchCountry:'ابحث عن دولة', settings:'الإعدادات', loginTitle:'دخول الحلاق', passwordPlaceholder:'كلمة المرور', login:'دخول', wrongPassword:'البريد الإلكتروني أو كلمة المرور غير صحيحة.', dashboard:'لوحتي', noBookings:'لا توجد حجوزات.', phone:'الهاتف', service:'الخدمة', day:'اليوم', time:'الوقت', duration:'المدة', deleteTitle:'حذف', deleteMessage:'هل أنت متأكد؟', deleteBookingTitle:'حذف الحجز', deleteBookingMessage:'هل أنت متأكد من إلغاء هذا الحجز؟', cancel:'تراجع', yesDelete:'نعم، احذف', logout:'خروج', btnOk:'حسناً', gTitle:'صور أعمالي', gBtn:'🖼️ صور أعمالي', gAdd:'📷 إضافة صورة', gChange:'تغيير', gEmpty:'لا توجد صور بعد.', gDone:'تم حفظ الصورة.', deletePhotoTitle:'حذف الصورة', deletePhotoMsg:'حذف هذه الصورة؟', addWorker:'إضافة عامل', editWorker:'تعديل عامل', workerName:'اسم العامل', saveWorker:'حفظ العامل', deleteWorkerTitle:'حذف العامل', deleteWorkerMsg:'حذف هذا العامل وكل معلوماته؟', copyLink:'📋 نسخ رابطي العام', linkCopied:'✓ تم نسخ الرابط!', editCenter:'🛠️ مركز التعديلات', addService:'➕ إضافة خدمة', deleteServiceTitle:'حذف الخدمة', deleteServiceMsg:'حذف هذه الخدمة؟', serviceName:'اسم الخدمة', price:'السعر (€)', durMin:'المدة (دقيقة)', save:'حفظ', saved:'تم الحفظ.', invalidNum:'أدخل سعراً ومدة صحيحين.', coverImage:'صورة الغلاف', changeCover:'📷 تغيير الغلاف', changePassword:'🔑 تغيير كلمة المرور', myTeam:'فريقي (العمال)', shareWithClients:'🔗 شارك مع الزبائن', errNameShop:'الرجاء إدخال الاسم واسم الصالون.', errEmail:'الرجاء إدخال بريد إلكتروني صحيح.', errPass:'كلمة المرور يجب أن تكون 6 أحرف على الأقل.', errEmailExists:'هذا البريد مسجل مسبقاً.', signupSuccess:'✓ تم إنشاء الحساب! جاري الدخول...', loginSuccess:'جاري الدخول...', resetSent:'✓ تم إرسال الرابط. تحقق من بريدك.', emailNotFound:'البريد غير موجود.', newPassword:'كلمة مرور جديدة', savedPass:'✓ تم تحديث كلمة المرور.', selectWorker:'اختر الحلاق أولاً.', qrTitle:'امسح للحجز', jobsBtn:'💼 سوق العمل', jobsTitle:'💼 سوق العمل', jtJobTitle:'أبحث عن عمل', jtJobSub:'انشر ملفك ليجدك أصحاب الصالونات', jtWorkerTitle:'أبحث عن عامل', jtWorkerSub:'انشر عرض عمل للحلاقين', jtBrowseTitle:'مشاهدة', jtBrowseSub:'اطلع على كل الحلاقين والصالونات', postTitle:'نشر جديد', browseTitle:'👀 مشاهدة', pjTitle:'العنوان (مثال: حلاق محترف متاح)', pjDesc:'الوصف (اختياري)', pjPhone:'رقم الهاتف', pjInstagram:'حساب إنستغرام (اختياري)', cityLabel:'المدينة', pjSubmit:'نشر', filterLabel:'تصفية حسب المدينة', allCities:'كل المدن', typeAll:'الكل', typeBarbers:'👨‍🦱 حلاقون', typeSalons:'🏪 صالونات', contactCall:'📱 اتصل', contactInsta:'📷 إنستغرام', jobPosted:'✓ تم النشر بنجاح', jobDeleted:'✓ تم الحذف', loginRequired:'الرجاء تسجيل الدخول للنشر', editProfile:'✏️ تعديل ملفي', fullName:'الاسم الكامل', shopName:'اسم الصالون', addressLabel:'العنوان', phoneLabel:'الهاتف', holidays:'العطل', whatsappConfirm:'📱 تأكيد عبر واتساب', adminPanel:'👑 الإدارة العليا', totalBarbers:'إجمالي الحلاقين', totalBookings:'إجمالي الحجوزات', totalWorkers:'إجمالي العمال', totalJobs:'إجمالي الطلبات', selectCity:'اختر مدينة', other:'أخرى' },
-  fr: { logo:'BARBER RESERVE', sub:'Réservez facilement', label:'Langue', title:'Choisissez un service', btn1:'SUIVANT', btn2:'CONFIRMER', back:'‹ Retour', dLabel:'Choisir le jour', tLabel:'Heures disponibles', pName:'Nom complet', pPhone:'Téléphone', wLabel:'Choisissez votre barbier', cdLabel:'Coordonnées client', noTimes:'Aucune heure disponible.', holidayNoBooking:'Ce jour est fermé.', alertTitle:'Confirmé', alertSuccess:(n,s,d,t)=>`Merci ${n}! ${s} réservé le ${d} à ${t}.`, errS:'Choisissez un service.', errF:'Remplissez tous les champs.', timeTaken:'Cette heure vient d\'être réservée.', netErr:'Erreur de connexion.', phoneInvalid:'Numéro invalide.', searchCountry:'Rechercher un pays', settings:'Réglages', loginTitle:'Connexion barbier', passwordPlaceholder:'Mot de passe', login:'CONNEXION', wrongPassword:'Email ou mot de passe incorrect.', dashboard:'Mon tableau', noBookings:'Aucune réservation.', phone:'Téléphone', service:'Service', day:'Jour', time:'Heure', duration:'Durée', deleteTitle:'Supprimer', deleteMessage:'Êtes-vous sûr ?', deleteBookingTitle:'Supprimer la réservation', deleteBookingMessage:'Annuler cette réservation ?', cancel:'Annuler', yesDelete:'Oui, supprimer', logout:'Déconnexion', btnOk:'OK', gTitle:'Photos de mon travail', gBtn:'🖼️ Photos', gAdd:'📷 Ajouter photo', gChange:'Changer', gEmpty:'Pas de photos.', gDone:'Photo enregistrée.', deletePhotoTitle:'Supprimer', deletePhotoMsg:'Supprimer cette photo ?', addWorker:'Ajouter un coiffeur', editWorker:'Modifier', workerName:'Nom', saveWorker:'ENREGISTRER', deleteWorkerTitle:'Supprimer', deleteWorkerMsg:'Supprimer ce coiffeur ?', copyLink:'📋 Copier mon lien', linkCopied:'✓ Lien copié !', editCenter:'🛠️ Centre d\'édition', addService:'➕ Ajouter service', deleteServiceTitle:'Supprimer service', deleteServiceMsg:'Supprimer ce service ?', serviceName:'Nom', price:'Prix (€)', durMin:'Durée (min)', save:'Enregistrer', saved:'Enregistré.', invalidNum:'Prix/durée invalide.', coverImage:'Image de couverture', changeCover:'📷 Changer', change Changer mot de passe', myTeam:'Mon équipe', shareWithClients:'🔗 Partager', errNameShop:'Entrez nom et salon.', errEmail:'Email invalide.', errPass:'Mot de passe: 6+ caractères.', errEmailExists:'Email déjà utilisé.', signupSuccess:'✓ Compte créé ! Connexion...', loginSuccess:'Connexion...', resetSent:'✓ Lien envoyé.', emailNotFound:'Email introuvable.', newPassword:'Nouveau mot de passe', savedPass:'✓ Mot de passe changé.', selectWorker:'Choisissez un barbier.', qrTitle:'Scanner pour réserver', jobsBtn:'💼 Marché du travail', jobsTitle:'💼 Marché du travail', jtJobTitle:'Je cherche un emploi', jtJobSub:'Publiez votre profil', jtWorkerTitle:'Je cherche un coiffeur', jtWorkerSub:'Publiez une offre', jtBrowseTitle:'Parcourir', jtBrowseSub:'Voir toutes les annonces', postTitle:'Nouvelle annonce', browseTitle:'👀 Parcourir', pjTitle:'Titre', pjDesc:'Description', pjPhone:'Téléphone', pjInstagram:'Instagram (optionnel)', cityLabel:'Ville', pjSubmit:'PUBLIER', filterLabel:'Filtrer par ville', allCities:'Toutes les villes', typeAll:'Tout', typeBarbers:'👨‍🦱 Coiffeurs', typeSalons:'🏪 Salons', contactCall:'📱 Appeler', contactInsta:'📷 Instagram', jobPosted:'✓ Publié', jobDeleted:'✓ Supprimé', loginRequired:'Connectez-vous pour publier', editProfile:'✏️ Modifier', fullName:'Nom', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Téléphone', holidays:'Congés', whatsappConfirm:'📱 Confirmer via WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Coiffeurs', totalBookings:'Réservations', totalWorkers:'Employés', totalJobs:'Annonces', selectCity:'Choisir une ville', other:'Autre' },
-  es: { logo:'BARBER RESERVE', sub:'Reserva fácilmente', label:'Idioma', title:'Elige un servicio', btn1:'SIGUIENTE', btn2:'CONFIRMAR', back:'‹ Volver', dLabel:'Elige el día', tLabel:'Horarios disponibles', pName:'Nombre completo', pPhone:'Teléfono', wLabel:'Elige tu barbero', cdLabel:'Datos del cliente', noTimes:'Sin horarios disponibles.', holidayNoBooking:'Día festivo.', alertTitle:'Confirmado', alertSuccess:(n,s,d,t)=>`Gracias ${n}! ${s} reservado el ${d} a las ${t}.`, errS:'Elige un servicio.', errF:'Completa todos los datos.', timeTaken:'Esta hora acaba de ser reservada.', netErr:'Error de conexión.', phoneInvalid:'Número inválido.', searchCountry:'Buscar país', settings:'Ajustes', loginTitle:'Acceso barbero', passwordPlaceholder:'Contraseña', login:'ENTRAR', wrongPassword:'Email o contraseña incorrectos.', dashboard:'Mi Panel', noBookings:'Sin reservas.', phone:'Teléfono', service:'Servicio', day:'Día', time:'Hora', duration:'Duración', deleteTitle:'Eliminar', deleteMessage:'¿Seguro?', deleteBookingTitle:'Eliminar reserva', deleteBookingMessage:'¿Cancelar esta reserva?', cancel:'Cancelar', yesDelete:'Sí, eliminar', logout:'Salir', btnOk:'OK', gTitle:'Fotos de mi trabajo', gBtn:'🖼️ Fotos', gAdd:'📷 Añadir foto', gChange:'Cambiar', gEmpty:'Sin fotos.', gDone:'Foto guardada.', deletePhotoTitle:'Eliminar', deletePhotoMsg:'¿Eliminar esta foto?', addWorker:'Añadir barbero', editWorker:'Editar', workerName:'Nombre', saveWorker:'GUARDAR', deleteWorkerTitle:'Eliminar', deleteWorkerMsg:'¿Eliminar este barbero?', copyLink:'📋 Copiar mi enlace', linkCopied:'✓ ¡Enlace copiado!', editCenter:'🛠️ Centro de edición', addService:'➕ Añadir servicio', deleteServiceTitle:'Eliminar servicio', deleteServiceMsg:'¿Eliminar?', serviceName:'Nombre', price:'Precio (€)', durMin:'Duración (min)', save:'Guardar', saved:'Guardado.', invalidNum:'Precio/duración inválidos.', coverImage:'Imagen de portada', changeCover:'📷 Cambiar', changePassword:'🔑 Cambiar contraseña', myTeam:'Mi equipo', shareWithClients:'🔗 Compartir', errNameShop:'Introduce nombre y salón.', errEmail:'Email inválido.', errPass:'Contraseña: 6+ caracteres.', errEmailExists:'Email ya registrado.', signupSuccess:'✓ ¡Cuenta creada! Entrando...', loginSuccess:'Entrando...', resetSent:'✓ Enlace enviado.', emailNotFound:'Email no encontrado.', newPassword:'Nueva contraseña', savedPass:'✓ Contraseña cambiada.', selectWorker:'Elige un barbero.', qrTitle:'Escanea para reservar', jobsBtn:'💼 Mercado laboral', jobsTitle:'💼 Mercado laboral', jtJobTitle:'Busco trabajo', jtJobSub:'Publica tu perfil', jtWorkerTitle:'Busco un barbero', jtWorkerSub:'Publica una oferta', jtBrowseTitle:'Explorar', jtBrowseSub:'Ver todas las ofertas', postTitle:'Nueva publicación', browseTitle:'👀 Explorar', pjTitle:'Título', pjDesc:'Descripción', pjPhone:'Teléfono', pjInstagram:'Instagram (opcional)', cityLabel:'Ciudad', pjSubmit:'PUBLICAR', filterLabel:'Filtrar por ciudad', allCities:'Todas las ciudades', typeAll:'Todo', typeBarbers:'👨‍🦱 Barberos', typeSalons:'🏪 Salones', contactCall:'📱 Llamar', contactInsta:'📷 Instagram', jobPosted:'✓ Publicado', jobDeleted:'✓ Eliminado', loginRequired:'Inicia sesión para publicar', editProfile:'✏️ Editar', fullName:'Nombre', shopName:'Salón', addressLabel:'Dirección', phoneLabel:'Teléfono', holidays:'Vacaciones', whatsappConfirm:'📱 Confirmar por WhatsApp', adminPanel:'👑 Super Admin', totalBarbers:'Barberos', totalBookings:'Reservas', totalWorkers:'Empleados', totalJobs:'Anuncios', selectCity:'Elige una ciudad', other:'Otro' },
-  de: { logo:'BARBER RESERVE', sub:'Einfach buchen', label:'Sprache', title:'Service wählen', btn1:'WEITER', btn2:'BESTÄTIGEN', back:'‹ Zurück', dLabel:'Tag wählen', tLabel:'Verfügbare Zeiten', pName:'Vollständiger Name', pPhone:'Telefonnummer', wLabel:'Wähle deinen Barbier', cdLabel:'Kundendaten', noTimes:'Keine Zeiten verfügbar.', holidayNoBooking:'Feiertag.', alertTitle:'Bestätigt', alertSuccess:(n,s,d,t)=>`Danke ${n}! ${s} am ${d} um ${t}.`, errS:'Service wählen.', errF:'Alle Felder ausfüllen.', timeTaken:'Gerade gebucht.', netErr:'Verbindungsfehler.', phoneInvalid:'Ungültige Nummer.', searchCountry:'Land suchen', settings:'Einstellungen', loginTitle:'Barbier-Anmeldung', passwordPlaceholder:'Passwort', login:'ANMELDEN', wrongPassword:'Email oder Passwort falsch.', dashboard:'Mein Dashboard', noBookings:'Keine Buchungen.', phone:'Telefon', service:'Service', day:'Tag', time:'Zeit', duration:'Dauer', deleteTitle:'Löschen', deleteMessage:'Sicher?', deleteBookingTitle:'Buchung löschen', deleteBookingMessage:'Diese Buchung löschen?', cancel:'Abbrechen', yesDelete:'Ja, löschen', logout:'Abmelden', btnOk:'OK', gTitle:'Meine Arbeitsfotos', gBtn:'🖼️ Fotos', gAdd:'📷 Foto hinzufügen', gChange:'Ändern', gEmpty:'Keine Fotos.', gDone:'Foto gespeichert.', deletePhotoTitle:'Löschen', deletePhotoMsg:'Dieses Foto löschen?', addWorker:'Barbier hinzufügen', editWorker:'Bearbeiten', workerName:'Name', saveWorker:'SPEICHERN', deleteWorkerTitle:'Löschen', deleteWorkerMsg:'Diesen Barbier löschen?', copyLink:'📋 Link kopieren', linkCopied:'✓ Link kopiert!', editCenter:'🛠️ Bearbeitungszentrum', addService:'➕ Service hinzufügen', deleteServiceTitle:'Service löschen', deleteServiceMsg:'Löschen?', serviceName:'Name', price:'Preis (€)', durMin:'Dauer (min)', save:'Speichern', saved:'Gespeichert.', invalidNum:'Ungültig.', coverImage:'Titelbild', changeCover:'📷 Ändern', changePassword:'🔑 Passwort ändern', myTeam:'Mein Team', shareWithClients:'🔗 Teilen', errNameShop:'Name und Salon eingeben.', errEmail:'Ungültige Email.', errPass:'Passwort: 6+ Zeichen.', errEmailExists:'Email bereits registriert.', signupSuccess:'✓ Konto erstellt! Anmeldung...', loginSuccess:'Anmeldung...', resetSent:'✓ Link gesendet.', emailNotFound:'Email nicht gefunden.', newPassword:'Neues Passwort', savedPass:'✓ Passwort geändert.', selectWorker:'Barbier wählen.', qrTitle:'Scannen zum Buchen', jobsBtn:'💼 Jobbörse', jobsTitle:'💼 Jobbörse', jtJobTitle:'Ich suche Arbeit', jtJobSub:'Profil veröffentlichen', jtWorkerTitle:'Ich suche Barbier', jtWorkerSub:'Stelle veröffentlichen', jtBrowseTitle:'Durchsuchen', jtBrowseSub:'Alle Anzeigen ansehen', postTitle:'Neue Anzeige', browseTitle:'👀 Durchsuchen', pjTitle:'Titel', pjDesc:'Beschreibung', pjPhone:'Telefon', pjInstagram:'Instagram (optional)', cityLabel:'Stadt', pjSubmit:'POSTEN', filterLabel:'Nach Stadt filtern', allCities:'Alle Städte', typeAll:'Alle', typeBarbers:'👨‍🦱 Barbiere', typeSalons:'🏪 Salons', contactCall:'📱 Anrufen', contactInsta:'📷 Instagram', jobPosted:'✓ Gepostet', jobDeleted:'✓ Gelöscht', loginRequired:'Bitte anmelden zum Posten', editProfile:'✏️ Bearbeiten', fullName:'Name', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Telefon', holidays:'Urlaub', whatsappConfirm:'📱 Via WhatsApp bestätigen', adminPanel:'👑 Super Admin', totalBarbers:'Barbiere', totalBookings:'Buchungen', totalWorkers:'Mitarbeiter', totalJobs:'Anzeigen', selectCity:'Stadt wählen', other:'Andere' }
+  en: {
+    logo:'BARBER RESERVE', sub:'Book easily', label:'Language / اللغة',
+    title:'Choose service', btn1:'NEXT', btn2:'CONFIRM BOOKING', back:'‹ Back',
+    dLabel:'Select Day', tLabel:'Available Times',
+    pName:'Full Name', pPhone:'Phone Number',
+    wLabel:'Select your barber', cdLabel:'Customer Details',
+    noTimes:'No available time for this service on this day.',
+    holidayNoBooking:'This day is a holiday. No bookings.',
+    alertTitle:'Confirmed',
+    alertSuccess:(n,s,d,t)=>`Thank you ${n}! ${s} booked on ${d} at ${t}.`,
+    errS:'Please select a service.', errF:'Please enter name, phone, day and time.',
+    timeTaken:'This time has just been booked. Please choose another time.',
+    netErr:'Connection error. Please try again.',
+    phoneInvalid:'Please enter a valid phone number for the selected country.',
+    searchCountry:'Search country',
+    settings:'Settings', admCard:'Admin', admCardSub:'Bookings & holidays',
+    loginTitle:'Barber Login', passwordPlaceholder:'Password', login:'LOGIN',
+    wrongPassword:'Incorrect email or password.',
+    dashboard:'My Dashboard', noBookings:'No bookings yet.',
+    phone:'Phone', service:'Service', day:'Day', time:'Time', duration:'Duration',
+    deleteTitle:'Delete', deleteMessage:'Are you sure?',
+    deleteBookingTitle:'Delete booking',
+    deleteBookingMessage:'Cancel this booking and free the time?',
+    cancel:'Cancel', yesDelete:'Yes, delete', logout:'Logout', btnOk:'OK',
+    gTitle:'My Work Photos', gBtn:'🖼️ My Work Photos', gAdd:'📷 Add Photo',
+    gChange:'Change', gEmpty:'No photos yet.', gDone:'Photo saved.',
+    deletePhotoTitle:'Delete photo', deletePhotoMsg:'Delete this photo?',
+    addWorker:'Add Worker', editWorker:'Edit Worker', workerName:'Worker name',
+    saveWorker:'SAVE WORKER', deleteWorkerTitle:'Delete worker',
+    deleteWorkerMsg:'Delete this worker and all their info?',
+    copyLink:'📋 Copy my public link', linkCopied:'✓ Link copied!',
+    editCenter:'🛠️ Edit Center', addService:'➕ Add Service',
+    deleteServiceTitle:'Delete service', deleteServiceMsg:'Delete this service?',
+    serviceName:'Service name', price:'Price (€)', durMin:'Duration (min)',
+    save:'Save', saved:'Saved.', invalidNum:'Please enter valid price and duration.',
+    coverImage:'Cover Image', changeCover:'📷 Change Cover',
+    changePassword:'🔑 Change password', myTeam:'My Team (Workers)',
+    shareWithClients:'🔗 Share with clients',
+    errNameShop:'Please enter your name and shop name.',
+    errEmail:'Please enter a valid email.',
+    errPass:'Password must be at least 6 characters.',
+    errEmailExists:'This email is already registered.',
+    signupSuccess:'✓ Account created! Logging in...',
+    loginSuccess:'Logging in...',
+    resetSent:'✓ Reset link sent. Check your email.',
+    emailNotFound:'Email not found.',
+    newPassword:'New password', savedPass:'✓ Password updated.',
+    selectWorker:'Please select a barber first.',
+    qrTitle:'Scan to book',
+    jobsBtn:'💼 Work Market',
+    jobsTitle:'💼 Work Market',
+    jtJobTitle:'Looking for a Job', jtJobSub:'Post your profile so salons can find you',
+    jtWorkerTitle:'Looking for a Worker', jtWorkerSub:'Post a job offer for barbers',
+    jtBrowseTitle:'Browse Offers', jtBrowseSub:'See all barbers and salons looking to connect',
+    postTitle:'New Post', browseTitle:'👀 Browse',
+    pjTitle:'Title (e.g. Experienced barber available)',
+    pjDesc:'Description (optional)',
+    pjPhone:'Phone number',
+    pjInstagram:'Instagram handle (optional)',
+    cityLabel:'City',
+    pjSubmit:'POST',
+    filterLabel:'Filter by city',
+    allCities:'All cities',
+    typeAll:'All', typeBarbers:'👨‍🦱 Barbers', typeSalons:'🏪 Salons',
+    contactCall:'📱 Call', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Posted successfully',
+    jobDeleted:'✓ Deleted',
+    loginRequired:'Please login or sign up to post',
+    profileTitle:'My Profile',
+    editProfile:'✏️ Edit Profile',
+    fullName:'Full Name', shopName:'Shop Name',
+    addressLabel:'Address', phoneLabel:'Phone',
+    holidays:'Holidays',
+    whatsappConfirm:'📱 Confirm via WhatsApp',
+    adminPanel:'👑 Super Admin',
+    totalBarbers:'Total Barbers', totalBookings:'Total Bookings',
+    totalWorkers:'Total Workers', totalJobs:'Total Jobs',
+    selectCity:'Select a city',
+    other:'Other'
+  },
+  ar: {
+    logo:'حجوزات الصالون', sub:'احجز بسهولة', label:'اللغة / Language',
+    title:'اختر الخدمة', btn1:'التالي', btn2:'تأكيد الحجز', back:'‹ العودة',
+    dLabel:'اختر اليوم', tLabel:'الأوقات المتاحة',
+    pName:'الاسم الكامل', pPhone:'رقم الهاتف',
+    wLabel:'اختر الحلاق', cdLabel:'بيانات العميل',
+    noTimes:'لا يوجد وقت متاح لهذه الخدمة في هذا اليوم.',
+    holidayNoBooking:'هذا اليوم عطلة. لا يمكن الحجز.',
+    alertTitle:'تم التأكيد',
+    alertSuccess:(n,s,d,t)=>`شكراً يا ${n}! تم حجز ${s} يوم ${d} الساعة ${t}.`,
+    errS:'اختر الخدمة أولاً.', errF:'الرجاء كتابة الاسم والهاتف واختيار اليوم والوقت.',
+    timeTaken:'تم حجز هذا الوقت للتو. اختر وقتاً آخر.',
+    netErr:'خطأ في الاتصال. حاول مرة أخرى.',
+    phoneInvalid:'الرجاء إدخال رقم صحيح للدولة المختارة.',
+    searchCountry:'ابحث عن دولة',
+    settings:'الإعدادات', admCard:'الإدارة', admCardSub:'الحجوزات والعطل',
+    loginTitle:'دخول الحلاق', passwordPlaceholder:'كلمة المرور', login:'دخول',
+    wrongPassword:'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+    dashboard:'لوحتي', noBookings:'لا توجد حجوزات.',
+    phone:'الهاتف', service:'الخدمة', day:'اليوم', time:'الوقت', duration:'المدة',
+    deleteTitle:'حذف', deleteMessage:'هل أنت متأكد؟',
+    deleteBookingTitle:'حذف الحجز',
+    deleteBookingMessage:'هل أنت متأكد من إلغاء هذا الحجز؟',
+    cancel:'تراجع', yesDelete:'نعم، احذف', logout:'خروج', btnOk:'حسناً',
+    gTitle:'صور أعمالي', gBtn:'🖼️ صور أعمالي', gAdd:'📷 إضافة صورة',
+    gChange:'تغيير', gEmpty:'لا توجد صور بعد.', gDone:'تم حفظ الصورة.',
+    deletePhotoTitle:'حذف الصورة', deletePhotoMsg:'حذف هذه الصورة؟',
+    addWorker:'إضافة عامل', editWorker:'تعديل عامل', workerName:'اسم العامل',
+    saveWorker:'حفظ العامل', deleteWorkerTitle:'حذف العامل',
+    deleteWorkerMsg:'حذف هذا العامل وكل معلوماته؟',
+    copyLink:'📋 نسخ رابطي العام', linkCopied:'✓ تم نسخ الرابط!',
+    editCenter:'🛠️ مركز التعديلات', addService:'➕ إضافة خدمة',
+    deleteServiceTitle:'حذف الخدمة', deleteServiceMsg:'حذف هذه الخدمة؟',
+    serviceName:'اسم الخدمة', price:'السعر (€)', durMin:'المدة (دقيقة)',
+    save:'حفظ', saved:'تم الحفظ.', invalidNum:'أدخل سعراً ومدة صحيحين.',
+    coverImage:'صورة الغلاف', changeCover:'📷 تغيير الغلاف',
+    changePassword:'🔑 تغيير كلمة المرور', myTeam:'فريقي (العمال)',
+    shareWithClients:'🔗 شارك مع الزبائن',
+    errNameShop:'الرجاء إدخال الاسم واسم الصالون.',
+    errEmail:'الرجاء إدخال بريد إلكتروني صحيح.',
+    errPass:'كلمة المرور يجب أن تكون 6 أحرف على الأقل.',
+    errEmailExists:'هذا البريد مسجل مسبقاً.',
+    signupSuccess:'✓ تم إنشاء الحساب! جاري الدخول...',
+    loginSuccess:'جاري الدخول...',
+    resetSent:'✓ تم إرسال الرابط. تحقق من بريدك.',
+    emailNotFound:'البريد غير موجود.',
+    newPassword:'كلمة مرور جديدة', savedPass:'✓ تم تحديث كلمة المرور.',
+    selectWorker:'اختر الحلاق أولاً.',
+    qrTitle:'امسح للحجز',
+    jobsBtn:'💼 سوق العمل',
+    jobsTitle:'💼 سوق العمل',
+    jtJobTitle:'أبحث عن عمل', jtJobSub:'انشر ملفك ليجدك أصحاب الصالونات',
+    jtWorkerTitle:'أبحث عن عامل', jtWorkerSub:'انشر عرض عمل للحلاقين',
+    jtBrowseTitle:'مشاهدة', jtBrowseSub:'اطلع على كل الحلاقين والصالونات',
+    postTitle:'نشر جديد', browseTitle:'👀 مشاهدة',
+    pjTitle:'العنوان (مثال: حلاق محترف متاح)',
+    pjDesc:'الوصف (اختياري)',
+    pjPhone:'رقم الهاتف',
+    pjInstagram:'حساب إنستغرام (اختياري)',
+    cityLabel:'المدينة',
+    pjSubmit:'نشر',
+    filterLabel:'تصفية حسب المدينة',
+    allCities:'كل المدن',
+    typeAll:'الكل', typeBarbers:'👨‍🦱 حلاقون', typeSalons:'🏪 صالونات',
+    contactCall:'📱 اتصل', contactInsta:'📷 إنستغرام',
+    jobPosted:'✓ تم النشر بنجاح',
+    jobDeleted:'✓ تم الحذف',
+    loginRequired:'الرجاء تسجيل الدخول للنشر',
+    profileTitle:'ملفي',
+    editProfile:'✏️ تعديل الملف',
+    fullName:'الاسم الكامل', shopName:'اسم الصالون',
+    addressLabel:'العنوان', phoneLabel:'الهاتف',
+    holidays:'العطل',
+    whatsappConfirm:'📱 تأكيد عبر واتساب',
+    adminPanel:'👑 الإدارة العليا',
+    totalBarbers:'إجمالي الحلاقين', totalBookings:'إجمالي الحجوزات',
+    totalWorkers:'إجمالي العمال', totalJobs:'إجمالي الطلبات',
+    selectCity:'اختر مدينة',
+    other:'أخرى'
+  },
+  fr: {
+    logo:'BARBER RESERVE', sub:'Réservez facilement', label:'Langue',
+    title:'Choisissez un service', btn1:'SUIVANT', btn2:'CONFIRMER', back:'‹ Retour',
+    dLabel:'Choisir le jour', tLabel:'Heures disponibles',
+    pName:'Nom complet', pPhone:'Téléphone',
+    wLabel:'Choisissez votre barbier', cdLabel:'Coordonnées client',
+    noTimes:'Aucune heure disponible.',
+    holidayNoBooking:'Ce jour est fermé.',
+    alertTitle:'Confirmé',
+    alertSuccess:(n,s,d,t)=>`Merci ${n}! ${s} réservé le ${d} à ${t}.`,
+    errS:'Choisissez un service.', errF:'Remplissez tous les champs.',
+    timeTaken:'Cette heure vient d\'être réservée.',
+    netErr:'Erreur de connexion.',
+    phoneInvalid:'Numéro invalide pour ce pays.',
+    searchCountry:'Rechercher un pays',
+    settings:'Réglages', admCard:'Admin', admCardSub:'Réservations et congés',
+    loginTitle:'Connexion barbier', passwordPlaceholder:'Mot de passe', login:'CONNEXION',
+    wrongPassword:'Email ou mot de passe incorrect.',
+    dashboard:'Mon tableau', noBookings:'Aucune réservation.',
+    phone:'Téléphone', service:'Service', day:'Jour', time:'Heure', duration:'Durée',
+    deleteTitle:'Supprimer', deleteMessage:'Êtes-vous sûr ?',
+    deleteBookingTitle:'Supprimer la réservation',
+    deleteBookingMessage:'Annuler cette réservation ?',
+    cancel:'Annuler', yesDelete:'Oui, supprimer', logout:'Déconnexion', btnOk:'OK',
+    gTitle:'Photos de mon travail', gBtn:'🖼️ Photos', gAdd:'📷 Ajouter photo',
+    gChange:'Changer', gEmpty:'Pas de photos.', gDone:'Photo enregistrée.',
+    deletePhotoTitle:'Supprimer', deletePhotoMsg:'Supprimer cette photo ?',
+    addWorker:'Ajouter un coiffeur', editWorker:'Modifier', workerName:'Nom',
+    saveWorker:'ENREGISTRER', deleteWorkerTitle:'Supprimer',
+    deleteWorkerMsg:'Supprimer ce coiffeur ?',
+    copyLink:'📋 Copier mon lien', linkCopied:'✓ Lien copié !',
+    editCenter:'🛠️ Centre d\'édition', addService:'➕ Ajouter service',
+    deleteServiceTitle:'Supprimer service', deleteServiceMsg:'Supprimer ce service ?',
+    serviceName:'Nom', price:'Prix (€)', durMin:'Durée (min)',
+    save:'Enregistrer', saved:'Enregistré.', invalidNum:'Prix/durée invalide.',
+    coverImage:'Image de couverture', changeCover:'📷 Changer',
+    changePassword:'🔑 Changer mot de passe', myTeam:'Mon équipe',
+    shareWithClients:'🔗 Partager',
+    errNameShop:'Entrez nom et salon.',
+    errEmail:'Email invalide.',
+    errPass:'Mot de passe: 6+ caractères.',
+    errEmailExists:'Email déjà utilisé.',
+    signupSuccess:'✓ Compte créé ! Connexion...',
+    loginSuccess:'Connexion...',
+    resetSent:'✓ Lien envoyé.',
+    emailNotFound:'Email introuvable.',
+    newPassword:'Nouveau mot de passe', savedPass:'✓ Mot de passe changé.',
+    selectWorker:'Choisissez un barbier.',
+    qrTitle:'Scanner pour réserver',
+    jobsBtn:'💼 Marché du travail',
+    jobsTitle:'💼 Marché du travail',
+    jtJobTitle:'Je cherche un emploi', jtJobSub:'Publiez votre profil',
+    jtWorkerTitle:'Je cherche un coiffeur', jtWorkerSub:'Publiez une offre',
+    jtBrowseTitle:'Parcourir', jtBrowseSub:'Voir toutes les annonces',
+    postTitle:'Nouvelle annonce', browseTitle:'👀 Parcourir',
+    pjTitle:'Titre', pjDesc:'Description', pjPhone:'Téléphone',
+    pjInstagram:'Instagram (optionnel)', cityLabel:'Ville', pjSubmit:'PUBLIER',
+    filterLabel:'Filtrer par ville', allCities:'Toutes les villes',
+    typeAll:'Tout', typeBarbers:'👨‍🦱 Coiffeurs', typeSalons:'🏪 Salons',
+    contactCall:'📱 Appeler', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Publié', jobDeleted:'✓ Supprimé',
+    loginRequired:'Connectez-vous pour publier',
+    profileTitle:'Mon profil', editProfile:'✏️ Modifier',
+    fullName:'Nom', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Téléphone',
+    holidays:'Congés', whatsappConfirm:'📱 Confirmer via WhatsApp',
+    adminPanel:'👑 Super Admin', totalBarbers:'Coiffeurs', totalBookings:'Réservations',
+    totalWorkers:'Employés', totalJobs:'Annonces',
+    selectCity:'Choisir une ville', other:'Autre'
+  },
+  es: {
+    logo:'BARBER RESERVE', sub:'Reserva fácilmente', label:'Idioma',
+    title:'Elige un servicio', btn1:'SIGUIENTE', btn2:'CONFIRMAR', back:'‹ Volver',
+    dLabel:'Elige el día', tLabel:'Horarios disponibles',
+    pName:'Nombre completo', pPhone:'Teléfono',
+    wLabel:'Elige tu barbero', cdLabel:'Datos del cliente',
+    noTimes:'Sin horarios disponibles.',
+    holidayNoBooking:'Día festivo.',
+    alertTitle:'Confirmado',
+    alertSuccess:(n,s,d,t)=>`Gracias ${n}! ${s} reservado el ${d} a las ${t}.`,
+    errS:'Elige un servicio.', errF:'Completa todos los datos.',
+    timeTaken:'Esta hora acaba de ser reservada.',
+    netErr:'Error de conexión.',
+    phoneInvalid:'Número inválido para este país.',
+    searchCountry:'Buscar país',
+    settings:'Ajustes', admCard:'Admin', admCardSub:'Reservas y vacaciones',
+    loginTitle:'Acceso barbero', passwordPlaceholder:'Contraseña', login:'ENTRAR',
+    wrongPassword:'Email o contraseña incorrectos.',
+    dashboard:'Mi Panel', noBookings:'Sin reservas.',
+    phone:'Teléfono', service:'Servicio', day:'Día', time:'Hora', duration:'Duración',
+    deleteTitle:'Eliminar', deleteMessage:'¿Seguro?',
+    deleteBookingTitle:'Eliminar reserva',
+    deleteBookingMessage:'¿Cancelar esta reserva?',
+    cancel:'Cancelar', yesDelete:'Sí, eliminar', logout:'Salir', btnOk:'OK',
+    gTitle:'Fotos de mi trabajo', gBtn:'🖼️ Fotos', gAdd:'📷 Añadir foto',
+    gChange:'Cambiar', gEmpty:'Sin fotos.', gDone:'Foto guardada.',
+    deletePhotoTitle:'Eliminar', deletePhotoMsg:'¿Eliminar esta foto?',
+    addWorker:'Añadir barbero', editWorker:'Editar', workerName:'Nombre',
+    saveWorker:'GUARDAR', deleteWorkerTitle:'Eliminar',
+    deleteWorkerMsg:'¿Eliminar este barbero?',
+    copyLink:'📋 Copiar mi enlace', linkCopied:'✓ ¡Enlace copiado!',
+    editCenter:'🛠️ Centro de edición', addService:'➕ Añadir servicio',
+    deleteServiceTitle:'Eliminar servicio', deleteServiceMsg:'¿Eliminar?',
+    serviceName:'Nombre', price:'Precio (€)', durMin:'Duración (min)',
+    save:'Guardar', saved:'Guardado.', invalidNum:'Precio/duración inválidos.',
+    coverImage:'Imagen de portada', changeCover:'📷 Cambiar',
+    changePassword:'🔑 Cambiar contraseña', myTeam:'Mi equipo',
+    shareWithClients:'🔗 Compartir',
+    errNameShop:'Introduce nombre y salón.',
+    errEmail:'Email inválido.',
+    errPass:'Contraseña: 6+ caracteres.',
+    errEmailExists:'Email ya registrado.',
+    signupSuccess:'✓ ¡Cuenta creada! Entrando...',
+    loginSuccess:'Entrando...',
+    resetSent:'✓ Enlace enviado.',
+    emailNotFound:'Email no encontrado.',
+    newPassword:'Nueva contraseña', savedPass:'✓ Contraseña cambiada.',
+    selectWorker:'Elige un barbero.',
+    qrTitle:'Escanea para reservar',
+    jobsBtn:'💼 Mercado laboral',
+    jobsTitle:'💼 Mercado laboral',
+    jtJobTitle:'Busco trabajo', jtJobSub:'Publica tu perfil',
+    jtWorkerTitle:'Busco un barbero', jtWorkerSub:'Publica una oferta',
+    jtBrowseTitle:'Explorar', jtBrowseSub:'Ver todas las ofertas',
+    postTitle:'Nueva publicación', browseTitle:'👀 Explorar',
+    pjTitle:'Título', pjDesc:'Descripción', pjPhone:'Teléfono',
+    pjInstagram:'Instagram (opcional)', cityLabel:'Ciudad', pjSubmit:'PUBLICAR',
+    filterLabel:'Filtrar por ciudad', allCities:'Todas las ciudades',
+    typeAll:'Todo', typeBarbers:'👨‍🦱 Barberos', typeSalons:'🏪 Salones',
+    contactCall:'📱 Llamar', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Publicado', jobDeleted:'✓ Eliminado',
+    loginRequired:'Inicia sesión para publicar',
+    profileTitle:'Mi perfil', editProfile:'✏️ Editar',
+    fullName:'Nombre', shopName:'Salón', addressLabel:'Dirección', phoneLabel:'Teléfono',
+    holidays:'Vacaciones', whatsappConfirm:'📱 Confirmar por WhatsApp',
+    adminPanel:'👑 Super Admin', totalBarbers:'Barberos', totalBookings:'Reservas',
+    totalWorkers:'Empleados', totalJobs:'Anuncios',
+    selectCity:'Elige una ciudad', other:'Otro'
+  },
+  de: {
+    logo:'BARBER RESERVE', sub:'Einfach buchen', label:'Sprache',
+    title:'Service wählen', btn1:'WEITER', btn2:'BESTÄTIGEN', back:'‹ Zurück',
+    dLabel:'Tag wählen', tLabel:'Verfügbare Zeiten',
+    pName:'Vollständiger Name', pPhone:'Telefonnummer',
+    wLabel:'Wähle deinen Barbier', cdLabel:'Kundendaten',
+    noTimes:'Keine Zeiten verfügbar.',
+    holidayNoBooking:'Feiertag.',
+    alertTitle:'Bestätigt',
+    alertSuccess:(n,s,d,t)=>`Danke ${n}! ${s} am ${d} um ${t}.`,
+    errS:'Service wählen.', errF:'Alle Felder ausfüllen.',
+    timeTaken:'Gerade gebucht.',
+    netErr:'Verbindungsfehler.',
+    phoneInvalid:'Ungültige Nummer für dieses Land.',
+    searchCountry:'Land suchen',
+    settings:'Einstellungen', admCard:'Admin', admCardSub:'Buchungen und Urlaub',
+    loginTitle:'Barbier-Anmeldung', passwordPlaceholder:'Passwort', login:'ANMELDEN',
+    wrongPassword:'Email oder Passwort falsch.',
+    dashboard:'Mein Dashboard', noBookings:'Keine Buchungen.',
+    phone:'Telefon', service:'Service', day:'Tag', time:'Zeit', duration:'Dauer',
+    deleteTitle:'Löschen', deleteMessage:'Sicher?',
+    deleteBookingTitle:'Buchung löschen',
+    deleteBookingMessage:'Diese Buchung löschen?',
+    cancel:'Abbrechen', yesDelete:'Ja, löschen', logout:'Abmelden', btnOk:'OK',
+    gTitle:'Meine Arbeitsfotos', gBtn:'🖼️ Fotos', gAdd:'📷 Foto hinzufügen',
+    gChange:'Ändern', gEmpty:'Keine Fotos.', gDone:'Foto gespeichert.',
+    deletePhotoTitle:'Löschen', deletePhotoMsg:'Dieses Foto löschen?',
+    addWorker:'Barbier hinzufügen', editWorker:'Bearbeiten', workerName:'Name',
+    saveWorker:'SPEICHERN', deleteWorkerTitle:'Löschen',
+    deleteWorkerMsg:'Diesen Barbier löschen?',
+    copyLink:'📋 Link kopieren', linkCopied:'✓ Link kopiert!',
+    editCenter:'🛠️ Bearbeitungszentrum', addService:'➕ Service hinzufügen',
+    deleteServiceTitle:'Service löschen', deleteServiceMsg:'Löschen?',
+    serviceName:'Name', price:'Preis (€)', durMin:'Dauer (min)',
+    save:'Speichern', saved:'Gespeichert.', invalidNum:'Ungültig.',
+    coverImage:'Titelbild', changeCover:'📷 Ändern',
+    changePassword:'🔑 Passwort ändern', myTeam:'Mein Team',
+    shareWithClients:'🔗 Teilen',
+    errNameShop:'Name und Salon eingeben.',
+    errEmail:'Ungültige Email.',
+    errPass:'Passwort: 6+ Zeichen.',
+    errEmailExists:'Email bereits registriert.',
+    signupSuccess:'✓ Konto erstellt! Anmeldung...',
+    loginSuccess:'Anmeldung...',
+    resetSent:'✓ Link gesendet.',
+    emailNotFound:'Email nicht gefunden.',
+    newPassword:'Neues Passwort', savedPass:'✓ Passwort geändert.',
+    selectWorker:'Barbier wählen.',
+    qrTitle:'Scannen zum Buchen',
+    jobsBtn:'💼 Jobbörse',
+    jobsTitle:'💼 Jobbörse',
+    jtJobTitle:'Ich suche Arbeit', jtJobSub:'Profil veröffentlichen',
+    jtWorkerTitle:'Ich suche Barbier', jtWorkerSub:'Stelle veröffentlichen',
+    jtBrowseTitle:'Durchsuchen', jtBrowseSub:'Alle Anzeigen ansehen',
+    postTitle:'Neue Anzeige', browseTitle:'👀 Durchsuchen',
+    pjTitle:'Titel', pjDesc:'Beschreibung', pjPhone:'Telefon',
+    pjInstagram:'Instagram (optional)', cityLabel:'Stadt', pjSubmit:'POSTEN',
+    filterLabel:'Nach Stadt filtern', allCities:'Alle Städte',
+    typeAll:'Alle', typeBarbers:'👨‍🦱 Barbiere', typeSalons:'🏪 Salons',
+    contactCall:'📱 Anrufen', contactInsta:'📷 Instagram',
+    jobPosted:'✓ Gepostet', jobDeleted:'✓ Gelöscht',
+    loginRequired:'Bitte anmelden zum Posten',
+    profileTitle:'Mein Profil', editProfile:'✏️ Bearbeiten',
+    fullName:'Name', shopName:'Salon', addressLabel:'Adresse', phoneLabel:'Telefon',
+    holidays:'Urlaub', whatsappConfirm:'📱 Via WhatsApp bestätigen',
+    adminPanel:'👑 Super Admin', totalBarbers:'Barbiere', totalBookings:'Buchungen',
+    totalWorkers:'Mitarbeiter', totalJobs:'Anzeigen',
+    selectCity:'Stadt wählen', other:'Andere'
+  }
 };
 
 const t = () => translations[lang];
@@ -248,11 +888,10 @@ function setScreen(s){
   if (s==='barber') renderBarberDashboard();
   if (s==='editcenter') renderEditCenter();
   if (s==='admingallery') renderAdminGallery();
+  if (s==='worker') renderWorkerScreen();
   if (s==='jobs') renderJobsHub();
   if (s==='postjob') renderPostJob();
   if (s==='browsejobs') renderBrowseJobs();
-  if (s==='editprofile') renderEditProfile();
-  if (s==='manageworker') renderManageWorker();
 }
 
 /* ============ SUPABASE LOADERS ============ */
@@ -265,6 +904,7 @@ async function loadBarberConfig(){
   currentSettings = (data && data.settings) || {};
   return data;
 }
+
 async function loadBusy(){
   if (!viewingBarberId){ busySlots=[]; return false; }
   const { data, error } = await sb.rpc('bb_public_busy', { p_barber_id: viewingBarberId });
@@ -272,6 +912,7 @@ async function loadBusy(){
   busySlots = (data||[]).map(r=>({dateKey:r.date_key, start:r.start_min, duration:r.duration, workerId:r.worker_id}));
   return true;
 }
+
 async function loadHolidays(){
   if (!viewingBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
   const [h1, h2] = await Promise.all([
@@ -282,6 +923,7 @@ async function loadHolidays(){
   if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
   return true;
 }
+
 async function loadPhotos(){
   if (!viewingBarberId){ galleryPhotos=[]; return false; }
   const { data, error } = await sb.from('gallery').select('id,url,sort').eq('barber_id', viewingBarberId).order('sort');
@@ -289,6 +931,7 @@ async function loadPhotos(){
   galleryPhotos = (data||[]).map(r=>({id:String(r.id), url:r.url}));
   return true;
 }
+
 async function loadMyWorkers(){
   if (!currentBarberId){ workers=[]; return false; }
   const { data, error } = await sb.from('workers')
@@ -297,6 +940,7 @@ async function loadMyWorkers(){
   workers = (data||[]).map(w => ({ id: w.id, name: w.name, photo_url: w.photo_url, sort: w.sort, open_time: w.open_time, close_time: w.close_time }));
   return true;
 }
+
 async function loadAdminBookings(){
   if (!currentBarberId){ adminBookings=[]; return false; }
   const { data, error } = await sb.from('bookings')
@@ -312,23 +956,25 @@ async function loadAdminBookings(){
   }));
   return true;
 }
+
 async function loadMyHolidays(){
   if (!currentBarberId){ holidayDates=[]; workerHolidays=[]; return false; }
   const [h1, h2] = await Promise.all([
     sb.from('holidays').select('date_key').eq('barber_id', currentBarberId).gte('date_key', dateToKey(new Date())),
-    sb.from('worker_holidays').select('worker_id,date_key').
-
+    sb.from('worker_holidays').select('worker_id,date_key').eq('barber_id', currentBarberId).gte('date_key', dateToKey(new Date()))
   ]);
   if (!h1.error) holidayDates = (h1.data||[]).map(r=>r.date_key);
   if (!h2.error) workerHolidays = (h2.data||[]).map(r=>({worker_id: Number(r.worker_id), date_key: r.date_key}));
   return true;
 }
+
 async function loadCities(){
   const { data, error } = await sb.rpc('bb_public_cities');
   if (error){ console.error(error); return false; }
   cities = (data||[]).map(c=>({ id: Number(c.id), name: c.name, country: c.country, jobs_count: Number(c.jobs_count||0) }));
   return true;
 }
+
 async function loadJobPosts(cityId = null, type = null){
   const params = {};
   if (cityId) params.p_city_id = cityId;
@@ -342,6 +988,7 @@ async function loadJobPosts(cityId = null, type = null){
   }));
   return true;
 }
+
 async function loadSettings(){
   if (!viewingBarberId) return null;
   const { data, error } = await sb.from('barber_settings').select('key,value').eq('barber_id', viewingBarberId);
@@ -363,12 +1010,16 @@ async function loadCurrentBarber(){
   if (data){ viewingBarberId = data.id; }
   return data;
 }
+
 async function enterBarberMode(){
   const b = await loadCurrentBarber();
   if (!b){ alert('Profile not found. Try logging out and back in.'); return; }
-  await Promise.all([loadMyWorkers(), loadMyHolidays(), loadPhotos(), loadAdminBookings(), loadSettings()]);
+  await Promise.all([
+    loadMyWorkers(), loadMyHolidays(), loadPhotos(), loadAdminBookings(), loadSettings()
+  ]);
   setScreen('barber');
 }
+
 async function doSignup(){
   const full_name = document.getElementById('suName').value.trim();
   const shop_name = document.getElementById('suShop').value.trim();
@@ -376,11 +1027,16 @@ async function doSignup(){
   const password = document.getElementById('suPassword').value;
   const msg = document.getElementById('suMsg');
   const tr = t();
+  
   if (!full_name || !shop_name){ msg.textContent = tr.errNameShop; return; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.textContent = tr.errEmail; return; }
   if (password.length < 6){ msg.textContent = tr.errPass; return; }
+  
   msg.textContent = 'Creating...';
-  const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name, shop_name } } });
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name, shop_name } }
+  });
   if (error){ 
     if (/already/i.test(error.message)) msg.textContent = tr.errEmailExists;
     else msg.textContent = error.message;
@@ -391,6 +1047,7 @@ async function doSignup(){
   if (le){ msg.textContent = '✓ Created. Please login.'; return; }
   await enterBarberMode();
 }
+
 async function doLogin(){
   const email = document.getElementById('blEmail').value.trim();
   const password = document.getElementById('blPassword').value;
@@ -407,6 +1064,7 @@ async function doLogin(){
   msg.textContent = '';
   await enterBarberMode();
 }
+
 async function doLogout(){
   await sb.auth.signOut();
   currentBarberId = null; currentBarber = null; isAdmin = false;
@@ -417,30 +1075,65 @@ async function doLogout(){
 function applyLang(){
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  // Apply to static labels
   const els = {
-    'jobsBtn': 'jobsBtn', 'bdTitle': 'dashboard', 'myTeamLabel': 'myTeam', 'bdEditCenter': 'editCenter',
-    'bdGallery': 'gBtn', 'shareLabel': 'shareWithClients', 'bdShare': 'copyLink', 'bdPassword': 'changePassword',
-    'holidaysLabel': 'holidays', 'myBookingsLabel': 'noBookings', 'cpTitle': 'changePassword',
-    'ecTitle': 'editCenter', 'coverLabel': 'coverImage', 'ecHeroChange': 'changeCover',
-    'servicesLabel': 'title', 'ecAddService': 'addService', 'agTitle': 'gTitle', 'agAdd': 'gAdd',
-    'workerTitle': 'addWorker', 'wSave': 'saveWorker', 'jobsTitle': 'jobsTitle',
-    'jtJobTitle': 'jtJobTitle', 'jtJobSub': 'jtJobSub', 'jtWorkerTitle': 'jtWorkerTitle',
-    'jtWorkerSub': 'jtWorkerSub', 'jtBrowseTitle': 'jtBrowseTitle', 'jtBrowseSub': 'jtBrowseSub',
-    'postTitle': 'postTitle', 'browseTitle': 'browseTitle', 'cityLabel': 'cityLabel',
-    'pjSubmit': 'pjSubmit', 'filterLabel': 'filterLabel', 'wLabel': 'wLabel', 'cdLabel': 'cdLabel',
-    'pName': 'pName', 'dLabel': 'dLabel', 'tLabel': 'tLabel', 'btn2': 'btn2'
+    'jobsBtn': 'jobsBtn',
+    'bdTitle': 'dashboard',
+    'myTeamLabel': 'myTeam',
+    'addWorkerBtn': null,
+    'bdEditCenter': 'editCenter',
+    'bdGallery': 'gBtn',
+    'shareLabel': 'shareWithClients',
+    'bdShare': 'copyLink',
+    'bdPassword': 'changePassword',
+    'holidaysLabel': 'holidays',
+    'myBookingsLabel': 'noBookings',
+    'cpTitle': 'changePassword',
+    'ecTitle': 'editCenter',
+    'coverLabel': 'coverImage',
+    'ecHeroChange': 'changeCover',
+    'servicesLabel': 'title',
+    'ecAddService': 'addService',
+    'agTitle': 'gTitle',
+    'agAdd': 'gAdd',
+    'workerTitle': 'addWorker',
+    'wSave': 'saveWorker',
+    'jobsTitle': 'jobsTitle',
+    'jtJobTitle': 'jtJobTitle',
+    'jtJobSub': 'jtJobSub',
+    'jtWorkerTitle': 'jtWorkerTitle',
+    'jtWorkerSub': 'jtWorkerSub',
+    'jtBrowseTitle': 'jtBrowseTitle',
+    'jtBrowseSub': 'jtBrowseSub',
+    'postTitle': 'postTitle',
+    'browseTitle': 'browseTitle',
+    'cityLabel': 'cityLabel',
+    'pjSubmit': 'pjSubmit',
+    'filterLabel': 'filterLabel',
+    'wLabel': 'wLabel',
+    'cdLabel': 'cdLabel',
+    'pName': 'pName',
+    'dLabel': 'dLabel',
+    'tLabel': 'tLabel',
+    'btn2': 'btn2'
   };
   Object.keys(els).forEach(id => {
     const el = document.getElementById(id);
     if (el && els[id]) el.textContent = t()[els[id]] || el.textContent;
   });
+  // Placeholders
   const ph = {
-    'inpName': 'pName', 'pjTitle': 'pjTitle', 'pjDesc': 'pjDesc', 'pjPhone': 'pjPhone', 'pjInstagram': 'pjInstagram'
+    'inpName': 'pName',
+    'pjTitle': 'pjTitle',
+    'pjDesc': 'pjDesc',
+    'pjPhone': 'pjPhone',
+    'pjInstagram': 'pjInstagram'
   };
   Object.keys(ph).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.placeholder = t()[ph[id]] || '';
   });
+  // Chip labels
   document.querySelectorAll('#bjChips .chip').forEach(c => {
     const type = c.dataset.type;
     if (!type) c.textContent = t().typeAll;
@@ -474,6 +1167,7 @@ async function renderHome(){
   });
 
   const list = document.getElementById('servicesList');
+
   if (!viewingBarberId){
     document.getElementById('shopName').textContent = 'Barber';
     document.getElementById('locText').textContent = '';
@@ -484,6 +1178,7 @@ async function renderHome(){
   }
 
   list.innerHTML = '<div class="warning">Loading...</div>';
+
   const [data, settings] = await Promise.all([loadBarberConfig(), loadSettings()]);
   if (!data || !data.barber){ 
     list.innerHTML='<div class="warning">Barber not found.</div>'; 
@@ -513,12 +1208,11 @@ async function renderHome(){
   
   list.innerHTML = '';
   svcs.forEach(sv=>{
-    const sName = sv['name_' + lang] || sv.name_en || 'Service';
     const b = document.createElement('button');
     b.className = 'item' + (selectedService && selectedService.id===String(sv.id) ? ' active' : '');
-    b.innerHTML = `<div style="flex:1"><div class="service-name">${esc(sName)}</div><div class="service-time">${sv.duration} min</div></div><div class="price">€${esc(sv.price)}</div>`;
+    b.innerHTML = `<div style="flex:1"><div class="service-name">${esc(sv.name_en)}</div><div class="service-time">${sv.duration} min</div></div><div class="price">€${esc(sv.price)}</div>`;
     b.onclick = () => {
-      selectedService = { id:String(sv.id), name: sName, duration:sv.duration, price:sv.price };
+      selectedService = { id:String(sv.id), name:sv.name_en, duration:sv.duration, price:sv.price };
       time = null;
       renderHome();
     };
@@ -535,6 +1229,7 @@ function updateConfirmState(){
     || isHoliday(selectedDateKey) || !workerOK;
   document.getElementById('confirmBtn').classList.toggle('disabled', disabled);
 }
+
 async function renderBooking(){
   const tr = t();
   const daysEl = document.getElementById('bookingDays');
@@ -615,6 +1310,7 @@ async function renderBooking(){
   }
   updateConfirmState();
 }
+
 function isWorkerBusy(workerId, dateKey, timeStr, service){
   if (!service || !timeStr) return false;
   const start = timeToMinutes(timeStr);
@@ -627,12 +1323,15 @@ function isWorkerBusy(workerId, dateKey, timeStr, service){
     && end > b.start
   );
 }
+
 function getWorkerHours(workerId){
+  // ساعات العامل إذا محددة، وإلا ساعات الصالون
   const w = workers.find(x => x.id === workerId);
   const open = (w && w.open_time) || currentSettings.opening_time || '10:00';
   const close = (w && w.close_time) || currentSettings.closing_time || '20:00';
   return [open, close];
 }
+
 function generateAvailableTimes(){
   if (!selectedDateKey || !selectedService) return [];
   if (isHoliday(selectedDateKey)) return [];
@@ -675,9 +1374,11 @@ function generateAvailableTimes(){
   }
   return out;
 }
+
 async function handleFinalBooking(){
   if (submitting) return;
   normalizePhoneField();
+  
   if (!name.trim() || !phone.trim() || !selectedDateKey || !time || !selectedService){
     showAlert('!', t().errF); return;
   }
@@ -689,10 +1390,16 @@ async function handleFinalBooking(){
   
   try {
     const params = {
-      p_barber_id: viewingBarberId, p_name: name.trim(), p_phone: phone.trim(),
-      p_service_id: Number(selectedService.id), p_date: selectedDateKey, p_start: timeToMinutes(time)
+      p_barber_id: viewingBarberId,
+      p_name: name.trim(),
+      p_phone: phone.trim(),
+      p_service_id: Number(selectedService.id),
+      p_date: selectedDateKey,
+      p_start: timeToMinutes(time)
     };
-    if (workers.length > 0 && selectedWorkerId) params.p_worker_id = selectedWorkerId;
+    if (workers.length > 0 && selectedWorkerId){
+      params.p_worker_id = selectedWorkerId;
+    }
     
     const { data, error } = await sb.rpc('bb_public_create_booking', params);
     if (error){ console.error(error); showAlert('!', t().netErr); return; }
@@ -710,6 +1417,7 @@ async function handleFinalBooking(){
     
     const msg = t().alertSuccess(name.trim(), selectedService.name, displayed, time);
     const waText = encodeURIComponent(`مرحباً، حجزت ${selectedService.name} يوم ${displayed} الساعة ${time}. الاسم: ${name.trim()}`);
+    const waBtn = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;margin-top:10px;cursor:pointer">${t().whatsappConfirm}</button>`;
     
     showAlert(t().alertTitle, msg, t().btnOk, () => {
       name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
@@ -718,29 +1426,35 @@ async function handleFinalBooking(){
       setScreen('home');
     });
     
+    // Add WhatsApp button after modal appears
     setTimeout(() => {
       const modal = document.querySelector('#modalOverlay .modal');
       const buttons = modal.querySelector('.modal-buttons');
-      if (buttons && !buttons.parentNode.querySelector('.wa-btn')){
+      if (buttons && !buttons.querySelector('.wa-btn')){
         const wa = document.createElement('div');
         wa.className = 'wa-btn';
-        wa.style.marginTop = '10px';
-        wa.innerHTML = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;cursor:pointer">${t().whatsappConfirm}</button>`;
+        wa.innerHTML = `<button onclick="window.open('https://wa.me/?text=${waText}','_blank')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #25D366;background:none;color:#25D366;font-weight:bold;margin-top:10px;cursor:pointer">${t().whatsappConfirm}</button>`;
         buttons.parentNode.insertBefore(wa, buttons.nextSibling);
       }
     }, 50);
+    
   } finally {
     submitting = false;
     if (screen === 'booking') updateConfirmState();
   }
 }
+
+/* ============ GALLERY (customers) ============ */
 async function renderGallery(){
   document.querySelector('#screen-gallery .back').textContent = t().back;
   document.getElementById('galleryTitle').textContent = t().gTitle;
   const list = document.getElementById('galleryList');
   list.innerHTML = '<div class="warning">Loading...</div>';
   await loadPhotos();
-  if (!galleryPhotos.length){ list.innerHTML = `<div class="warning">${esc(t().gEmpty)}</div>`; return; }
+  if (!galleryPhotos.length){ 
+    list.innerHTML = `<div class="warning">${esc(t().gEmpty)}</div>`; 
+    return; 
+  }
   list.innerHTML = galleryPhotos.map(p=>`<img class="gallery-full" src="${esc(p.url)}" alt="" loading="lazy">`).join('');
 }
 
@@ -763,6 +1477,7 @@ function countryName(iso){
   } catch(e){ return iso; }
 }
 const normTxt = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 function detectDial(digits){
   for (let n = 4; n >= 1; n--){ const d = digits.slice(0, n); if (byDial[d]) return { dial: d, rest: digits.slice(n) }; }
   return null;
@@ -844,9 +1559,9 @@ async function renderBarberDashboard(){
   document.getElementById('bdGallery').textContent = tr.gBtn;
   document.getElementById('bdShare').textContent = tr.copyLink;
   document.getElementById('bdPassword').textContent = tr.changePassword;
-  document.getElementById('bdEditProfile').textContent = tr.editProfile;
   document.getElementById('addWorkerBtn').textContent = '➕ ' + tr.addWorker;
 
+  // Load workers
   await loadMyWorkers();
   const wr = document.getElementById('bdWorkersRow');
   wr.innerHTML = '';
@@ -857,12 +1572,24 @@ async function renderBarberDashboard(){
       const div = document.createElement('div');
       div.className = 'worker-circle';
       const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
-      div.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt=""><div class="worker-name">${esc(w.name)}</div>`;
-      div.onclick = () => openManageWorker(w);
+      div.innerHTML = `<img class="worker-photo" src="${esc(photo)}" alt="">
+                       <div class="worker-name">${esc(w.name)}</div>`;
+      div.onclick = () => {
+        showConfirm(tr.editWorker + ' / ' + tr.deleteWorkerTitle, 
+          w.name + ' — ' + tr.deleteWorkerMsg, 
+          tr.yesDelete, 
+          async () => {
+            const { error } = await sb.from('workers').update({ is_active: false }).eq('id', w.id);
+            if (error){ alert(error.message); return; }
+            await loadMyWorkers();
+            renderBarberDashboard();
+          });
+      };
       wr.appendChild(div);
     });
   }
 
+  // Holidays
   await loadMyHolidays();
   const daysEl = document.getElementById('bdDays');
   daysEl.innerHTML = '';
@@ -877,8 +1604,10 @@ async function renderBarberDashboard(){
   });
   document.getElementById('bdMonth').textContent = getMonthLabel(daysEl);
 
+  // QR Code
   renderQR();
 
+  // Bookings
   await loadAdminBookings();
   const list = document.getElementById('bdBookings');
   if (!adminBookings.length){
@@ -899,8 +1628,6 @@ async function renderBarberDashboard(){
         <div class="admin-info">📅 ${esc(item.dateKey)} — ⏰ ${esc(item.startTime)}</div>
       </div>
       <button class="delete-btn">🗑️</button>`;
-    div.querySelector('.delete-btn').
-
     div.querySelector('.delete-btn').onclick = () => {
       showConfirm(tr.deleteBookingTitle, tr.deleteBookingMessage, tr.yesDelete, async () => {
         const { error } = await sb.from('bookings').update({ status: 'cancelled' }).eq('id', item.id);
@@ -935,54 +1662,6 @@ async function toggleHoliday(key){
   renderBarberDashboard();
 }
 
-/* ============ EDIT PROFILE (BARBER) ============ */
-function renderEditProfile(){
-  document.getElementById('epName').value = currentBarber ? (currentBarber.full_name || '') : '';
-  document.getElementById('epShop').value = currentBarber ? (currentBarber.shop_name || '') : '';
-  document.getElementById('epPhone').value = currentSettings.phone || '';
-  document.getElementById('epAddress').value = currentSettings.location || '';
-}
-
-/* ============ MANAGE WORKER ============ */
-function renderManageWorker(){
-  const w = workers.find(x => x.id === editingWorkerId);
-  if (!w){ setScreen('barber'); return; }
-  document.getElementById('mwTitle').textContent = 'Manage: ' + w.name;
-  document.getElementById('mwName').value = w.name;
-  document.getElementById('mwOpen').value = w.open_time || '';
-  document.getElementById('mwClose').value = w.close_time || '';
-  const photo = w.photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(w.name) + '&background=333&color=D4AF37&size=200';
-  const preview = document.getElementById('mwPhotoPreview');
-  preview.src = photo;
-  preview.style.visibility = 'visible';
-  mwPhotoFile = null;
-  mwPhotoUrl = w.photo_url;
-  
-  const daysEl = document.getElementById('mwDays');
-  daysEl.innerHTML = '';
-  futureDates.forEach(d => {
-    const key = dateToKey(d);
-    const sel = isWorkerHoliday(w.id, key);
-    const box = document.createElement('div');
-    box.className = 'day-box' + (sel ? ' holiday-selected' : '');
-    box.innerHTML = `<div class="day-name">${esc(getShortDayName(d))}</div><div class="day-number">${d.getDate()}</div>${sel?'<div class="holiday-mini" style="color:var(--gold)">✓</div>':''}`;
-    box.onclick = async () => {
-      const isOn = isWorkerHoliday(w.id, key);
-      let err;
-      if (isOn) {
-        ({ error: err } = await sb.from('worker_holidays').delete().eq('worker_id', w.id).eq('date_key', key));
-      } else {
-        ({ error: err } = await sb.from('worker_holidays').insert({ barber_id: currentBarberId, worker_id: w.id, date_key: key }));
-      }
-      if (err) { alert(err.message); return; }
-      await loadMyHolidays();
-      renderManageWorker();
-    };
-    daysEl.appendChild(box);
-  });
-  document.getElementById('mwMonth').textContent = getMonthLabel(daysEl);
-}
-
 /* ============ EDIT CENTER ============ */
 async function renderEditCenter(){
   const tr = t();
@@ -991,9 +1670,6 @@ async function renderEditCenter(){
   document.getElementById('ecAddService').textContent = tr.addService;
 
   const settings = await loadSettings() || {};
-  document.getElementById('ecOpenTime').value = settings.opening_time || '10:00';
-  document.getElementById('ecCloseTime').value = settings.closing_time || '20:00';
-
   const heroUrl = settings.hero_url || DEFAULT_HERO;
   const heroPos = parseInt(settings.hero_pos || '50', 10);
   const heroPrev = document.getElementById('ecHeroPreview');
@@ -1010,11 +1686,9 @@ async function renderEditCenter(){
     card.className = 'admin-item';
     card.style.flexDirection = 'column';
     card.style.alignItems = 'stretch';
-    const sNameAr = sv.name_ar || sv.name_en;
     card.innerHTML = `
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
-        <input class="input" type="text" data-f="name" value="${esc(sv.name_en)}" placeholder="English Name" style="margin:0;flex:1">
-        <input class="input" type="text" data-f="nameAr" value="${esc(sNameAr)}" placeholder="Arabic Name" style="margin:0;flex:1">
+        <input class="input" type="text" data-f="name" value="${esc(sv.name_en)}" placeholder="${esc(tr.serviceName)}" style="margin:0;flex:1">
         <button class="delete-btn" data-f="del">🗑️</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -1033,11 +1707,10 @@ async function renderEditCenter(){
       const price = parseFloat(String(card.querySelector('[data-f="price"]').value).replace(',', '.'));
       const dur = parseInt(card.querySelector('[data-f="dur"]').value, 10);
       const nm = card.querySelector('[data-f="name"]').value.trim();
-      const nmAr = card.querySelector('[data-f="nameAr"]').value.trim();
       if (!nm || !(price >= 0 && price <= 10000) || !(dur >= 5 && dur <= 240)){ 
         showAlert('!', tr.invalidNum); return; 
       }
-      const { error } = await sb.from('services').update({ name_en: nm, name_ar: nmAr, price, duration: dur }).eq('id', sv.id);
+      const { error } = await sb.from('services').update({ name_en: nm, price, duration: dur }).eq('id', sv.id);
       if (error){ alert(error.message); return; }
       showAlert('✓', tr.saved);
     };
@@ -1054,9 +1727,8 @@ async function renderEditCenter(){
 /* ============ ADD SERVICE ============ */
 async function addService(){
   const tr = t();
-  const nm = prompt("English Name (e.g. Haircut)");
+  const nm = prompt(tr.serviceName);
   if (!nm || !nm.trim()) return;
-  const nmAr = prompt("Arabic Name (e.g. قص شعر)", nm);
   const priceStr = prompt(tr.price, '15');
   if (priceStr === null) return;
   const durStr = prompt(tr.durMin, '30');
@@ -1069,8 +1741,11 @@ async function addService(){
   const { data: maxSort } = await sb.from('services').select('sort').eq('barber_id', currentBarberId).order('sort', { ascending: false }).limit(1);
   const nextSort = ((maxSort && maxSort[0] && maxSort[0].sort) || 0) + 1;
   const { error } = await sb.from('services').insert({
-    barber_id: currentBarberId, name_en: nm.trim(), name_ar: nmAr ? nmAr.trim() : null,
-    price, duration: dur, sort: nextSort, is_active: true
+    barber_id: currentBarberId,
+    name_en: nm.trim(),
+    price, duration: dur,
+    sort: nextSort,
+    is_active: true
   });
   if (error){ alert(error.message); return; }
   renderEditCenter();
@@ -1121,23 +1796,33 @@ async function renderAdminGallery(){
   });
 }
 
+/* ============ ADD / REPLACE PHOTO ============ */
 async function addPhoto(file){
   try {
     const url = await uploadToStorage(file);
     const nextSort = Math.floor(Date.now() / 1000);
-    const { error } = await sb.from('gallery').insert({ barber_id: currentBarberId, url, sort: nextSort });
+    const { error } = await sb.from('gallery').insert({ 
+      barber_id: currentBarberId, url, sort: nextSort 
+    });
     if (error) throw error;
     showAlert('✓', t().gDone);
     renderAdminGallery();
-  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
 }
+
 async function replacePhoto(id, file){
   try {
     const url = await uploadToStorage(file);
     const { error } = await sb.from('gallery').update({ url }).eq('id', id);
     if (error) throw error;
     renderAdminGallery();
-  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
 }
 
 /* ============ COMPRESS + UPLOAD ============ */
@@ -1154,11 +1839,14 @@ async function compressImage(file, maxSize = 1600, quality = 0.85){
   const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
   return new File([blob], 'photo.jpg', { type: 'image/jpeg' });
 }
+
 async function uploadToStorage(file, prefix = 'img'){
   const compressed = await compressImage(file);
   const fileName = currentBarberId + '/' + prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8) + '.jpg';
   const { error } = await sb.storage.from(BUCKET).upload(fileName, compressed, { 
-    cacheControl: 'no-cache, max-age=0', upsert: false, contentType: 'image/jpeg' 
+    cacheControl: 'no-cache, max-age=0', 
+    upsert: false, 
+    contentType: 'image/jpeg' 
   });
   if (error) throw error;
   return sb.storage.from(BUCKET).getPublicUrl(fileName).data.publicUrl;
@@ -1168,18 +1856,96 @@ async function uploadToStorage(file, prefix = 'img'){
 async function changeHero(file){
   try {
     const url = await uploadToStorage(file, 'hero');
+    console.log('Hero uploaded:', url);
     if (!currentBarberId){ alert('Not logged in'); return; }
-    const { data: existing } = await sb.from('barber_settings').select('key').eq('barber_id', currentBarberId).eq('key', 'hero_url').maybeSingle();
+    
+    const { data: existing } = await sb.from('barber_settings')
+      .select('key').eq('barber_id', currentBarberId).eq('key', 'hero_url').maybeSingle();
+    
     let err;
     if (existing){
-      ({ error: err } = await sb.from('barber_settings').update({ value: url }).eq('barber_id', currentBarberId).eq('key', 'hero_url'));
+      ({ error: err } = await sb.from('barber_settings')
+        .update({ value: url }).eq('barber_id', currentBarberId).eq('key', 'hero_url'));
     } else {
-      ({ error: err } = await sb.from('barber_settings').insert({ barber_id: currentBarberId, key: 'hero_url', value: url }));
+      ({ error: err } = await sb.from('barber_settings')
+        .insert({ barber_id: currentBarberId, key: 'hero_url', value: url }));
     }
     if (err){ console.error(err); alert('Error: ' + err.message); return; }
+    
+    const defaults = [
+      { key: 'hero_pos', value: '50' },
+      { key: 'opening_time', value: '10:00' },
+      { key: 'closing_time', value: '20:00' },
+      { key: 'location', value: 'Mallorca, Spain' },
+      { key: 'phone', value: '' },
+      { key: 'address', value: '' }
+    ];
+    for (const s of defaults){
+      const { data } = await sb.from('barber_settings')
+        .select('key').eq('barber_id', currentBarberId).eq('key', s.key).maybeSingle();
+      if (!data){
+        await sb.from('barber_settings').insert({ barber_id: currentBarberId, key: s.key, value: s.value });
+      }
+    }
+    
     showAlert('✓', t().saved);
     renderEditCenter();
-  } catch (err){ console.error(err); alert((err && err.message) || t().netErr); }
+  } catch (err){ 
+    console.error(err);
+    alert((err && err.message) || t().netErr); 
+  }
+}
+
+/* ============ WORKER SCREEN ============ */
+function renderWorkerScreen(){
+  const tr = t();
+  document.getElementById('workerTitle').textContent = editingWorkerId ? tr.editWorker : tr.addWorker;
+  document.getElementById('wPhotoBtn').textContent = '📷 Photo';
+  document.getElementById('wSave').textContent = tr.saveWorker;
+  document.getElementById('wName').placeholder = tr.workerName;
+  
+  const preview = document.getElementById('wPhotoPreview');
+  if (editingWorkerPhotoUrl){
+    preview.src = editingWorkerPhotoUrl;
+    preview.style.visibility = 'visible';
+  } else {
+    preview.style.visibility = 'hidden';
+  }
+}
+
+async function saveWorker(){
+  const name = document.getElementById('wName').value.trim();
+  if (!name){ alert(t().workerName); return; }
+  
+  let photoUrl = editingWorkerPhotoUrl || null;
+  if (pendingWorkerPhotoFile){
+    try {
+      photoUrl = await uploadToStorage(pendingWorkerPhotoFile, 'worker');
+    } catch(err){
+      alert((err && err.message) || t().netErr);
+      return;
+    }
+  }
+  
+  if (editingWorkerId){
+    const { error } = await sb.from('workers').update({ name, photo_url: photoUrl }).eq('id', editingWorkerId);
+    if (error){ alert(error.message); return; }
+  } else {
+    const { error } = await sb.from('workers').insert({
+      barber_id: currentBarberId,
+      name,
+      photo_url: photoUrl,
+      is_active: true,
+      sort: workers.length + 1
+    });
+    if (error){ alert(error.message); return; }
+  }
+  
+  editingWorkerId = null;
+  editingWorkerPhotoUrl = null;
+  pendingWorkerPhotoFile = null;
+  document.getElementById('wName').value = '';
+  setScreen('barber');
 }
 
 /* ============ WORK MARKET HUB ============ */
@@ -1196,6 +1962,8 @@ async function renderJobsHub(){
 }
 
 /* ============ POST JOB ============ */
+let postingType = 'looking_for_job';
+
 async function renderPostJob(){
   const tr = t();
   document.querySelector('#screen-postjob .back').textContent = tr.back;
@@ -1207,6 +1975,7 @@ async function renderPostJob(){
   document.getElementById('cityLabel').textContent = tr.cityLabel;
   document.getElementById('pjSubmit').textContent = tr.pjSubmit;
 
+  // Populate cities dropdown
   if (!cities.length) await loadCities();
   const sel = document.getElementById('pjCity');
   sel.innerHTML = `<option value="">${tr.selectCity}</option>`;
@@ -1217,6 +1986,7 @@ async function renderPostJob(){
     sel.appendChild(opt);
   });
 
+  // Reset form
   document.getElementById('pjTitle').value = '';
   document.getElementById('pjDesc').value = '';
   document.getElementById('pjPhone').value = '';
@@ -1234,6 +2004,7 @@ async function renderBrowseJobs(){
   document.getElementById('filterLabel').textContent = tr.filterLabel;
 
   if (!cities.length) await loadCities();
+
   const sel = document.getElementById('bjCity');
   sel.innerHTML = `<option value="">${tr.allCities}</option>`;
   cities.forEach(c => {
@@ -1247,6 +2018,7 @@ async function renderBrowseJobs(){
   await loadJobPosts(jobFilter.city_id, jobFilter.type);
   renderJobList();
 }
+
 function renderJobList(){
   const tr = t();
   const list = document.getElementById('bjList');
@@ -1264,6 +2036,7 @@ function renderJobList(){
       <div class="job-card-title">${icon} ${esc(j.title)}</div>
       ${j.description ? `<div class="job-card-desc">${esc(j.description)}</div>` : ''}
       ${city ? `<div class="job-card-meta">📍 ${esc(city)}</div>` : ''}
+      <div class="job-card-meta">👁️ ${j.views} views</div>
       <div class="job-card-actions">
         <button data-a="call">${esc(tr.contactCall)}</button>
         ${j.instagram ? `<button data-a="insta">${esc(tr.contactInsta)}</button>` : ''}
@@ -1274,7 +2047,10 @@ function renderJobList(){
       window.open('tel:' + j.phone.replace(/\s/g, ''), '_blank');
     };
     const instaBtn = card.querySelector('[data-a="insta"]');
-    if (instaBtn) instaBtn.onclick = () => window.open('https://instagram.com/' + j.instagram.replace(/^@/, ''), '_blank');
+    if (instaBtn) instaBtn.onclick = () => {
+      const handle = j.instagram.replace(/^@/, '');
+      window.open('https://instagram.com/' + handle, '_blank');
+    };
     list.appendChild(card);
   });
 }
@@ -1283,9 +2059,7 @@ function renderJobList(){
 async function submitJobPost(){
   const tr = t();
   const { data: { user } } = await sb.auth.getUser();
-  
-  // إصلاح: التحقق من وجود currentBarberId (وليس user فقط) لضمان أن الحلاق مسجل
-  if (!currentBarberId){
+  if (!user){
     showAlert('!', tr.loginRequired, tr.btnOk, () => setScreen('login'));
     return;
   }
@@ -1302,14 +2076,44 @@ async function submitJobPost(){
   if (!cityId && !cityCustom){ showAlert('!', 'Please select or enter a city.'); return; }
 
   const payload = {
-    user_id: user.id, post_type: postingType, title, description: description || null,
-    phone, instagram: instagram || null, city_id: cityId ? Number(cityId) : null,
-    city_custom: (!cityId && cityCustom) ? cityCustom : null, is_active: true
+    user_id: user.id,
+    post_type: postingType,
+    title,
+    description: description || null,
+    phone,
+    instagram: instagram || null,
+    city_id: cityId ? Number(cityId) : null,
+    city_custom: (!cityId && cityCustom) ? cityCustom : null,
+    is_active: true
   };
 
   const { error } = await sb.from('job_posts').insert(payload);
   if (error){ alert(error.message); return; }
+  
   showAlert('✓', tr.jobPosted, tr.btnOk, () => setScreen('jobs'));
+}
+
+/* ============ SUPER ADMIN ============ */
+async function renderSuperAdmin(){
+  const tr = t();
+  if (!isAdmin){ showAlert('!', 'Access denied'); return; }
+  
+  // Fetch stats
+  const [b, bk, w, j] = await Promise.all([
+    sb.from('barbers').select('id', { count: 'exact', head: true }),
+    sb.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'confirmed'),
+    sb.from('workers').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    sb.from('job_posts').select('id', { count: 'exact', head: true }).eq('is_active', true)
+  ]);
+  
+  const totalBarbers = b.count || 0;
+  const totalBookings = bk.count || 0;
+  const totalWorkers = w.count || 0;
+  const totalJobs = j.count || 0;
+  
+  showAlert(tr.adminPanel, 
+    `${tr.totalBarbers}: ${totalBarbers}\n${tr.totalBookings}: ${totalBookings}\n${tr.totalWorkers}: ${totalWorkers}\n${tr.totalJobs}: ${totalJobs}`, 
+    tr.btnOk);
 }
 
 /* ============ EVENTS ============ */
@@ -1318,10 +2122,13 @@ document.getElementById('adminTrigger').onclick = async () => {
   if (user) await enterBarberMode();
   else setScreen('settings');
 };
+
+// Settings
 document.getElementById('goSignup').onclick = () => setScreen('signup');
 document.getElementById('goLogin').onclick = () => setScreen('login');
 document.getElementById('goJobsFromSettings').onclick = () => setScreen('jobs');
 
+// Home
 document.getElementById('galleryBtn').onclick = () => setScreen('gallery');
 document.getElementById('jobsBtn').onclick = () => setScreen('jobs');
 document.getElementById('nextBtn').onclick = () => {
@@ -1333,6 +2140,7 @@ document.getElementById('langBox').onclick = () => {
   m.style.display = m.style.display === 'none' ? 'block' : 'none';
 };
 
+// Booking
 document.getElementById('confirmBtn').onclick = handleFinalBooking;
 document.getElementById('inpName').addEventListener('input', e => { name = e.target.value; updateConfirmState(); });
 document.getElementById('inpPhone').addEventListener('input', () => { normalizePhoneField(); updateConfirmState(); });
@@ -1341,6 +2149,7 @@ document.getElementById('countryClose').onclick = closeCountryPicker;
 document.getElementById('countrySearch').addEventListener('input', e => renderCountryList(e.target.value));
 document.getElementById('countryOverlay').addEventListener('click', e => { if (e.target.id === 'countryOverlay') closeCountryPicker(); });
 
+// Auth
 document.getElementById('signupBtn').onclick = doSignup;
 document.getElementById('loginBtn').onclick = doLogin;
 document.getElementById('forgotBtn').onclick = () => setScreen('reset');
@@ -1349,7 +2158,9 @@ document.getElementById('resetBtn').onclick = async () => {
   const msg = document.getElementById('rpMsg');
   if (!email){ msg.textContent = t().errEmail; return; }
   msg.textContent = 'Sending...';
-  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname + '?reset=1' });
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + location.pathname + '?reset=1'
+  });
   if (error){ msg.textContent = error.message; return; }
   msg.textContent = t().resetSent;
 };
@@ -1363,13 +2174,16 @@ document.getElementById('newpassBtn').onclick = async () => {
   setScreen('login');
 };
 
+// Dashboard
 document.getElementById('logoutBtn').onclick = doLogout;
 document.getElementById('bdShare').onclick = async () => {
   const url = location.origin + location.pathname + '?b=' + currentBarberId;
   try {
     await navigator.clipboard.writeText(url);
     showAlert('✓', t().linkCopied + '\n\n' + url, t().btnOk);
-  } catch(e){ showAlert('📋', url, t().btnOk); }
+  } catch(e){
+    showAlert('📋', url, t().btnOk);
+  }
 };
 document.getElementById('bdPassword').onclick = () => setScreen('changepass');
 document.getElementById('cpBtn').onclick = async () => {
@@ -1382,104 +2196,27 @@ document.getElementById('cpBtn').onclick = async () => {
   setScreen('barber');
 };
 
-/* --- PROFILE EVENTS --- */
-document.getElementById('bdEditProfile').onclick = () => setScreen('editprofile');
-document.getElementById('epSave').onclick = async () => {
-  const name = document.getElementById('epName').value.trim();
-  const shop = document.getElementById('epShop').value.trim();
-  const phone = document.getElementById('epPhone').value.trim();
-  const address = document.getElementById('epAddress').value.trim();
-  if (!name || !shop) { showAlert('!', t().errNameShop); return; }
-  
-  const { error: bErr } = await sb.from('barbers').update({ full_name: name, shop_name: shop }).eq('id', currentBarberId);
-  if (bErr) { alert(bErr.message); return; }
-  
-  await sb.from('barber_settings').upsert([
-    { barber_id: currentBarberId, key: 'phone', value: phone },
-    { barber_id: currentBarberId, key: 'location', value: address }
-  ]);
-  
-  await loadCurrentBarber();
-  showAlert('✓', t().saved);
-  setScreen('barber');
-};
-
-/* --- WORKER EVENTS --- */
+// Workers
 document.getElementById('addWorkerBtn').onclick = () => {
-  editingWorkerId = 'new';
-  document.getElementById('mwTitle').textContent = t().addWorker;
-  document.getElementById('mwName').value = '';
-  document.getElementById('mwOpen').value = '';
-  document.getElementById('mwClose').value = '';
-  document.getElementById('mwPhotoPreview').style.visibility = 'hidden';
-  mwPhotoFile = null;
-  mwPhotoUrl = null;
-  document.getElementById('mwDays').innerHTML = '';
-  setScreen('manageworker');
+  editingWorkerId = null;
+  editingWorkerPhotoUrl = null;
+  pendingWorkerPhotoFile = null;
+  document.getElementById('wName').value = '';
+  setScreen('worker');
 };
-function openManageWorker(w){
-  editingWorkerId = w.id;
-  setScreen('manageworker');
-}
-document.getElementById('mwPhotoBtn').onclick = () => document.getElementById('mwPhotoInput').click();
-document.getElementById('mwPhotoInput').addEventListener('change', e => {
+document.getElementById('wPhotoBtn').onclick = () => document.getElementById('wPhotoInput').click();
+document.getElementById('wPhotoInput').addEventListener('change', e => {
   if (!e.target.files[0]) return;
-  mwPhotoFile = e.target.files[0];
-  const preview = document.getElementById('mwPhotoPreview');
-  preview.src = URL.createObjectURL(mwPhotoFile);
+  pendingWorkerPhotoFile = e.target.files[0];
+  const preview = document.getElementById('wPhotoPreview');
+  preview.src = URL.createObjectURL(pendingWorkerPhotoFile);
   preview.style.visibility = 'visible';
   e.target.value = '';
 });
-document.getElementById('mwSave').onclick = async () => {
-  const name = document.getElementById('mwName').value.trim();
-  const open = document.getElementById('mwOpen').value.trim();
-  const close = document.getElementById('mwClose').value.trim();
-  if (!name) { alert(t().workerName); return; }
-  
-  let photoUrl = mwPhotoUrl;
-  if (mwPhotoFile) {
-    try { photoUrl = await uploadToStorage(mwPhotoFile, 'worker'); } 
-    catch(err) { alert(err.message); return; }
-  }
-  
-  if (editingWorkerId === 'new') {
-    const { error } = await sb.from('workers').insert({
-      barber_id: currentBarberId, name, photo_url: photoUrl,
-      open_time: open || null, close_time: close || null, is_active: true, sort: workers.length + 1
-    });
-    if (error) { alert(error.message); return; }
-  } else {
-    const { error } = await sb.from('workers').update({ name, photo_url: photoUrl, open_time: open || null, close_time: close || null }).eq('id', editingWorkerId);
-    if (error) { alert(error.message); return; }
-  }
-  
-  await loadMyWorkers();
-  showAlert('✓', t().saved);
-  setScreen('barber');
-};
-document.getElementById('mwDelete').onclick = () => {
-  if (editingWorkerId === 'new') { setScreen('barber'); return; }
-  showConfirm(t().deleteWorkerTitle, t().deleteWorkerMsg, t().yesDelete, async () => {
-    const { error } = await sb.from('workers').update({ is_active: false }).eq('id', editingWorkerId);
-    if (error) { alert(error.message); return; }
-    await loadMyWorkers();
-    setScreen('barber');
-  });
-};
+document.getElementById('wSave').onclick = saveWorker;
 
-/* --- EDIT CENTER EVENTS --- */
+// Edit Center
 document.getElementById('bdEditCenter').onclick = () => setScreen('editcenter');
-document.getElementById('ecSaveHours').onclick = async () => {
-  const open = document.getElementById('ecOpenTime').value.trim();
-  const close = document.getElementById('ecCloseTime').value.trim();
-  if (!open || !close) return;
-  await sb.from('barber_settings').upsert([
-    { barber_id: currentBarberId, key: 'opening_time', value: open },
-    { barber_id: currentBarberId, key: 'closing_time', value: close }
-  ]);
-  showAlert('✓', t().saved);
-  renderEditCenter();
-};
 document.getElementById('ecHeroChange').onclick = () => document.getElementById('ecHeroInput').click();
 document.getElementById('ecHeroInput').addEventListener('change', e => {
   if (!e.target.files[0]) return;
@@ -1489,11 +2226,23 @@ document.getElementById('ecHeroInput').addEventListener('change', e => {
 document.getElementById('ecHeroPos').addEventListener('change', async e => {
   const v = String(parseInt(e.target.value, 10));
   document.getElementById('ecHeroPreview').style.objectPosition = '50% ' + v + '%';
-  await sb.from('barber_settings').upsert([{ barber_id: currentBarberId, key: 'hero_pos', value: v }]);
+  
+  const { data: existing } = await sb.from('barber_settings')
+    .select('key').eq('barber_id', currentBarberId).eq('key', 'hero_pos').maybeSingle();
+  
+  let err;
+  if (existing){
+    ({ error: err } = await sb.from('barber_settings')
+      .update({ value: v }).eq('barber_id', currentBarberId).eq('key', 'hero_pos'));
+  } else {
+    ({ error: err } = await sb.from('barber_settings')
+      .insert({ barber_id: currentBarberId, key: 'hero_pos', value: v }));
+  }
+  if (err) console.error(err);
 });
 document.getElementById('ecAddService').onclick = addService;
 
-/* --- ADMIN GALLERY EVENTS --- */
+// Admin Gallery
 document.getElementById('bdGallery').onclick = () => setScreen('admingallery');
 document.getElementById('agAdd').onclick = () => document.getElementById('agInput').click();
 document.getElementById('agInput').addEventListener('change', e => {
@@ -1502,13 +2251,23 @@ document.getElementById('agInput').addEventListener('change', e => {
   e.target.value = '';
 });
 
-/* --- WORK MARKET EVENTS --- */
-document.getElementById('jobTypeJob').onclick = () => { postingType = 'looking_for_job'; setScreen('postjob'); };
-document.getElementById('jobTypeWorker').onclick = () => { postingType = 'looking_for_worker'; setScreen('postjob'); };
-document.getElementById('jobTypeBrowse').onclick = () => { jobFilter = { city_id: null, type: null }; setScreen('browsejobs'); };
+// Work Market
+document.getElementById('jobTypeJob').onclick = () => {
+  postingType = 'looking_for_job';
+  setScreen('postjob');
+};
+document.getElementById('jobTypeWorker').onclick = () => {
+  postingType = 'looking_for_worker';
+  setScreen('postjob');
+};
+document.getElementById('jobTypeBrowse').onclick = () => {
+  jobFilter = { city_id: null, type: null };
+  setScreen('browsejobs');
+};
 document.getElementById('pjSubmit').onclick = submitJobPost;
 document.getElementById('pjCity').addEventListener('change', e => {
-  document.getElementById('pjCityCustom').style.display = e.target.value ? 'none' : 'block';
+  const custom = document.getElementById('pjCityCustom');
+  custom.style.display = e.target.value ? 'none' : 'block';
 });
 document.getElementById('bjCity').addEventListener('change', async e => {
   jobFilter.city_id = e.target.value ? Number(e.target.value) : null;
@@ -1525,18 +2284,20 @@ document.querySelectorAll('#bjChips .chip').forEach(chip => {
   };
 });
 
-/* --- BACK BUTTONS --- */
+// Back buttons
 document.querySelectorAll('.back').forEach(b => {
   b.onclick = () => {
-    let go = b.dataset.goto;
+    const go = b.dataset.goto;
     if (go === 'home' && screen === 'booking'){
       name=''; phone=''; selectedDateKey=null; time=null; selectedService=null; selectedWorkerId=null;
-      document.getElementById('inpName').value=''; document.getElementById('inpPhone').value='';
+      document.getElementById('inpName').value='';
+      document.getElementById('inpPhone').value='';
     }
     setScreen(go);
   };
 });
 
+// Scroll months
 const bookingDaysEl = document.getElementById('bookingDays');
 if (bookingDaysEl) bookingDaysEl.addEventListener('scroll', () => { 
   document.getElementById('bookingMonth').textContent = getMonthLabel(bookingDaysEl); 
@@ -1544,25 +2305,77 @@ if (bookingDaysEl) bookingDaysEl.addEventListener('scroll', () => {
 
 /* ============ URL PARAMS ============ */
 const urlParams = new URLSearchParams(location.search);
-if (urlParams.get('reset') === '1'){ setTimeout(() => setScreen('newpass'), 400); }
+if (urlParams.get('reset') === '1'){
+  setTimeout(() => setScreen('newpass'), 400);
+}
 const bParam = urlParams.get('b');
-if (bParam){ viewingBarberId = bParam; localStorage.setItem('viewing_barber', bParam); }
-else { const stored = localStorage.getItem('viewing_barber'); if (stored) viewingBarberId = stored; }
+if (bParam){
+  viewingBarberId = bParam;
+  localStorage.setItem('viewing_barber', bParam);
+} else {
+  const stored = localStorage.getItem('viewing_barber');
+  if (stored) viewingBarberId = stored;
+}
+
+/* ============ PWA MANIFEST ============ */
+const pwaManifest = {
+  name: 'Barber Reserve',
+  short_name: 'Barber',
+  start_url: './',
+  display: 'standalone',
+  background_color: '#111111',
+  theme_color: '#D4AF37',
+  icons: [
+    { src: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 fill=%22%23111%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 font-size=%22280%22 text-anchor=%22middle%22 fill=%22%23D4AF37%22%3E✂%3C/text%3E%3C/svg%3E', sizes: '512x512', type: 'image/svg+xml' }
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(pwaManifest)], { type: 'application/json' });
+const manifestLink = document.createElement('link');
+manifestLink.rel = 'manifest';
+manifestLink.href = URL.createObjectURL(manifestBlob);
+document.head.appendChild(manifestLink);
+
+// Theme color meta
+const themeMeta = document.createElement('meta');
+themeMeta.name = 'theme-color';
+themeMeta.content = '#D4AF37';
+document.head.appendChild(themeMeta);
 
 /* ============ INIT ============ */
 (async () => {
   applyLang();
   renderCountryBtn();
+  
   const { data: { session } } = await sb.auth.getSession();
-  if (session){ await loadCurrentBarber(); }
-  if (viewingBarberId){ await Promise.all([loadBusy(), loadHolidays(), loadPhotos()]); }
+  if (session){
+    await loadCurrentBarber();
+  }
+  
+  if (viewingBarberId){
+    await Promise.all([loadBusy(), loadHolidays(), loadPhotos()]);
+  }
+  
   await loadCities();
   await renderHome();
 })();
-sb.auth.onAuthStateChange((event) => { console.log('Auth event:', event); });
+
+// Listen to auth
+sb.auth.onAuthStateChange((event) => {
+  console.log('Auth event:', event);
+});
+
+// Add Super Admin button if user is admin
+setTimeout(async () => {
+  if (isAdmin && document.getElementById('bdEditCenter')){
+    const btn = document.createElement('button');
+    btn.className = 'btn-secondary';
+    btn.textContent = t().adminPanel;
+    btn.onclick = renderSuperAdmin;
+    btn.style.borderColor = '#ff4d4d';
+    btn.style.color = '#ff4d4d';
+    document.getElementById('bdEditCenter').before(btn);
+  }
+}, 1000);
 </script>
 </body>
 </html>
-  
-  .chip { padding:10px 18px; background:var(--box); border:1
-  
